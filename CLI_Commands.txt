@@ -1,0 +1,130 @@
+
+
+
+ databricks warehouses list
+ databricks catalogs list
+
+ databricks bundle validate
+
+        Name: vinoworld_bundle
+        Target: dev
+        Workspace:
+        Host: https://dbc-d0f295f4-d028.cloud.databricks.com/
+        User: zieder0022@gmail.com
+        Path: /Workspace/Users/zieder0022@gmail.com/.bundle/vinoworld_bundle/dev
+
+        Validation OK!
+
+ What the validate output tells you:
+
+  - User — confirms which identity the CLI authenticated as (zieder0022@gmail.com)
+  - Path — this is where the bundle will deploy its files in the workspace. The pattern is /Workspace/Users/<you>/.bundle/<bundle-name>/<target>. Notice dev at the end — that
+  comes from the target name. When we add a prod target later, it will deploy to a separate path automatically.
+  - Validation OK! — the YAML is syntactically valid and the CLI can reach the workspace
+
+  What profile does: It tells the CLI which entry in ~/.databrickscfg to use for authentication when running any bundle command. Without it, the CLI tries to match by host and
+  fails if more than one profile matches — which is exactly what happened.
+
+
+    databricks bundle deploy --target dev
+                             --target staging
+                             --target prod
+
+
+
+
+
+databricks bundle deploy --log-level debug
+
+
+##  If files are not uploading on bundle deploy, its a Databricks CLI caching issue.  Run the following to delete the cache, and the files should upload.
+
+rm -rf .databricks/bundle/dev/sync-snapshots/
+rm -rf .databricks/bundle/azure_prod/sync-snapshots/
+rm -rf .databricks/bundle/staging/sync-snapshots/
+rm -rf .databricks/bundle/prod/sync-snapshots/
+
+rm -rf .databricks/bundle/user/sync-snapshots/
+
+
+
+ databricks bundle validate --output json | python3 -m json.tool | grep -A2 "notebook_path"
+
+  This prints the validate output as JSON and extracts every notebook_path entry. You should see absolute workspace paths (not ./ relative paths) — that confirms Bundle is
+  resolving them correctly.
+
+
+
+
+  git checkout main
+  git merge branch_name
+  git push -u origin main
+
+  git branch -d fix/log_identity_collision      -- Deletes the branch.  Optional
+
+
+
+
+
+
+
+
+Here's the clean workflow. The key rule: never check out main and merge your feature branch locally — that's what broke it last time. Stay on the feature branch until the PR is
+  merged on GitHub.
+
+  # ── While still on new-changes, with edited/new files in the working tree ──
+
+  # 1. See what you've changed
+  git status
+
+  # 2. Stage the files you want in this commit (prefer named files over `git add .`)
+  git add path/to/file1 path/to/file2
+
+  # 3. Commit on the branch
+  git commit -m "Short description of the change"
+
+  # 4. (Optional, repeat as needed) more edits → git add → git commit
+
+  # 5. Push the branch to GitHub — `-u` sets upstream so future pushes are just `git push`
+  git push -u origin new-changes
+
+  # 6. Open the PR (base = main, head = current branch)
+  gh pr create --base main --head new-changes \
+      --title "Short PR title" \
+      --body "What and why"
+
+  # ── Now wait: CI runs `bundle validate` on the PR. Review on GitHub. ──
+  # ── When ready, merge the PR on GitHub (UI button, or `gh pr merge --squash`). ──
+  # ── That push-to-main triggers CI to deploy to dev. ──
+
+  # 7. After the PR is merged on GitHub, sync your local main
+  git checkout main
+  git pull --ff-only origin main
+
+  # 8. Delete the merged branch locally and on origin
+  git branch -d new-changes
+  git push origin --delete new-changes
+
+  Things to avoid:
+
+  ┌──────────────────────────────────────────────────────────┬──────────────────────────────────────────────────────────────────────────────────────────┐
+  │                          Don't                           │                                           Why                                            │
+  ├──────────────────────────────────────────────────────────┼──────────────────────────────────────────────────────────────────────────────────────────┤
+  │ git checkout main + git merge new-changes before pushing │ Fast-forwards main locally → PR shows "no changes" (what happened today)                 │
+  ├──────────────────────────────────────────────────────────┼──────────────────────────────────────────────────────────────────────────────────────────┤
+  │ git push origin main from your laptop                    │ Bypasses the PR/CI gate; CI was designed to be the only thing that updates main remotely │
+  ├──────────────────────────────────────────────────────────┼──────────────────────────────────────────────────────────────────────────────────────────┤
+  │ git add . or git add -A                                  │ Can sweep in .env, scratch files, or unrelated edits                                     │
+  ├──────────────────────────────────────────────────────────┼──────────────────────────────────────────────────────────────────────────────────────────┤
+  │ git commit --amend after pushing                         │ Rewrites history; forces a --force push later                                            │
+  ├──────────────────────────────────────────────────────────┼──────────────────────────────────────────────────────────────────────────────────────────┤
+  │ git push --force to main                                 │ Destroys other people's commits; never do this on shared branches                        │
+  └──────────────────────────────────────────────────────────┴──────────────────────────────────────────────────────────────────────────────────────────┘
+
+  If you ever realize mid-flow that you're on the wrong branch with uncommitted changes:
+
+  git stash push -m "wip"           # save changes
+  git checkout correct-branch
+  git stash pop                      # restore changes
+
+  Stash + pop is reversible. Resetting and checkouts of -- paths are not.

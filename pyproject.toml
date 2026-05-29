@@ -1,0 +1,14 @@
+[project]
+name = "marketpulse"
+version = "0.0.0"
+description = "Databricks medallion ETL — data acquisition framework (local-first dev/test)"
+requires-python = ">=3.12"
+dependencies = ["requests>=2.31"]
+
+[dependency-groups]
+# pyspark is needed only to build the download_log StructType when unit-testing
+# pipeline_logging (no JVM / SparkSession is started — type objects only).
+dev = ["pytest>=8.0", "pyspark>=3.5"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

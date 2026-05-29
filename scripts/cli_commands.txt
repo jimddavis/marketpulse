@@ -1,0 +1,7 @@
+
+**  Download commands
+  uv run --python 3.12 scripts/download_local.py dl_all       # every source (abort-on-first)
+  uv run --python 3.12 scripts/download_local.py dl_zillow    # 3 CSVs  — no auth   ✅ verified
+  uv run --python 3.12 scripts/download_local.py dl_fhfa      # 1 CSV + 2 XLSX — no auth   ✅ verified
+  uv run --python 3.12 scripts/download_local.py dl_realtor   # snapshot + ~32 MB history — no auth
+  uv run --python 3.12 scripts/download_local.py dl_fred      # 10 series — needs FRED_API_KEY in .env

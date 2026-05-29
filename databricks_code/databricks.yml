@@ -1,0 +1,46 @@
+bundle:
+  name: marketpulse
+
+workspace:
+  host: https://dbc-d0f295f4-d028.cloud.databricks.com/
+
+include:
+  - resources/*.yml
+
+variables:
+  catalog:
+    description: Unity Catalog name for this deployment target
+    default: marketpulse
+  shared_lib_path:
+    description: Workspace path to the shared Python utility modules
+    # ${workspace.root_path} resolves at deploy time to the bundle's workspace root.
+    # Verify on first deploy that the resolved path matches the deployed libs location.
+    default: ${workspace.root_path}/files/libs
+
+targets:
+  user:
+    default: true
+    mode: development
+    variables:
+      catalog: dev_marketpulse
+
+  dev:
+    mode: production
+    workspace:
+      root_path: /Workspace/Users/zieder0022@gmail.com/.bundle/${bundle.name}/${bundle.target}
+    variables:
+      catalog: dev_marketpulse
+
+  staging:
+    mode: production
+    workspace:
+      root_path: /Workspace/Users/zieder0022@gmail.com/.bundle/${bundle.name}/${bundle.target}
+    variables:
+      catalog: staging_marketpulse
+
+  prod:
+    mode: production
+    workspace:
+      root_path: /Workspace/Users/zieder0022@gmail.com/.bundle/${bundle.name}/${bundle.target}
+    variables:
+      catalog: marketpulse

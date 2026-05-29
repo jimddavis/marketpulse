@@ -1,0 +1,35 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+.uv/
+*.egg-info/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Editor / OS
+.vscode/
+.idea/
+.DS_Store
+*.swp
+
+# Local environment / secrets
+.env
+.env.*
+!.env.example
+
+# Databricks Asset Bundle local state (if DAB is later added)
+databricks_code/.databricks/
+
+# Local data — raw data lives in Volumes, not the repo.
+# Keep crosswalk CSVs (they're committed reference data) but ignore
+# anything else under data/.
+data/**
+!data/
+!data/crosswalks/
+!data/crosswalks/**
+AUDIT_DDL.py
+
+_local_downloads/

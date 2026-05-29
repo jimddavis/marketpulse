@@ -1,0 +1,16 @@
+resources:
+  jobs:
+    catalog_setup:
+      name: "Marketpulse catalog_setup  [${bundle.target}] "
+      parameters:
+        - name: catalog
+          default: ${var.catalog}
+        - name: shared_lib_path
+          default: ${var.shared_lib_path}
+      tasks:
+        - task_key: catalog_ddl
+          notebook_task:
+            notebook_path: ../setup/catalog_ddl.ipynb
+            base_parameters:
+              catalog: "{{job.parameters.catalog}}"
+              shared_lib_path: "{{job.parameters.shared_lib_path}}"
