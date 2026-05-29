@@ -19,9 +19,6 @@ Run from the project root:
 from __future__ import annotations
 
 import sys
-import tempfile
-import uuid
-from datetime import datetime, timezone
 from pathlib import Path
 
 # The framework lives under the bundle root; put it on sys.path before importing.
@@ -33,31 +30,20 @@ from data_fetch import (  # noqa: E402 — import after sys.path setup
     DownloadJournal,
     DotenvSecretResolver,
     LocalFileWriter,
-    RunContext,
+    local_run_context,
     run_all,
 )
 
 DEST_ROOT = _REPO / "_local_downloads"
 
 
-def _ctx() -> RunContext:
-    return RunContext(
-        catalog="localdev",
-        pipeline_run_id="LOCALDEV",
-        step_log_id=str(uuid.uuid4()),
-        audit_schema="localdev.audit",
-        scratch_dir=tempfile.gettempdir(),
-        now=lambda: datetime.now(timezone.utc),
-    )
-
-
 def _run(sources):
     DEST_ROOT.mkdir(parents=True, exist_ok=True)
     summary = run_all(
         sources,
-        _ctx(),
+        local_run_context(),
         writer=LocalFileWriter(str(DEST_ROOT)),
-        journal=DownloadJournal(record=lambda **kw: None, last_sha256=lambda url: None),
+        journal=DownloadJournal.noop(),
         secrets=DotenvSecretResolver(start_dir=str(_REPO)),
     )
     print(summary.describe())

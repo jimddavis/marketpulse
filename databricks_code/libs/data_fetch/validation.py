@@ -40,20 +40,21 @@ def validate_download(path: str, *, fmt: str, expected_header: tuple[str, ...] |
     - byte-count match vs `expected_size` (the server Content-Length) when provided;
     - CSV prefix-header match when fmt == 'csv' and `expected_header` is set.
     """
-    assert_non_empty(path)
+    size = os.path.getsize(path)                       # stat once; reused by both checks
+    assert_non_empty(path, size=size)
     if expected_size is not None:
-        assert_size_matches(path, expected_size)
+        assert_size_matches(path, expected_size, size=size)
     if fmt == "csv" and expected_header is not None:
         assert_csv_header_prefix(path, expected_header)
 
 
-def assert_non_empty(path: str) -> None:
-    if os.path.getsize(path) == 0:
+def assert_non_empty(path: str, *, size: int | None = None) -> None:
+    if (size if size is not None else os.path.getsize(path)) == 0:
         raise ValidationError(f"downloaded file is empty: {path}")
 
 
-def assert_size_matches(path: str, expected_size: int) -> None:
-    actual = os.path.getsize(path)
+def assert_size_matches(path: str, expected_size: int, *, size: int | None = None) -> None:
+    actual = size if size is not None else os.path.getsize(path)
     if actual != expected_size:
         raise ValidationError(
             f"size mismatch (truncation?): expected {expected_size:,} bytes, "

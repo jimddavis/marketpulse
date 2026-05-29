@@ -42,6 +42,11 @@ class HttpFileProvider:
             )
         timeout = (HTTP_CONNECT_TIMEOUT, HTTP_READ_TIMEOUT)
 
+        def _result(resp, status):
+            return ProviderFetch(bytes_written=os.path.getsize(scratch_path),
+                                 http_status=status, canonical_url=url,
+                                 content_length=self._total_size(resp))
+
         # 1) Try to resume onto an existing local partial (design §7.4).
         if resume_from > 0:
             with self._session.get(url, headers=self._headers(spec, resume_from),
@@ -49,14 +54,10 @@ class HttpFileProvider:
                 status = resp.status_code
                 if status == 206 and self._range_consistent(resp, resume_from):
                     self._stream_to(resp, scratch_path, mode="ab")   # append remainder
-                    return ProviderFetch(bytes_written=os.path.getsize(scratch_path),
-                                     http_status=status, canonical_url=url,
-                                     content_length=self._total_size(resp))
+                    return _result(resp, status)
                 if status == 200:
                     self._stream_to(resp, scratch_path, mode="wb")   # server ignored Range; full body
-                    return ProviderFetch(bytes_written=os.path.getsize(scratch_path),
-                                     http_status=status, canonical_url=url,
-                                     content_length=self._total_size(resp))
+                    return _result(resp, status)
                 if status >= 400 and status != 416:
                     raise ProviderHttpError(status, url,
                                         retry_after=parse_retry_after(resp.headers.get("Retry-After")))
@@ -71,9 +72,7 @@ class HttpFileProvider:
                 raise ProviderHttpError(status, url,
                                         retry_after=parse_retry_after(resp.headers.get("Retry-After")))
             self._stream_to(resp, scratch_path, mode="wb")
-            return ProviderFetch(bytes_written=os.path.getsize(scratch_path),
-                                 http_status=status, canonical_url=url,
-                                 content_length=self._total_size(resp))
+            return _result(resp, status)
 
     # -- probe ---------------------------------------------------------------
 

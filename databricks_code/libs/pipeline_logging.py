@@ -22,7 +22,7 @@ Audit tables expected (see setup/catalog_ddl.ipynb when written):
 
 from __future__ import annotations
 
-from datetime import datetime, timezone
+from datetime import datetime
 from typing import Any
 
 from pyspark.sql.types import (
@@ -34,6 +34,8 @@ from pyspark.sql.types import (
     StructType,
     TimestampType,
 )
+
+from pipeline_utils import Utils
 
 # Status literal used by download_log_last_sha256's filter. Must equal notebook_init
 # STATUS_SUCCEEDED (the project's canonical "succeeded" value); centralized here so the
@@ -192,7 +194,9 @@ def download_log_insert(
         row = (
             download_id, pipeline_run_id, step_log_id, source_system, source_url,
             landed_file_path, status, http_status_code, bytes_downloaded, file_sha256,
-            download_attempts, _aware(download_started_ts), _aware(download_ended_ts),
+            download_attempts,
+            Utils.normalize_aware_datetime(download_started_ts),
+            Utils.normalize_aware_datetime(download_ended_ts),
             _duration_seconds(download_started_ts, download_ended_ts), error_message,
         )
         df = spark.createDataFrame([row], schema=_DOWNLOAD_LOG_SCHEMA)
@@ -229,16 +233,10 @@ def download_log_last_sha256(spark: Any, audit_schema: str, source_url: str) -> 
     return rows[0]["file_sha256"] if rows else None
 
 
-def _aware(dt: datetime | None) -> datetime | None:
-    # Normalize to offset-aware UTC. Spark-read TIMESTAMPs come back offset-naive while
-    # datetime.now(timezone.utc) is aware; mixing the two raises on subtraction
-    # (CLAUDE.md anti-pattern table).
-    if dt is None:
-        return None
-    return dt if dt.tzinfo is not None else dt.replace(tzinfo=timezone.utc)
-
-
 def _duration_seconds(started: datetime | None, ended: datetime | None) -> float | None:
+    # normalize_aware_datetime handles the offset-naive/aware mix (Spark TIMESTAMPs read
+    # back naive; datetime.now(timezone.utc) is aware) so the subtraction never raises.
     if started is None or ended is None:
         return None
-    return (_aware(ended) - _aware(started)).total_seconds()
+    return (Utils.normalize_aware_datetime(ended)
+            - Utils.normalize_aware_datetime(started)).total_seconds()

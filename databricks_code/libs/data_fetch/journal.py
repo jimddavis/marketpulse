@@ -51,3 +51,10 @@ class DownloadJournal:
     """
     record: Callable[..., object]
     last_sha256: Callable[[str], str | None]
+
+    @classmethod
+    def noop(cls) -> "DownloadJournal":
+        """A journal that records nothing and reports no prior sha — for local runs where
+        a missing audit table must never fail the run (design §9). last_sha256→None means
+        every local run re-downloads (never skips)."""
+        return cls(record=lambda **kw: None, last_sha256=lambda url: None)

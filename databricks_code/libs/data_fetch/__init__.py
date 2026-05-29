@@ -36,6 +36,7 @@ from data_fetch.runner import (
     HealthCheckResult,
     RunSummary,
     healthcheck,
+    local_run_context,
     main,
     run_all,
 )
@@ -92,6 +93,7 @@ __all__ = [
     "DownloadRunner",
     "run_all",
     "healthcheck",
+    "local_run_context",
     "main",
     "RunSummary",
     "FileOutcome",

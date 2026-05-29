@@ -127,16 +127,13 @@ class DownloadRunner:
 
             prior = self._journal.last_sha256(canonical_url)
             if prior is not None and prior == sha:
-                # Publisher re-served identical bytes — skip the promote (§7.6).
-                self._record(download_id, spec, canonical_url, dest, STATUS_SKIPPED,
-                             http_status, bytes_dl, sha, attempts, started, None)
-                return FileOutcome(spec.name, f.landed_filename, STATUS_SKIPPED,
-                                   canonical_url, dest, bytes_dl, sha, attempts)
-
-            landed = self._writer.promote(scratch, spec.name, f.landed_filename)
-            self._record(download_id, spec, canonical_url, landed, STATUS_SUCCEEDED,
+                status, landed = STATUS_SKIPPED, dest      # identical bytes already landed (§7.6) — no promote
+            else:
+                status = STATUS_SUCCEEDED
+                landed = self._writer.promote(scratch, spec.name, f.landed_filename)
+            self._record(download_id, spec, canonical_url, landed, status,
                          http_status, bytes_dl, sha, attempts, started, None)
-            return FileOutcome(spec.name, f.landed_filename, STATUS_SUCCEEDED,
+            return FileOutcome(spec.name, f.landed_filename, status,
                                canonical_url, landed, bytes_dl, sha, attempts)
         except Exception as e:
             attempts = getattr(provider, "last_attempts", attempts)
@@ -183,6 +180,17 @@ def _default_provider_for(secrets: SecretResolver, *,
     return provider_for
 
 
+def local_run_context(scratch_dir: str | None = None) -> RunContext:
+    """Dummy RunContext for local dev / CLI (design §8.1): localdev catalog, LOCALDEV run
+    id, a fresh uuid4 step_log_id, UTC clock, and scratch in the system temp dir. Shared by
+    runner.main and scripts/download_local.py so the local-dev wiring lives in one place."""
+    return RunContext(
+        catalog="localdev", pipeline_run_id="LOCALDEV", step_log_id=str(uuid.uuid4()),
+        audit_schema="localdev.audit", scratch_dir=scratch_dir or tempfile.gettempdir(),
+        now=lambda: datetime.now(timezone.utc),
+    )
+
+
 def run_all(sources, ctx: RunContext, *, writer: FileWriter, journal: DownloadJournal,
             secrets: SecretResolver, provider_for: ProviderFor | None = None) -> RunSummary:
     provider_for = provider_for or _default_provider_for(secrets)
@@ -210,9 +218,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--healthcheck", action="store_true", help="probe every source URL; land nothing")
     args = parser.parse_args(argv)
 
-    ctx = RunContext(catalog="localdev", pipeline_run_id="LOCALDEV", step_log_id=str(uuid.uuid4()),
-                     audit_schema="localdev.audit", scratch_dir=args.scratch,
-                     now=lambda: datetime.now(timezone.utc))
+    ctx = local_run_context(args.scratch)
     secrets = DotenvSecretResolver()
 
     if args.healthcheck:
@@ -225,7 +231,7 @@ def main(argv: list[str] | None = None) -> int:
 
     if not args.root:
         parser.error("--root is required unless --healthcheck")
-    journal = DownloadJournal(record=lambda **kw: None, last_sha256=lambda url: None)
+    journal = DownloadJournal.noop()
     try:
         summary = run_all(SOURCES, ctx, writer=LocalFileWriter(args.root),
                           journal=journal, secrets=secrets)
