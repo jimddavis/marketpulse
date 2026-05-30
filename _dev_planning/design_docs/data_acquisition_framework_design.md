@@ -166,9 +166,8 @@ class SourceFile:
 
 @dataclass(frozen=True)
 class SourceSpec:
-    name: str                                  # source_system: "zillow"|"fhfa"|"realtor"|"fred"
+    name: str                                  # source_system AND raw Volume segment: "zillow"|"fhfa"|"realtor"|"fred"
     provider: str                              # "http_file" | "fred_api"  → factory key
-    volume: str                                # raw Volume name; joined onto RAW_FILES base
     files: tuple[SourceFile, ...]
     user_agent: str | None = None              # Family A
     api_key_env: str | None = None             # Family B, e.g. "FRED_API_KEY"
@@ -179,7 +178,12 @@ class ProviderFetch:
     bytes_written: int
     http_status: int | None          # None for the FRED JSON path
     canonical_url: str               # KEY-FREE url for logging + no-op keying (§16)
+    content_length: int | None = None  # server-declared size; drives the truncation check (§7.5); None when unknown/FRED
 ```
+
+> **`name` is the Volume segment.** There is no separate `volume` field — the writer
+> joins `spec.name` onto `RAW_FILES` (`/Volumes/<catalog>/raw/<name>/<file>`), and the
+> Volumes `catalog.raw.<name>` are provisioned by `catalog_setup.create_volumes()`.
 
 ### The Provider protocol (Strategy)
 
@@ -196,6 +200,13 @@ class Provider(Protocol):
 
     def probe(self, spec: SourceSpec, f: SourceFile) -> ProbeResult:
         """Cheap reachability check for healthcheck mode — no full download."""
+
+    def canonical_url(self, spec: SourceSpec, f: SourceFile) -> str:
+        """The KEY-FREE canonical URL for this file — the same value fetch_to stamps
+        on ProviderFetch.canonical_url, but computable WITHOUT a fetch (no I/O). The
+        runner seeds download_log.source_url with this so a file that fails BEFORE the
+        fetch returns logs the same url namespace as one that succeeds. Each provider
+        owns its URL shaping, so the runner holds no provider-specific knowledge."""
 ```
 
 - **`HttpFileProvider`** (Zillow, FHFA, Realtor): `GET` with the spec's
@@ -346,7 +357,7 @@ class FileWriter(Protocol):
 **The Volume base path is owned by `notebook_init` (`RAW_FILES` / `RAW_ZILLOW…`),
 not reconstructed in the package** (`.claude/CLAUDE.md` §6). The notebook entry
 passes `RAW_FILES` into `VolumeFileWriter`; the writer only joins
-`<volume>/<filename>`.
+`<source_system>/<filename>` (where `source_system` is `spec.name`).
 
 **Atomicity footnote.** `shutil.copy` to a Volume is not atomic, but downloads are
 a discrete step that completes before any Bronze read — no concurrent reader — so
@@ -521,7 +532,7 @@ all three hosts this session):
 ```python
 SOURCES: tuple[SourceSpec, ...] = (
     SourceSpec(
-        name="zillow", provider="http_file", volume="zillow", user_agent=BROWSER_UA,
+        name="zillow", provider="http_file", user_agent=BROWSER_UA,
         files=(
             SourceFile("zhvi_home_values_metro_monthly.csv",
                 url="https://files.zillowstatic.com/research/public_csvs/zhvi/"
@@ -540,7 +551,7 @@ SOURCES: tuple[SourceSpec, ...] = (
         ),
     ),
     SourceSpec(
-        name="fhfa", provider="http_file", volume="fhfa", user_agent=BROWSER_UA,
+        name="fhfa", provider="http_file", user_agent=BROWSER_UA,
         files=(
             SourceFile("hpi_master_all_geographies.csv",
                 url="https://www.fhfa.gov/hpi/download/monthly/hpi_master.csv",
@@ -556,7 +567,7 @@ SOURCES: tuple[SourceSpec, ...] = (
         ),
     ),
     SourceSpec(
-        name="realtor", provider="http_file", volume="realtor", user_agent=BROWSER_UA,
+        name="realtor", provider="http_file", user_agent=BROWSER_UA,
         files=(
             SourceFile("inventory_core_metrics_metro_snapshot.csv",
                 url="https://econdata.s3-us-west-2.amazonaws.com/Reports/Core/"
@@ -568,7 +579,7 @@ SOURCES: tuple[SourceSpec, ...] = (
         ),
     ),
     SourceSpec(
-        name="fred", provider="fred_api", volume="fred", api_key_env="FRED_API_KEY",
+        name="fred", provider="fred_api", api_key_env="FRED_API_KEY",
         files=tuple(
             SourceFile(friendly, series_id=sid, fmt="csv",
                        expected_header=("date","value","realtime_start","realtime_end"))
@@ -590,9 +601,9 @@ SOURCES: tuple[SourceSpec, ...] = (
 ```
 
 The Volumes (`{catalog}.raw.zillow|fhfa|realtor|fred`) are provisioned by the
-existing `catalog_setup.create_volumes()`; `spec.volume` feeds its
-`volume_definitions` and is joined onto notebook_init's `RAW_FILES` base at
-promote time.
+existing `catalog_setup.create_volumes()` (which keeps its own `volume_definitions`
+list). `spec.name` is the Volume segment and is joined onto notebook_init's
+`RAW_FILES` base at promote time.
 
 ---
 
@@ -740,7 +751,8 @@ code "works." **If any conflict with §1–§15, this section wins — raise it.
    columns must equal `expected_header`. `xlsx`/`json` are not header-validated
    (opaque). `expected_header=None` skips the check.
 7. **Destination path comes from notebook_init.** On Databricks, the entry passes
-   `RAW_FILES` into `VolumeFileWriter`; the writer joins `<volume>/<filename>`.
+   `RAW_FILES` into `VolumeFileWriter`; the writer joins `<source_system>/<filename>`
+   (where `source_system` is `spec.name`).
    **Do not reconstruct `/Volumes/...` inside the package.** Local writer joins a
    `local_root`.
 8. **Scratch dir = `ctx.scratch_dir`, default `tempfile.gettempdir()`.** Never
