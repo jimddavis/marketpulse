@@ -33,4 +33,4 @@ The orchestrator lives at the project root because `dbutils.notebook.run()` reso
 
 ## Conventions in one paragraph
 
-Three-part Unity Catalog table names everywhere. Explicit `StructType`, never `inferSchema`. Audit columns on every managed table. Idempotent writes — one of MERGE / `txnAppId` / DELETE+reinsert per source, documented in a cell comment. Row-count assertion after every write. `try/except` with `except dbutils.NotebookExit: raise` before `except Exception`. Constants for any value that appears in more than one cell. See `.claude/CLAUDE.md` for the full spec.
+Three-part Unity Catalog table names everywhere. Explicit `StructType`, never `inferSchema`. Audit columns on every managed table. Idempotent writes — one of MERGE / `txnAppId` / DELETE+reinsert per source, documented in a cell comment. Row-count assertion after every write. `try/except Exception` per cell, with any `dbutils.notebook.exit()` called OUTSIDE the try (there is no `dbutils.NotebookExit` class to guard on). Constants for any value that appears in more than one cell. See `.claude/CLAUDE.md` for the full spec.

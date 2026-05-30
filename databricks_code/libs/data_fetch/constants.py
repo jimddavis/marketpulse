@@ -25,10 +25,11 @@ BACKOFF_JITTER_SECONDS: float = 0.5
 HTTP_CONNECT_TIMEOUT: float = 10.0
 HTTP_READ_TIMEOUT: float = 60.0
 
-# Pipeline status literals. MUST equal notebook_init's STATUS_* (verified lowercase:
-# succeeded/failed/skipped/no_files) AND pipeline_logging._STATUS_SUCCEEDED. The runner
-# stamps these on every download_log row — do not invent strings (§16.4). A drift test
-# (test_runner) asserts agreement with pipeline_logging.
+# Pipeline status literals. This package is standalone (it never imports the notebook /
+# logging layer), so it keeps its OWN copy; these MUST equal pipeline_logging's STATUS_*
+# (the single source of truth, which notebook_init re-exports). The runner stamps these
+# on every download_log row — do not invent strings (§16.4). A drift test (test_runner)
+# asserts agreement with pipeline_logging.
 STATUS_SUCCEEDED: str = "succeeded"
 STATUS_FAILED: str = "failed"
 STATUS_SKIPPED: str = "skipped"

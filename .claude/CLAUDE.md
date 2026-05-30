@@ -204,12 +204,33 @@ Every Bronze and Silver notebook follows this sequence. Do not deviate without e
 |---|---|---|
 | 1 | `%run "[SHARED_MODULES_PATH]/notebook_init"` | Inject catalog/schema constants, status literals, run-id, common imports |
 | 2 | Constants | Per-notebook constants: source path, target table, expected source columns, read schema. All derived from cell-1 globals. |
-| 3 | Step log init | `pipeline_step_log_upsert(... STATUS_RUNNING ...)` |
-| 4 | File validation | Per-file header/schema check before bulk read. Fail fast on mismatch. |
-| 5 | Read and shape | Read with explicit schema; rename columns to `snake_case`; add audit columns. |
-| 6 | Write | Idempotent write (MERGE or `txnAppId`). Row-count assertion. Update step log to `STATUS_SUCCEEDED`. Log ingestion_log rows. |
+| 3 | Open step log | `step = StepLog(spark, AUDIT, dbutils, …)` — opens the `pipeline_step_log` row at `STATUS_RUNNING` (see §10.1). |
+| 4 | File validation | Per-file header/schema check before bulk read. Fail fast on mismatch. Per-cell `except` per §10.1. |
+| 5 | Read and shape | Read with explicit schema; rename columns to `snake_case`; add audit columns. Set `step.rows_read`. |
+| 6 | Write | Idempotent write (MERGE or `txnAppId`). Row-count assertion. Set `step.rows_written` and call `step.succeed()`. Log ingestion_log rows (checked dict). |
 | 7 | Archive | Move source files to archive subfolder. |
 | 8+ | `%skip` debug cells | Optional SQL queries for inspection. Never leave unguarded debug code in active cells. |
+
+### 10.1 The `StepLog` recorder (canonical step-logging)
+
+`pipeline_step_log` rows are managed by the `StepLog` recorder (from `pipeline_logging`, re-exported by `notebook_init`) — **not** by inline `pipeline_step_log_upsert` calls, and **not** a context manager (a `with` block can't span notebook cells, which would force the whole notebook into one cell). Construct it once in cell 3; it opens the `RUNNING` row. Each work cell keeps its own 2-line handler:
+
+```python
+step = StepLog(spark, AUDIT, dbutils, pipeline_run_id=PIPELINE_RUN_ID, step_sequence=1,
+               notebook_folder=nb["notebook_folder"], notebook_name=nb["notebook_name"],
+               layer="bronze", target_table=TARGET_TABLE)
+try:
+    ...
+    step.rows_written = rows_written
+    step.succeed()                 # explicit success close (cell 6)
+except Exception as e:
+    step.fail(e); raise            # whole failure handler, in 2 lines
+```
+
+- `step.fail(exc)` captures the traceback and writes `STATUS_FAILED`; `step.no_files()` writes `STATUS_NO_FILES`; `step.succeed()` writes `STATUS_SUCCEEDED`.
+- **Early exit (no-files) goes OUTSIDE the `try`.** `dbutils.notebook.exit()` raises an ordinary exception that `except Exception` swallows — there is **no** `dbutils.NotebookExit` class to guard on. Keep the no-files CHECK inside the try (so a failed `dbutils.fs.ls` is logged via `step.fail`), set a flag, then call `step.no_files()` + `dbutils.notebook.exit(...)` **after** the try, where the exit can't be intercepted. See `.claude/project/gotchas.md`.
+- State lives on `step` (`step.rows_read`, `step.rows_written`, `step.step_log_id`) — so there are **no** loose `status` / `ended_timestamp` / `error_message` vars to pre-declare, which removes the §11.4 footgun.
+- Cells stay separately runnable; success is closed **explicitly** (no auto-close) — a row left at `RUNNING` signals the notebook never reached its write cell.
 
 ---
 
@@ -260,15 +281,11 @@ Exception: Python `datetime` passed to audit log function calls (not to DataFram
 
 ### 11.4 Error handling
 
-Every file I/O, read, and write cell must be wrapped in `try/except` using this structure:
+In notebooks this handler is provided by the `StepLog` recorder (§10.1): the per-cell handler is just `except Exception as e: step.fail(e); raise`, and `StepLog.fail` does the capture/upsert internally. The expanded structure below is what runs inside `StepLog` — and the contract any direct caller (e.g. the `spark_python` run-tier scripts) must still honor:
 
 ```python
 try:
     ...
-    dbutils.notebook.exit("reason")   # if used
-
-except dbutils.NotebookExit:
-    raise   # REQUIRED — must appear BEFORE except Exception
 
 except Exception as e:
     err = Utils.capture_exception(e)
@@ -287,7 +304,7 @@ except Exception as e:
     raise
 ```
 
-`except dbutils.NotebookExit: raise` **must appear before** `except Exception`. Databricks raises a JVM-internal exception on `dbutils.notebook.exit()` that propagates past `except Exception`. Without this guard, the orchestrator receives an unexpected failure instead of a clean notebook exit.
+**`dbutils.notebook.exit()` must be called OUTSIDE the `try/except Exception`, never inside it.** The exit works by raising an ordinary exception, and there is **no** `dbutils.NotebookExit` class to catch it — a call inside the `try` is swallowed by `except Exception`, so the notebook does not exit and the outcome is misclassified (step row left mid-flight, orchestrator misreads the result). Keep the early-exit CHECK inside the try, set a flag, and call `step.no_files()` + `dbutils.notebook.exit(...)` after the try. See `.claude/project/gotchas.md`.
 
 **Audit-logging variables go outside `try`.** When a `try` block writes an audit log entry in both success and `except` paths, declare the variables used by **both** paths above the `try`. Otherwise, if the first line of the `try` raises, the `except` handler hits `NameError` instead of logging the actual failure.
 
@@ -397,7 +414,7 @@ These five live in the Anthropic skills marketplace and are not included by defa
 | `F.lit(datetime_obj)` without `.cast("timestamp")` | Implicit type inference may produce `timestamp_ntz`. |
 | Bare `import traceback` inside a function | Module-level import; keep at top of file. |
 | Mixing offset-aware and offset-naive datetimes | Spark TIMESTAMP returns naive; `datetime.now(timezone.utc)` is aware. Normalize at helper boundaries. |
-| `except Exception` without `except dbutils.NotebookExit: raise` first | Swallows clean notebook exits as errors. |
+| `dbutils.notebook.exit()` inside a `try/except Exception` | The exit raises an ordinary exception that `except Exception` swallows (there is no `dbutils.NotebookExit` class); call it OUTSIDE the try. |
 
 ---
 
@@ -410,7 +427,7 @@ These five live in the Anthropic skills marketplace and are not included by defa
 - [ ] Are audit columns present and using `F.current_timestamp()` (not `datetime.now()`)?
 - [ ] Is the write strategy chosen (MERGE / txnAppId / delete+reinsert) and documented with a comment?
 - [ ] Is the cell inside a `try/except` with `pipeline_step_log_upsert` on failure?
-- [ ] Does the `except` chain have `except dbutils.NotebookExit: raise` before `except Exception`?
+- [ ] Is any `dbutils.notebook.exit()` call placed OUTSIDE the `try/except Exception` (never inside it)?
 - [ ] Is there a row-count assertion after the write?
 
 ### Before finishing a notebook

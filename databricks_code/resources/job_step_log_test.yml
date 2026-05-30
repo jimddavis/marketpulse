@@ -1,0 +1,70 @@
+resources:
+  jobs:
+    step_log_test:
+      name: "Marketpulse step_log_test  [${bundle.target}] "
+      parameters:
+        - name: catalog
+          default: ${var.catalog}
+        - name: shared_lib_path
+          default: ${var.shared_lib_path}
+      # Serverless spark_python_task (init/finalize) requires a job-level environment
+      # + a task-level environment_key; serverless notebook_task does not.
+      environments:
+        - environment_key: default
+          spec:
+            environment_version: "2"
+      tasks:
+        # Opens the pipeline_log RUNNING row and sets the pipeline_run_id taskValue.
+        # task_key MUST stay "init_pipeline_log" — notebook_init reads the run id via
+        # dbutils.jobs.taskValues.get(taskKey="init_pipeline_log", ...).
+        - task_key: init_pipeline_log
+          spark_python_task:
+            python_file: ../libs/init_pipeline_run_log.py
+            parameters:
+              - "{{job.parameters.shared_lib_path}}"   # sys.argv[1]
+              - "{{job.parameters.catalog}}"           # sys.argv[2]
+          environment_key: default
+
+        # Task A — scenario=no_files: dbutils.fs.ls finds no CSVs → writes a NO_FILES step
+        # row and calls dbutils.notebook.exit() (deferred OUTSIDE the try). A clean exit
+        # => task SUCCEEDS.
+        - task_key: step_log_test_no_files
+          depends_on:
+            - task_key: init_pipeline_log
+          notebook_task:
+            notebook_path: ../bronze/step_log_test.ipynb
+            base_parameters:
+              catalog: "{{job.parameters.catalog}}"
+              shared_lib_path: "{{job.parameters.shared_lib_path}}"
+              scenario: "no_files"
+              step_sequence: "1"
+
+        # Task B — scenario=has_files: the folder has a CSV, so the notebook proceeds and
+        # closes SUCCEEDED. It depends on Task A with the default run_if (ALL_SUCCESS), so
+        # the fact that B runs PROVES Task A's early exit let the job continue. Edit the
+        # notebook's divide cell to 100/0 to make THIS task fail and confirm the FAILED
+        # step row + failed run.
+        - task_key: step_log_test_has_files
+          depends_on:
+            - task_key: step_log_test_no_files
+          notebook_task:
+            notebook_path: ../bronze/step_log_test2.ipynb
+            base_parameters:
+              catalog: "{{job.parameters.catalog}}"
+              shared_lib_path: "{{job.parameters.shared_lib_path}}"
+              scenario: "has_files"
+              step_sequence: "2"
+
+        # Closes the pipeline_log row. run_if: ALL_DONE → fires whether the upstream tasks
+        # succeeded, failed, or were skipped; pipeline_log_finalize derives final status by
+        # scanning pipeline_step_log.
+        - task_key: finalize_pipeline_log
+          depends_on:
+            - task_key: step_log_test_has_files
+          run_if: ALL_DONE
+          spark_python_task:
+            python_file: ../libs/finalize_pipeline_run_log.py
+            parameters:
+              - "{{job.parameters.shared_lib_path}}"   # sys.argv[1]
+              - "{{job.parameters.catalog}}"           # sys.argv[2]
+          environment_key: default

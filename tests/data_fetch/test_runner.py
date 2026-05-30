@@ -221,26 +221,16 @@ def test_healthcheck_reports_without_landing(tmp_path):
 
 # -- status literals agree across all three definitions (drift guard) --------
 
-def test_status_literals_match_notebook_init_and_pipeline_logging():
-    # STATUS_* is defined three times (the package can't import the notebook layer):
-    # notebook_init.ipynb, data_fetch.constants, and pipeline_logging. This asserts all
-    # three agree, so a change in one surfaces as a test failure, not silent audit drift.
-    import json
-    import re
-    from pathlib import Path
-
-    import pipeline_logging
+def test_status_literals_match_pipeline_logging():
+    # STATUS_* now lives in ONE place — pipeline_logging (notebook_init re-exports it,
+    # so it is transitively covered). data_fetch.constants keeps its OWN copy by design:
+    # the package is standalone and never imports the notebook/logging layer. This
+    # asserts the two independent definitions agree, so a change in one surfaces as a
+    # test failure, not silent audit drift.
+    import pipeline_logging as pl
     from data_fetch import constants as c
 
-    nb_path = Path(pipeline_logging.__file__).parent / "notebook_init.ipynb"
-    nb = json.loads(nb_path.read_text())
-    code = "\n".join("".join(cell["source"]) for cell in nb["cells"]
-                     if cell["cell_type"] == "code")
-    nb_status = dict(re.findall(r'\bSTATUS_(\w+)\s*=\s*"([^"]+)"', code))
-
-    assert c.STATUS_SUCCEEDED == nb_status["SUCCEEDED"] == "succeeded"
-    assert c.STATUS_FAILED == nb_status["FAILED"] == "failed"
-    assert c.STATUS_SKIPPED == nb_status["SKIPPED"] == "skipped"
-    assert c.STATUS_NO_FILES == nb_status["NO_FILES"] == "no_files"
-    # the one literal pipeline_logging also pins (download_log_last_sha256 filter)
-    assert pipeline_logging._STATUS_SUCCEEDED == c.STATUS_SUCCEEDED
+    assert c.STATUS_SUCCEEDED == pl.STATUS_SUCCEEDED == "succeeded"
+    assert c.STATUS_FAILED    == pl.STATUS_FAILED    == "failed"
+    assert c.STATUS_SKIPPED   == pl.STATUS_SKIPPED   == "skipped"
+    assert c.STATUS_NO_FILES  == pl.STATUS_NO_FILES  == "no_files"

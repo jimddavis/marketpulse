@@ -17,6 +17,7 @@ Conventions enforced by this module (project CLAUDE.md § 12):
 from __future__ import annotations
 
 import traceback
+from pathlib import PurePosixPath
 from typing import Any
 
 
@@ -35,18 +36,56 @@ class Utils:
 
             try:
                 ...
-            except dbutils.NotebookExit:
-                raise
             except Exception as e:
                 err = Utils.capture_exception(e)
                 error_message = f"{err['error_type']}: {err['error_message']}\\n\\n{err['error_traceback']}"
                 ...
                 raise
+
+            # Any dbutils.notebook.exit() goes OUTSIDE the try — it raises an
+            # ordinary exception that `except Exception` would swallow (there is
+            # no dbutils.NotebookExit class). See .claude/project/gotchas.md.
         """
         return {
             "error_type": type(exc).__name__,
             "error_message": str(exc),
             "error_traceback": "".join(traceback.format_tb(exc.__traceback__)),
+        }
+
+    @staticmethod
+    def get_notebook_context(dbutils: Any) -> dict[str, str]:
+        """Return notebook identity fields for an audit log row.
+
+        Strips `/Workspace/Users/<email>/` (or `/Users/<email>/`) prefixes so
+        `notebook_folder` is project-relative. On any failure returns "unknown"
+        rather than raising — identity is best-effort metadata, not load-bearing.
+
+        Returns
+        -------
+        dict with keys: 'notebook_folder', 'notebook_name', 'notebook_path_full'.
+        """
+        try:
+            ctx = dbutils.notebook.entry_point.getDbutils().notebook().getContext()
+            full_path = ctx.notebookPath().get()
+        except Exception as e:
+            return {
+                "notebook_folder":    "unknown",
+                "notebook_name":      "unknown",
+                "notebook_path_full": f"error: {e}",
+            }
+
+        p = PurePosixPath(full_path)
+        folder_parts = p.parts[1:-1]   # drop leading '/' and the notebook name itself
+        if len(folder_parts) >= 2 and folder_parts[0] == "Workspace":
+            folder_parts = folder_parts[1:]        # drop 'Workspace'
+        if len(folder_parts) >= 2 and folder_parts[0] == "Users":
+            folder_parts = folder_parts[2:]        # drop 'Users' and the email
+
+        folder = "/".join(folder_parts) if folder_parts else "(root)"
+        return {
+            "notebook_folder":    folder,
+            "notebook_name":      p.name,
+            "notebook_path_full": full_path,
         }
 
     @staticmethod

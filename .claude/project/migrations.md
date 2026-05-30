@@ -22,3 +22,21 @@ code, stop and fix.
 This list grows as migrations finish; it never shrinks except by deliberate
 decision.
 
+### `except dbutils.NotebookExit: raise` (treating `dbutils.NotebookExit` as a real class)
+
+**Forbidden as of 2026-05-30.** There is no `dbutils.NotebookExit` class — the
+guard was a no-op invented in vinoworld. `dbutils.notebook.exit()` raises an
+ordinary exception that `except Exception` swallows, so it must be called
+**OUTSIDE** the `try` (set a flag inside the try, exit after). See
+`.claude/project/gotchas.md` → "`except Exception` swallows
+`dbutils.notebook.exit()`".
+
+Tripwire greps (must return zero in NEW or MODIFIED code):
+- `except dbutils.NotebookExit`
+- `NotebookExit: raise`
+
+Allowed ONLY in corrective prose that documents the ban (gotchas.md, this file,
+design-doc errata, the implement-prompt warning). Pre-existing exploration
+notebooks under `_dev_planning/log_error_handling_alternatives/` are historical
+artifacts and were intentionally left unchanged.
+
