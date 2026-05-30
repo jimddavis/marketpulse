@@ -48,6 +48,11 @@ rm -rf .databricks/bundle/user/sync-snapshots/
 
 
 
+databricks secrets create-scope marketpulse
+
+ databricks secrets put-secret marketpulse fred_api_key
+
+
  databricks bundle validate --output json | python3 -m json.tool | grep -A2 "notebook_path"
 
   This prints the validate output as JSON and extracts every notebook_path entry. You should see absolute workspace paths (not ./ relative paths) — that confirms Bundle is

@@ -1,0 +1,19 @@
+resources:
+  jobs:
+    download_sources:
+      name: "Marketpulse download_sources  [${bundle.target}] "
+      parameters:
+        - name: catalog
+          default: ${var.catalog}
+        - name: shared_lib_path
+          default: ${var.shared_lib_path}
+      tasks:
+        - task_key: download_sources
+          notebook_task:
+            notebook_path: ../bronze/download_sources.ipynb
+            base_parameters:
+              catalog: "{{job.parameters.catalog}}"
+              shared_lib_path: "{{job.parameters.shared_lib_path}}"
+              # FRED key is NOT passed here — secret references in notebook base_parameters
+              # don't deploy reliably on serverless. The notebook reads it directly via
+              # dbutils.secrets.get(scope="marketpulse", ...) — see download_sources.ipynb.
