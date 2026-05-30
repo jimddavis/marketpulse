@@ -15,12 +15,6 @@ def test_every_spec_uses_a_registered_provider():
         assert s.provider in PROVIDERS, f"{s.name} → unregistered provider {s.provider!r}"
 
 
-def test_name_equals_volume_for_every_source():
-    # The writer joins source_system onto RAW_FILES; name == volume keeps that correct.
-    for s in SOURCES:
-        assert s.name == s.volume
-
-
 def test_http_file_sources_have_urls_no_series():
     for s in SOURCES:
         if s.provider == "http_file":

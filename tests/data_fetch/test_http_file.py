@@ -18,7 +18,7 @@ from fakes import FakeResponse, FakeSession
 
 
 def _spec(url: str | None = "https://h/data.csv", ua: str | None = None) -> SourceSpec:
-    return SourceSpec(name="zillow", provider="http_file", volume="zillow",
+    return SourceSpec(name="zillow", provider="http_file",
                       user_agent=ua, files=(SourceFile("data.csv", url=url),))
 
 
@@ -46,6 +46,16 @@ def test_fresh_download_writes_full_body(tmp_path):
     assert open(scratch, "rb").read() == body
     assert sess.calls[0]["headers"]["User-Agent"] == BROWSER_UA
     assert "Range" not in sess.calls[0]["headers"]
+
+
+def test_canonical_url_matches_fetch_result(tmp_path):
+    # The pre-fetch canonical_url must equal what fetch_to stamps (consistent source_url).
+    spec = _spec()
+    sess = FakeSession([FakeResponse(200, headers={"Content-Length": "1"}, body=b"x")])
+    p = HttpFileProvider(session=sess)
+    pre = p.canonical_url(spec, spec.files[0])
+    res = p.fetch_to(str(tmp_path / "d"), spec, spec.files[0], resume_from=0, ctx=_ctx(tmp_path))
+    assert pre == res.canonical_url == spec.files[0].url
 
 
 def test_spec_user_agent_overrides_default(tmp_path):

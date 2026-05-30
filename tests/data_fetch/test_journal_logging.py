@@ -1,8 +1,8 @@
 """WS-D — download_log_insert / download_log_last_sha256 + DDL↔schema agreement.
 
 No real SparkSession: a FakeSpark captures the write / sql surface. The DDL test asserts
-AUDIT_DDL.create_download_log stays aligned with pipeline_logging._DOWNLOAD_LOG_SCHEMA
-(the CLAUDE.md §11.1 load-bearing check).
+the download_log statement in ddl.audit_ddl.create_audit_tables stays aligned with
+pipeline_logging._DOWNLOAD_LOG_SCHEMA (the CLAUDE.md §11.1 load-bearing check).
 """
 
 from __future__ import annotations
@@ -122,14 +122,15 @@ def test_last_sha256_swallows_error_returns_none():
 # -- DDL ↔ insert-schema agreement (CLAUDE.md §11.1) -------------------------
 
 def test_download_log_ddl_matches_insert_schema(monkeypatch):
-    import AUDIT_DDL
-    # _run_ddl lives in catalog_setup and is in scope only when the setup notebook runs;
-    # inject a capturing stub so we can inspect the emitted DDL statement standalone.
-    monkeypatch.setattr(AUDIT_DDL, "_run_ddl", lambda spark, statements: statements, raising=False)
+    from ddl import audit_ddl
+    # audit_ddl imports _run_ddl from ddl._utils; inject a capturing stub so we can inspect
+    # the emitted DDL statements standalone (no real Spark/catalog).
+    monkeypatch.setattr(audit_ddl, "_run_ddl", lambda spark, statements: statements)
 
-    statements = AUDIT_DDL.create_download_log(spark=None, audit_schema="cat.audit")
-    table, sql = statements[0]
-    assert table == "cat.audit.download_log"
+    statements = audit_ddl.create_audit_tables(spark=None, audit_schema="cat.audit")
+    matches = [(t, s) for t, s in statements if t == "cat.audit.download_log"]
+    assert matches, "download_log not produced by create_audit_tables"
+    table, sql = matches[0]
 
     body = sql[sql.index("(") + 1: sql.rindex(")")]
     ddl_type = {"StringType": "STRING", "IntegerType": "INT", "LongType": "BIGINT",

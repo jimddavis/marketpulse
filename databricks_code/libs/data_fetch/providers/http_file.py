@@ -76,6 +76,11 @@ class HttpFileProvider:
 
     # -- probe ---------------------------------------------------------------
 
+    def canonical_url(self, spec: SourceSpec, f: SourceFile) -> str:
+        # The URL itself — no key to strip. Falls back to a stable identifier for a
+        # malformed manifest entry so the value is never null (fetch_to raises on it).
+        return f.url or f"{spec.name}/{f.landed_filename}"
+
     def probe(self, spec: SourceSpec, f: SourceFile) -> ProbeResult:
         url = f.url
         if not url:

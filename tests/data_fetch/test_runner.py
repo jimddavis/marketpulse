@@ -55,6 +55,9 @@ class StubProvider:
     def probe(self, spec, f):
         return ProbeResult(ok=True, http_status=200, content_length=len(self._content))
 
+    def canonical_url(self, spec, f):
+        return self._url
+
 
 class CapturingJournal:
     def __init__(self, last_sha=None):
@@ -80,7 +83,7 @@ def _ctx(tmp_path) -> RunContext:
 
 
 def _spec(*files):
-    return SourceSpec(name="zillow", provider="http_file", volume="zillow", files=files)
+    return SourceSpec(name="zillow", provider="http_file", files=files)
 
 
 def _runner(tmp_path, provider, journal):

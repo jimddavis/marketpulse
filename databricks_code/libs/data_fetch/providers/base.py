@@ -46,3 +46,11 @@ class Provider(Protocol):
     def probe(self, spec: SourceSpec, f: SourceFile) -> ProbeResult:
         """Cheap reachability check for healthcheck mode — no full download (§7.1)."""
         ...
+
+    def canonical_url(self, spec: SourceSpec, f: SourceFile) -> str:
+        """The KEY-FREE canonical URL for this file — the same value fetch_to stamps on
+        ProviderFetch.canonical_url, but computable WITHOUT a fetch (no I/O). The runner
+        seeds the download_log source_url with this so a file that fails BEFORE the fetch
+        returns logs the same url namespace as one that succeeds (§16.5). Each provider
+        owns its own URL shaping, so the runner needs no provider-specific knowledge."""
+        ...

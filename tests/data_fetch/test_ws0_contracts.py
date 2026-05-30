@@ -43,7 +43,7 @@ def test_runcontext_round_trip_and_immutable():
 
 def test_sourcespec_defaults():
     spec = df.SourceSpec(
-        name="zillow", provider="http_file", volume="zillow",
+        name="zillow", provider="http_file",
         files=(df.SourceFile("x.csv", url="https://h/x.csv"),),
     )
     assert spec.user_agent is None and spec.api_key_env is None
@@ -84,7 +84,7 @@ def test_protocols_are_runtime_checkable():
 
 
 def test_make_provider_unknown_key_raises():
-    spec = df.SourceSpec(name="x", provider="nope", volume="x", files=())
+    spec = df.SourceSpec(name="x", provider="nope", files=())
     with pytest.raises(ValueError, match="Unknown provider"):
         make_provider(spec, secrets=None)
 
@@ -98,7 +98,7 @@ def test_make_provider_dispatches_registered(monkeypatch):
         def probe(self, *a, **k): ...
 
     monkeypatch.setitem(PROVIDERS, "fake", FakeProvider)
-    spec = df.SourceSpec(name="x", provider="fake", volume="x", files=())
+    spec = df.SourceSpec(name="x", provider="fake", files=())
     provider = make_provider(spec, secrets="SEC", session="SESS")
     assert isinstance(provider, FakeProvider)
     assert provider.secrets == "SEC" and provider.session == "SESS"

@@ -74,6 +74,9 @@ class RetryingProvider:
     def probe(self, spec: SourceSpec, f: SourceFile) -> ProbeResult:
         return self._inner.probe(spec, f)   # cheap healthcheck — delegated, no retry
 
+    def canonical_url(self, spec: SourceSpec, f: SourceFile) -> str:
+        return self._inner.canonical_url(spec, f)   # pure, no I/O — delegated
+
     def _is_transient(self, e: BaseException) -> bool:
         if isinstance(e, _TRANSIENT_NETWORK):
             return True

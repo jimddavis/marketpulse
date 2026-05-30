@@ -19,7 +19,7 @@ from fakes import FakeResponse, FakeSession, FakeSecretResolver
 
 
 def _spec(series_id: str | None = "MORTGAGE30US", api_key_env: str | None = "FRED_API_KEY") -> SourceSpec:
-    return SourceSpec(name="fred", provider="fred_api", volume="fred",
+    return SourceSpec(name="fred", provider="fred_api",
                       api_key_env=api_key_env,
                       files=(SourceFile("mortgage_rate_30yr_weekly.csv", series_id=series_id),))
 
@@ -100,6 +100,16 @@ def test_canonical_url_is_key_free(tmp_path):
     assert "api_key" not in res.canonical_url
     assert "SECRET" not in res.canonical_url
     assert "series_id=MORTGAGE30US" in res.canonical_url
+
+
+def test_canonical_url_matches_fetch_and_is_key_free(tmp_path):
+    spec = _spec()
+    sess = FakeSession([_json_response(_OBS_PAYLOAD)])
+    p = FredApiProvider(secrets=FakeSecretResolver(FRED_API_KEY="SECRET"), session=sess)
+    pre = p.canonical_url(spec, spec.files[0])
+    res = p.fetch_to(str(tmp_path / "o.csv"), spec, spec.files[0], resume_from=0, ctx=_ctx(tmp_path))
+    assert pre == res.canonical_url
+    assert "api_key" not in pre and "SECRET" not in pre and "series_id=MORTGAGE30US" in pre
 
 
 def test_fetch_raises_on_bad_key_400_without_leaking_key(tmp_path):

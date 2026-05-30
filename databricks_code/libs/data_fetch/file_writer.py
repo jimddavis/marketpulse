@@ -69,9 +69,9 @@ class VolumeFileWriter:
     across the local→Volume boundary raises EXDEV, so the completed, validated file is
     COPIED (scratch is left intact). `raw_base` is notebook_init's RAW_FILES
     (`/Volumes/<catalog>/raw/`) — never reconstructed inside the package. Destination is
-    `<raw_base>/<source_system>/<final_name>`; the manifest keeps SourceSpec.name ==
-    SourceSpec.volume, so `source_system` selects the matching Volume (the runner passes
-    spec.name).
+    `<raw_base>/<source_system>/<final_name>`; `source_system` is the SourceSpec.name (the
+    runner passes spec.name), which is also the Volume segment, so it selects the matching
+    Volume.
 
     CONFIDENCE: standard-file-API writes to /Volumes are Verified (design §8). os.makedirs
     on a Volume is exercised only at WS-I; in the common case the Volume root already

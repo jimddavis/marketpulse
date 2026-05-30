@@ -62,6 +62,12 @@ class FredApiProvider:
 
     # -- probe ---------------------------------------------------------------
 
+    def canonical_url(self, spec: SourceSpec, f: SourceFile) -> str:
+        # KEY-FREE observations endpoint (series_id only) — same value fetch_to stamps.
+        if f.series_id:
+            return self._canonical_url(f.series_id)
+        return f"{spec.name}/{f.landed_filename}"
+
     def probe(self, spec: SourceSpec, f: SourceFile) -> ProbeResult:
         if not f.series_id:
             return ProbeResult(ok=False, detail=f"no series_id for {f.landed_filename!r}")

@@ -42,7 +42,7 @@ from pipeline_utils import Utils
 # WHERE clause carries no bare literal (CLAUDE.md §6).
 _STATUS_SUCCEEDED = "succeeded"
 
-# Column order and types MUST match {audit_schema}.download_log in AUDIT_DDL.py — the
+# Column order and types MUST match {audit_schema}.download_log in ddl/audit_ddl.py — the
 # CLAUDE.md §11.1 load-bearing check (STRING↔StringType, INT↔IntegerType,
 # BIGINT↔LongType, DOUBLE↔DoubleType, TIMESTAMP↔TimestampType). nullable=False mirrors
 # the DDL's NOT NULL columns. test_journal_logging asserts the two stay in agreement.
@@ -157,7 +157,7 @@ def transform_detail_log_insert(
 
 # ---------------------------------------------------------------------------
 # download_log — the data-acquisition framework's audit table (WS-D).
-# DDL: AUDIT_DDL.create_download_log. Surfaced to the core as a DownloadJournal
+# DDL: ddl.audit_ddl.create_audit_tables (download_log). Surfaced to the core as a DownloadJournal
 # of two callables (design §9): the entry binds these via functools.partial.
 # ---------------------------------------------------------------------------
 

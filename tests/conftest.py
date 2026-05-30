@@ -8,9 +8,7 @@ from __future__ import annotations
 import sys
 from pathlib import Path
 
-_ROOT = Path(__file__).resolve().parent.parent
-# databricks_code/libs → `import data_fetch`, `import pipeline_logging`.
-# repo root → `import AUDIT_DDL` (the audit DDL module lives at the project root).
-for _p in (str(_ROOT / "databricks_code" / "libs"), str(_ROOT)):
-    if _p not in sys.path:
-        sys.path.insert(0, _p)
+# databricks_code/libs → `import data_fetch`, `import ddl`, `import pipeline_logging`.
+_LIBS = Path(__file__).resolve().parent.parent / "databricks_code" / "libs"
+if str(_LIBS) not in sys.path:
+    sys.path.insert(0, str(_LIBS))

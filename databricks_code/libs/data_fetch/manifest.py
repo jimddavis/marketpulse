@@ -26,9 +26,8 @@ class SourceFile:
 
 @dataclass(frozen=True)
 class SourceSpec:
-    name: str                                          # source_system: zillow|fhfa|realtor|fred
+    name: str                                          # source_system AND raw Volume segment: zillow|fhfa|realtor|fred
     provider: str                                      # "http_file" | "fred_api" → factory key
-    volume: str                                        # raw Volume name; joined onto RAW_FILES base
     files: tuple[SourceFile, ...]
     user_agent: str | None = None                      # Family A
     api_key_env: str | None = None                     # Family B, e.g. "FRED_API_KEY"
@@ -36,14 +35,14 @@ class SourceSpec:
 
 # ---------------------------------------------------------------------------
 # The manifest (design §10). Adding a source = appending one SourceSpec here —
-# no change to providers, runner, writer, or journal. SourceSpec.name ==
-# SourceSpec.volume for every source (the writer joins source_system onto the
-# RAW_FILES base). Volumes catalog.raw.{name} are provisioned by
-# catalog_setup.create_volumes(). Pull ALL available history — no date windowing.
+# no change to providers, runner, writer, or journal. `name` is both the source_system
+# and the raw Volume segment: the writer joins it onto the RAW_FILES base, and Volumes
+# catalog.raw.{name} are provisioned by ddl.catalog_setup.create_volumes(). Pull ALL
+# available history — no date windowing.
 # ---------------------------------------------------------------------------
 SOURCES: tuple[SourceSpec, ...] = (
     SourceSpec(
-        name="zillow", provider="http_file", volume="zillow", user_agent=BROWSER_UA,
+        name="zillow", provider="http_file", user_agent=BROWSER_UA,
         files=(
             SourceFile("zhvi_home_values_metro_monthly.csv",
                 url="https://files.zillowstatic.com/research/public_csvs/zhvi/"
@@ -62,7 +61,7 @@ SOURCES: tuple[SourceSpec, ...] = (
         ),
     ),
     SourceSpec(
-        name="fhfa", provider="http_file", volume="fhfa", user_agent=BROWSER_UA,
+        name="fhfa", provider="http_file", user_agent=BROWSER_UA,
         files=(
             SourceFile("hpi_master_all_geographies.csv",
                 url="https://www.fhfa.gov/hpi/download/monthly/hpi_master.csv",
@@ -78,7 +77,7 @@ SOURCES: tuple[SourceSpec, ...] = (
         ),
     ),
     SourceSpec(
-        name="realtor", provider="http_file", volume="realtor", user_agent=BROWSER_UA,
+        name="realtor", provider="http_file", user_agent=BROWSER_UA,
         files=(
             SourceFile("inventory_core_metrics_metro_snapshot.csv",
                 url="https://econdata.s3-us-west-2.amazonaws.com/Reports/Core/"
@@ -90,7 +89,7 @@ SOURCES: tuple[SourceSpec, ...] = (
         ),
     ),
     SourceSpec(
-        name="fred", provider="fred_api", volume="fred", api_key_env="FRED_API_KEY",
+        name="fred", provider="fred_api", api_key_env="FRED_API_KEY",
         files=tuple(
             SourceFile(friendly, series_id=sid, fmt="csv",
                        expected_header=("date", "value", "realtime_start", "realtime_end"))

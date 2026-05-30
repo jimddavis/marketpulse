@@ -107,9 +107,10 @@ class DownloadRunner:
         dest = self._writer.destination(spec.name, f.landed_filename)
         started = self._ctx.now()
         download_id = str(uuid.uuid4())
-        # Best-effort source_url for the FAILED-before-fetch case; overwritten with the
-        # provider's KEY-FREE canonical_url on a successful fetch.
-        canonical_url = f.url or (f"fred_series:{f.series_id}" if f.series_id else spec.name)
+        # Seed source_url for the FAILED-before-fetch case from the provider's own KEY-FREE
+        # URL shaping (no provider-specific logic here); overwritten with fetch.canonical_url
+        # on success — both produce the same string, so the namespace is consistent.
+        canonical_url = provider.canonical_url(spec, f)
         bytes_dl: int | None = None
         http_status: int | None = None
         sha: str | None = None
