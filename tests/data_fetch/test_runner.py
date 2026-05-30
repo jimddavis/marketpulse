@@ -190,11 +190,34 @@ def test_sha_match_skips_promote(tmp_path):
     cap = CapturingJournal(last_sha={"https://h/x.csv": prior_sha})   # keyed on canonical_url
     runner = _runner(tmp_path, StubProvider(), cap.as_journal())
 
+    # File already landed from a prior run. Pre-create it with sentinel bytes so we can
+    # prove promote did NOT overwrite it on the skip.
+    dest = tmp_path / "root" / "zillow" / "z.csv"
+    dest.parent.mkdir(parents=True, exist_ok=True)
+    dest.write_bytes(b"ALREADY-LANDED")
+
     [o] = runner.run_all((_spec(f),)).outcomes
     assert o.status == STATUS_SKIPPED
-    assert not (tmp_path / "root" / "zillow" / "z.csv").exists()      # promote skipped
+    assert dest.read_bytes() == b"ALREADY-LANDED"                    # promote skipped (not overwritten)
     assert cap.records[0]["status"] == STATUS_SKIPPED
-    assert o.landed_file_path == str(tmp_path / "root" / "zillow" / "z.csv")  # destination, not promoted
+    assert o.landed_file_path == str(dest)                           # destination, not promoted
+
+
+def test_sha_match_but_file_missing_re_promotes(tmp_path):
+    # Content unchanged from the prior run (sha matches the journal), but the landed file
+    # was deleted out-of-band (e.g. Volume cleared). The runner must re-promote, not no-op.
+    f = SourceFile("z.csv", url="https://h/z.csv", expected_header=_HEADER)
+    prior_sha = hashlib.sha256(_GOOD).hexdigest()
+    cap = CapturingJournal(last_sha={"https://h/x.csv": prior_sha})   # keyed on canonical_url
+    runner = _runner(tmp_path, StubProvider(), cap.as_journal())
+
+    dest = tmp_path / "root" / "zillow" / "z.csv"
+    assert not dest.exists()                                         # landed file is gone
+
+    [o] = runner.run_all((_spec(f),)).outcomes
+    assert o.status == STATUS_SUCCEEDED                              # re-downloaded despite sha match
+    assert dest.read_bytes() == _GOOD                               # file restored
+    assert cap.records[0]["status"] == STATUS_SUCCEEDED
 
 
 # -- run_all module function with injected provider_for ----------------------

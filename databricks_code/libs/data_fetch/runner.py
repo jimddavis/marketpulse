@@ -127,8 +127,12 @@ class DownloadRunner:
             sha = sha256_of(scratch)
 
             prior = self._journal.last_sha256(canonical_url)
-            if prior is not None and prior == sha:
-                status, landed = STATUS_SKIPPED, dest      # identical bytes already landed (§7.6) — no promote
+            # Skip only if the bytes are unchanged AND the file is still on disk. The audit
+            # log alone is insufficient: a file deleted out-of-band (e.g. the Volume cleared)
+            # must re-download, not no-op (§7.6). final_size() returns 0 when absent.
+            already_present = self._writer.final_size(spec.name, f.landed_filename) > 0
+            if prior is not None and prior == sha and already_present:
+                status, landed = STATUS_SKIPPED, dest      # identical bytes already landed AND still present — no promote
             else:
                 status = STATUS_SUCCEEDED
                 landed = self._writer.promote(scratch, spec.name, f.landed_filename)

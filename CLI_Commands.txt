@@ -133,3 +133,9 @@ Here's the clean workflow. The key rule: never check out main and merge your fea
   git stash pop                      # restore changes
 
   Stash + pop is reversible. Resetting and checkouts of -- paths are not.
+
+
+ ---  Add a new Github repository
+  git remote add origin git@github.com-jim:jimddavis/marketpulse.git
+  git branch -M main          # no-op — already on main; keep it if you like
+  git push -u origin main

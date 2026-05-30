@@ -36,12 +36,25 @@ resources:
               # FRED key is NOT passed here — secret references in notebook base_parameters
               # don't deploy reliably on serverless. The notebook reads it directly via
               # dbutils.secrets.get(scope="marketpulse", ...) — see download_sources.ipynb.
-        # Closes the pipeline_log row. run_if: ALL_DONE → fires whether download_sources
-        # succeeded, failed, or was skipped; pipeline_log_finalize derives final status
+
+        # Transposes the three Zillow wide CSVs into long-form Parquet datasets under
+        # RAW_ZILLOW_LONG. Default run_if (ALL_SUCCESS) → only runs if the wide files
+        # actually landed. See _dev_planning/design_docs/zillow_wide_to_long_step_design.md.
+        - task_key: transpose_zillow_long
+          depends_on:
+            - task_key: download_sources
+          notebook_task:
+            notebook_path: ../bronze/load_zillow_long.ipynb
+            base_parameters:
+              catalog: "{{job.parameters.catalog}}"
+              shared_lib_path: "{{job.parameters.shared_lib_path}}"
+
+        # Closes the pipeline_log row. run_if: ALL_DONE → fires whether the upstream tasks
+        # succeeded, failed, or were skipped; pipeline_log_finalize derives final status
         # by scanning pipeline_step_log (see finalize_pipeline_run_log.py).
         - task_key: finalize_pipeline_log
           depends_on:
-            - task_key: download_sources
+            - task_key: transpose_zillow_long
           run_if: ALL_DONE
           spark_python_task:
             python_file: ../libs/finalize_pipeline_run_log.py
