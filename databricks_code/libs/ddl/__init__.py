@@ -23,6 +23,7 @@ from ddl.catalog_setup import (
 )
 from ddl.gold_ddl import create_gold_tables
 from ddl.silver_ddl import create_silver_tables
+from ddl.weather_data import create_weather_bronze_tables
 
 __all__ = [
     "create_catalog",
@@ -31,6 +32,7 @@ __all__ = [
     "create_volumes",
     "create_audit_tables",
     "create_bronze_tables",
+    "create_weather_bronze_tables",
     "create_silver_tables",
     "create_gold_tables",
 ]
