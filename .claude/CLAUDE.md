@@ -344,6 +344,7 @@ Shared Python modules (e.g., `pipeline_utils.py`, `pipeline_logging.py`) live at
 ## 13. Python best practices
 
 
+- **Clarity over efficiency (and over cleverness).** When readability conflicts with brevity, line count, or micro-performance, readability wins. Optimize code for the next human who reads it, not for compactness. Computer memory and cycles are cheap; the reader's working memory is not. A dense, clever one-liner that saves three lines but costs every future reader a re-parse is a bad trade. The bullets below are specific applications of this principle.
 - **Python version**: target 3.12 for tooling and scratch scripts. Databricks runtime Python version is dictated by the cluster runtime — note its version in the project config file.
 - **Environment management**: use `uv` for local Python tooling. `uv run --python 3.12 ...` for one-off scripts; PEP-723 inline metadata for self-contained scripts.
 - **No bare `except`.** Catch specific exception types; only use `except Exception` at the outermost orchestration boundary.
@@ -353,6 +354,8 @@ Shared Python modules (e.g., `pipeline_utils.py`, `pipeline_logging.py`) live at
 - **No `SELECT *` in joins** without column pruning. Schema fragility; carries unnecessary columns forward.
 - **Imports at top of file.** No mid-file or inside-function imports (except `try/except ImportError`).
 - **Constants in `UPPER_SNAKE_CASE`** at top of notebook cell 2 or top of module.
+- **Comment dense one-liners.** A line packing several operations (chained calls, nested comprehensions) gets a brief plain-language comment above it stating intent + any non-obvious mechanism. Even an expert benefits — it spares the reader mentally executing the expression, which quietly drains energy. Match surrounding comment density; raise the floor for dense lines, don't over-comment trivial ones.
+- **Descriptive variable names.** Name a variable for what it holds (`station`, `member`, `column`, `tarball`), never a bare single letter (`d`, `m`, `c`, `tf`) — *including* loop and comprehension variables. Exceptions: established project aliases (`F` = `pyspark.sql.functions`, `df` / `*_df` for DataFrames) and a throwaway `_`. A cryptic name saves one keystroke at write time and costs a lookup on every read.
 
 
 ** IMPORTANT **   Any code that works with datasets must be in PySpark. PySpark is installed locally.
@@ -494,3 +497,31 @@ completed in one session, do not start it.
 
 If during unrelated work you notice an old value where it shouldn't be, do
 NOT silently update it. Park the finding.
+
+---
+
+## 21. Hand off work through a written spec, not context memory
+
+Before kicking off a substantial unit of work that runs with fresh, compacted, or
+summarized context — a `/sc:implement` or `/sc:research`, a spawned subagent, or a
+resumed session — write the instructions into a **self-contained prompt grounded
+in committed artifacts** (the design doc, the READMEs, the manifest), not in this
+conversation's running context.
+
+**Why:** conversational context is lossy. It gets summarized, truncated, and
+silently misremembered, and a handoff that "drives from memory" inherits every
+drift. A prompt that names the authoritative files and states the exact scope
+re-derives correctness from durable sources instead of trusting recall. Recall
+*improving* does not remove the risk — the prompt must point at the artifact, and
+the worker must read it.
+
+**How to apply:**
+- Name the authoritative document(s) by path and require the worker to read them first.
+- State scope AND non-scope explicitly — what to build, what to leave alone.
+- Carry the confirmed decisions and the agreed naming, not just the happy path.
+- Give a checklist the worker can verify against (e.g. a design's file-by-file change list).
+- When the prompt and your memory disagree, the committed artifact wins.
+
+This is §6 (one definition for a load-bearing value) applied to instructions: the
+spec is the single source of truth for the work; the handoff references it rather
+than re-stating a remembered version that can drift.

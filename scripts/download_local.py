@@ -27,6 +27,7 @@ sys.path.insert(0, str(_REPO / "databricks_code" / "libs"))
 
 from data_fetch import (  # noqa: E402 — import after sys.path setup
     SOURCES,
+    WEATHER_SOURCES,
     DownloadJournal,
     DotenvSecretResolver,
     LocalFileWriter,
@@ -79,12 +80,20 @@ def dl_fred():
     return _run(_only("fred"))
 
 
+def dl_weather():
+    """Annual weather/hazard sources (FEMA NRI + NOAA Climate Normals) — the WEATHER_SOURCES
+    tuple, separate from the monthly SOURCES. Lands the NRI CSV + the Normals tarball +
+    inventory under _local_downloads/. (Normalize step is a Databricks notebook, not here.)"""
+    return _run(WEATHER_SOURCES)
+
+
 _METHODS = {
     "dl_all": dl_all,
     "dl_zillow": dl_zillow,
     "dl_fhfa": dl_fhfa,
     "dl_realtor": dl_realtor,
     "dl_fred": dl_fred,
+    "dl_weather": dl_weather,
 }
 
 

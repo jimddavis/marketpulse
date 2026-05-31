@@ -111,3 +111,46 @@ SOURCES: tuple[SourceSpec, ...] = (
         ),
     ),
 )
+
+
+# ---------------------------------------------------------------------------
+# Weather / hazard sources (design: weather_sources_download_design.md). A SEPARATE tuple
+# from SOURCES: these refresh ANNUALLY, not monthly, and run via their own job
+# (download_weather_sources.ipynb), so the monthly run_all(SOURCES) never touches them.
+# `name` is the source_system AND the raw Volume segment; Volumes catalog.raw.{name} are
+# provisioned by ddl.catalog_setup.create_volumes(). Pull ALL available history.
+# ---------------------------------------------------------------------------
+WEATHER_SOURCES: tuple[SourceSpec, ...] = (
+    SourceSpec(
+        name="fema_nri", provider="arcgis_feature_service",
+        files=(
+            SourceFile(
+                "nri_counties.csv",
+                url=("https://services.arcgis.com/XG15cJAlne2vxtgt/arcgis/rest/services/"
+                     "National_Risk_Index_Counties/FeatureServer/0/query"),
+                fmt="csv",
+                expected_header=("OBJECTID", "NRI_ID", "STATE", "STATEABBRV", "STATEFIPS"),
+                note="FEMA-owned ArcGIS FS; canonical hazards.fema.gov CSV is TLS-blocked from our env",
+            ),
+        ),
+    ),
+    SourceSpec(
+        name="climate_normals", provider="http_file", user_agent=BROWSER_UA,
+        files=(
+            SourceFile(
+                "us-climate-normals_1991-2020_v1.0.1_annualseasonal_multivariate_by-station_c20230404.tar.gz",
+                url=("https://www.ncei.noaa.gov/data/normals-annualseasonal/1991-2020/archive/"
+                     "us-climate-normals_1991-2020_v1.0.1_annualseasonal_multivariate_by-station_c20230404.tar.gz"),
+                fmt="tar.gz",   # non-csv → header validation skipped; size-match vs Content-Length still fires
+                note="54 MB; 15,616 ragged per-station CSVs; normalized post-download (process_climate_normals)",
+            ),
+            SourceFile(
+                "inventory_30yr.txt",
+                url=("https://www.ncei.noaa.gov/data/normals-annualseasonal/1991-2020/doc/"
+                     "inventory_30yr.txt"),
+                fmt="txt",
+                note="station id/lat/lon/elev/state — input to the station->county mapping (later)",
+            ),
+        ),
+    ),
+)

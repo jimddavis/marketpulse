@@ -14,6 +14,7 @@ of per-provider specifics (design §5).
 from __future__ import annotations
 
 from data_fetch.manifest import SourceSpec
+from data_fetch.providers.arcgis_feature_service import ArcGisFeatureServiceProvider
 from data_fetch.providers.base import Provider
 from data_fetch.providers.fred_api import FredApiProvider
 from data_fetch.providers.http_file import HttpFileProvider
@@ -23,6 +24,7 @@ from data_fetch.secrets import SecretResolver
 PROVIDERS: dict[str, type[Provider]] = {
     "http_file": HttpFileProvider,
     "fred_api": FredApiProvider,
+    "arcgis_feature_service": ArcGisFeatureServiceProvider,
 }
 
 

@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from data_fetch.manifest import SOURCES
+from data_fetch.manifest import SOURCES, WEATHER_SOURCES
 from data_fetch.providers import PROVIDERS
 
 
@@ -46,5 +46,41 @@ def test_csv_files_carry_a_header_xlsx_do_not():
 
 def test_landed_filenames_unique_within_each_source():
     for s in SOURCES:
+        names = [f.landed_filename for f in s.files]
+        assert len(names) == len(set(names)), f"duplicate landed_filename in {s.name}"
+
+
+# -- WEATHER_SOURCES (separate annual tuple; SOURCES untouched) ---------------
+
+def test_weather_sources_expected_names():
+    assert tuple(s.name for s in WEATHER_SOURCES) == ("fema_nri", "climate_normals")
+
+
+def test_weather_specs_use_registered_providers():
+    for s in WEATHER_SOURCES:
+        assert s.provider in PROVIDERS, f"{s.name} → unregistered provider {s.provider!r}"
+
+
+def test_fema_nri_is_arcgis_with_query_url_and_header():
+    nri = next(s for s in WEATHER_SOURCES if s.name == "fema_nri")
+    assert nri.provider == "arcgis_feature_service"
+    (csv_file,) = nri.files
+    assert csv_file.url and csv_file.url.endswith("/FeatureServer/0/query")
+    assert csv_file.expected_header and csv_file.expected_header[0] == "OBJECTID"
+
+
+def test_climate_normals_http_file_tarball_and_inventory():
+    normals = next(s for s in WEATHER_SOURCES if s.name == "climate_normals")
+    assert normals.provider == "http_file"
+    landed_names = [f.landed_filename for f in normals.files]
+    assert any(name.endswith(".tar.gz") for name in landed_names)
+    assert "inventory_30yr.txt" in landed_names
+    for source_file in normals.files:
+        assert source_file.url and source_file.url.startswith("https://www.ncei.noaa.gov/")
+        assert source_file.fmt != "csv"   # tarball/txt → header validation skipped
+
+
+def test_weather_landed_filenames_unique_within_each_source():
+    for s in WEATHER_SOURCES:
         names = [f.landed_filename for f in s.files]
         assert len(names) == len(set(names)), f"duplicate landed_filename in {s.name}"

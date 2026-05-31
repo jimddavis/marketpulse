@@ -1,0 +1,66 @@
+resources:
+  jobs:
+    weather_download:
+      name: "Marketpulse weather_download [${bundle.target}]"
+      # Annual weather/hazard refresh — SEPARATE from the monthly download_sources job.
+      # Operator-triggered (Free Edition has no scheduler). Downloads FEMA NRI + NOAA
+      # Climate Normals into their raw Volumes, then normalizes the Normals tarball into a
+      # _processed Parquet dataset. The monthly pipeline is untouched.
+      # Design: _dev_planning/design_docs/weather_sources_download_design.md Sec 6.
+      parameters:
+        - name: catalog
+          default: ${var.catalog}
+        - name: shared_lib_path
+          default: ${var.shared_lib_path}
+      # Serverless spark_python_task (init/finalize) needs a job-level environment + a
+      # task-level environment_key; notebook_task does not.
+      environments:
+        - environment_key: default
+          spec:
+            environment_version: "2"
+      tasks:
+        # Runs first: inserts the pipeline_log row and sets the pipeline_run_id taskValue.
+        # task_key MUST stay "init_pipeline_log" — notebook_init reads the run id via
+        # dbutils.jobs.taskValues.get(taskKey="init_pipeline_log", ...).
+        - task_key: init_pipeline_log
+          spark_python_task:
+            python_file: ../libs/init_pipeline_run_log.py
+            parameters:
+              - "{{job.parameters.shared_lib_path}}"   # sys.argv[1]
+              - "{{job.parameters.catalog}}"           # sys.argv[2]
+          environment_key: default
+
+        - task_key: download_weather_sources
+          depends_on:
+            - task_key: init_pipeline_log
+          notebook_task:
+            notebook_path: ../bronze/download_weather_sources.ipynb
+            base_parameters:
+              catalog: "{{job.parameters.catalog}}"
+              shared_lib_path: "{{job.parameters.shared_lib_path}}"
+
+        # Untars the Climate Normals tarball and normalizes the ragged station CSVs into a
+        # _processed Parquet dataset. Default run_if (ALL_SUCCESS) → only runs if the
+        # download landed. See weather_sources_download_design.md Sec 4.
+        - task_key: process_climate_normals
+          depends_on:
+            - task_key: download_weather_sources
+          notebook_task:
+            notebook_path: ../bronze/process_climate_normals.ipynb
+            base_parameters:
+              catalog: "{{job.parameters.catalog}}"
+              shared_lib_path: "{{job.parameters.shared_lib_path}}"
+
+        # Closes the pipeline_log row. run_if: ALL_DONE → fires whether upstream succeeded,
+        # failed, or was skipped; pipeline_log_finalize derives final status by scanning
+        # pipeline_step_log (see finalize_pipeline_run_log.py).
+        - task_key: finalize_pipeline_log
+          depends_on:
+            - task_key: process_climate_normals
+          run_if: ALL_DONE
+          spark_python_task:
+            python_file: ../libs/finalize_pipeline_run_log.py
+            parameters:
+              - "{{job.parameters.shared_lib_path}}"   # sys.argv[1]
+              - "{{job.parameters.catalog}}"           # sys.argv[2]
+          environment_key: default

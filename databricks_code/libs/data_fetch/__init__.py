@@ -23,8 +23,9 @@ from data_fetch.constants import (
 from data_fetch.context import RunContext
 from data_fetch.file_writer import FileWriter, LocalFileWriter, VolumeFileWriter
 from data_fetch.journal import DownloadJournal, DownloadLogRow
-from data_fetch.manifest import SOURCES, SourceFile, SourceSpec
+from data_fetch.manifest import SOURCES, WEATHER_SOURCES, SourceFile, SourceSpec
 from data_fetch.providers import PROVIDERS, make_provider
+from data_fetch.providers.arcgis_feature_service import ArcGisFeatureServiceProvider
 from data_fetch.providers.base import ProbeResult, Provider, ProviderFetch
 from data_fetch.providers.errors import ProviderHttpError
 from data_fetch.providers.fred_api import FredApiProvider
@@ -65,6 +66,7 @@ __all__ = [
     "SourceFile",
     "SourceSpec",
     "SOURCES",
+    "WEATHER_SOURCES",
     # providers
     "Provider",
     "ProviderFetch",
@@ -72,6 +74,7 @@ __all__ = [
     "ProviderHttpError",
     "HttpFileProvider",
     "FredApiProvider",
+    "ArcGisFeatureServiceProvider",
     "RetryingProvider",
     "PROVIDERS",
     "make_provider",
