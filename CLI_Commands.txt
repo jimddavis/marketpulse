@@ -6,24 +6,6 @@
 
  databricks bundle validate
 
-        Name: vinoworld_bundle
-        Target: dev
-        Workspace:
-        Host: https://dbc-d0f295f4-d028.cloud.databricks.com/
-        User: zieder0022@gmail.com
-        Path: /Workspace/Users/zieder0022@gmail.com/.bundle/vinoworld_bundle/dev
-
-        Validation OK!
-
- What the validate output tells you:
-
-  - User — confirms which identity the CLI authenticated as (zieder0022@gmail.com)
-  - Path — this is where the bundle will deploy its files in the workspace. The pattern is /Workspace/Users/<you>/.bundle/<bundle-name>/<target>. Notice dev at the end — that
-  comes from the target name. When we add a prod target later, it will deploy to a separate path automatically.
-  - Validation OK! — the YAML is syntactically valid and the CLI can reach the workspace
-
-  What profile does: It tells the CLI which entry in ~/.databrickscfg to use for authentication when running any bundle command. Without it, the CLI tries to match by host and
-  fails if more than one profile matches — which is exactly what happened.
 
 
     databricks bundle deploy --target dev
@@ -45,6 +27,10 @@ rm -rf .databricks/bundle/staging/sync-snapshots/
 rm -rf .databricks/bundle/prod/sync-snapshots/
 
 rm -rf .databricks/bundle/user/sync-snapshots/
+
+
+**  Upload local files to a volume
+databricks fs cp local_file.csv dbfs:/Volumes/catalog/schema/volume/local_file.csv
 
 
 

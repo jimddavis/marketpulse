@@ -1,0 +1,895 @@
+region_id,region_name,state_name,cbsa_code,cbsa_title,match_score,match_method,needs_review
+394513,"Cumberland, MD",MD,19060,"Cumberland, MD-WV",100,city+state_fuzzy,False
+394988,"Pocatello, ID",ID,38540,"Pocatello, ID",100,city+state_fuzzy,False
+394942,"Orangeburg, SC",SC,36700,"Orangeburg, SC",100,city+state_fuzzy,False
+395126,"Statesboro, GA",GA,44340,"Statesboro, GA",100,city+state_fuzzy,False
+394683,"Hobbs, NM",NM,26020,"Hobbs, NM",100,city+state_fuzzy,False
+394632,"Glasgow, KY",KY,23980,"Glasgow, KY",100,city+state_fuzzy,False
+394993,"Poplar Bluff, MO",MO,38740,"Poplar Bluff, MO",100,city+state_fuzzy,False
+394967,"Payson, AZ",AZ,37740,"Payson, AZ",100,city+state_fuzzy,False
+395234,"Winona, MN",MN,49100,"Winona, MN",100,city+state_fuzzy,False
+394919,"Norfolk, NE",NE,35740,"Norfolk, NE",100,city+state_fuzzy,False
+395043,"Ruston, LA",LA,40820,"Ruston, LA",100,city+state_fuzzy,False
+394918,"Nogales, AZ",AZ,35700,"Nogales, AZ",100,city+state_fuzzy,False
+394876,"Montrose, CO",CO,33940,"Montrose, CO",100,city+state_fuzzy,False
+753918,"Shawano, WI",WI,43020,"Shawano, WI",100,city+state_fuzzy,False
+753904,"Marion, NC",NC,32000,"Marion, NC",100,city+state_fuzzy,False
+394895,"Muscatine, IA",IA,34700,"Muscatine, IA",100,city+state_fuzzy,False
+394434,"Cambridge, OH",OH,15740,"Cambridge, OH",100,city+state_fuzzy,False
+395227,"Williston, ND",ND,48780,"Williston, ND",100,city+state_fuzzy,False
+395099,"Sikeston, MO",MO,43460,"Sikeston, MO",100,city+state_fuzzy,False
+394888,"Mount Vernon, IL",IL,34500,"Mount Vernon, IL",100,city+state_fuzzy,False
+394745,"Kill Devil Hills, NC",NC,28620,"Kill Devil Hills, NC",100,city+state_fuzzy,False
+394702,"Hutchinson, MN",MN,26780,"Hutchinson, MN",100,city+state_fuzzy,False
+753878,"Dayton, TN",TN,,,57,unmatched,True
+395093,"Sheridan, WY",WY,43260,"Sheridan, WY",100,city+state_fuzzy,False
+394921,"North Vernon, IN",IN,,,45,unmatched,True
+394340,"Ashtabula, OH",OH,,,62,unmatched,True
+395140,"Sunbury, PA",PA,44980,"Sunbury, PA",100,city+state_fuzzy,False
+394373,"Beaver Dam, WI",WI,13180,"Beaver Dam, WI",100,city+state_fuzzy,False
+394980,"Pine Bluff, AR",AR,38220,"Pine Bluff, AR",100,city+state_fuzzy,False
+394755,"Kokomo, IN",IN,29020,"Kokomo, IN",100,city+state_fuzzy,False
+394999,"Portsmouth, OH",OH,39020,"Portsmouth, OH",100,city+state_fuzzy,False
+394360,"Baraboo, WI",WI,12660,"Baraboo, WI",100,city+state_fuzzy,False
+394490,"Columbus, MS",MS,18060,"Columbus, MS",100,city+state_fuzzy,False
+394737,"Kearney, NE",NE,28260,"Kearney, NE",100,city+state_fuzzy,False
+394582,"Fairmont, WV",WV,21900,"Fairmont, WV",100,city+state_fuzzy,False
+394721,"Jasper, IN",IN,27540,"Jasper, IN",100,city+state_fuzzy,False
+394366,"Batesville, AR",AR,12900,"Batesville, AR",100,city+state_fuzzy,False
+395029,"Rochelle, IL",IL,40300,"Rochelle, IL",100,city+state_fuzzy,False
+395097,"Sidney, OH",OH,43380,"Sidney, OH",100,city+state_fuzzy,False
+395189,"Vicksburg, MS",MS,46980,"Vicksburg, MS",100,city+state_fuzzy,False
+395081,"Sedalia, MO",MO,42740,"Sedalia, MO",100,city+state_fuzzy,False
+394554,"Easton, MD",MD,20660,"Easton, MD",100,city+state_fuzzy,False
+394522,"DeRidder, LA",LA,19760,"DeRidder, LA",100,city+state_fuzzy,False
+394973,"Peru, IN",IN,37940,"Peru, IN",100,city+state_fuzzy,False
+394417,"Brookhaven, MS",MS,15020,"Brookhaven, MS",100,city+state_fuzzy,False
+394984,"Plainview, TX",TX,38380,"Plainview, TX",100,city+state_fuzzy,False
+394962,"Paris, TN",TN,37540,"Paris, TN",100,city+state_fuzzy,False
+394725,"Jesup, GA",GA,27700,"Jesup, GA",100,city+state_fuzzy,False
+394740,"Kennett, MO",MO,28380,"Kennett, MO",100,city+state_fuzzy,False
+395100,"Silver City, NM",NM,43500,"Silver City, NM",100,city+state_fuzzy,False
+394882,"Moses Lake, WA",WA,34180,"Moses Lake, WA",100,city+state_fuzzy,False
+394925,"Oak Harbor, WA",WA,36020,"Oak Harbor, WA",100,city+state_fuzzy,False
+394345,"Athens, TX",TX,11980,"Athens, TX",100,city+state_fuzzy,False
+394541,"DuBois, PA",PA,20180,"DuBois, PA",100,city+state_fuzzy,False
+394994,"Port Angeles, WA",WA,38820,"Port Angeles, WA",100,city+state_fuzzy,False
+394593,"Findlay, OH",OH,22300,"Findlay, OH",100,city+state_fuzzy,False
+753893,"Jefferson, GA",GA,27600,"Jefferson, GA",100,city+state_fuzzy,False
+394647,"Greeneville, TN",TN,24620,"Greeneville, TN",100,city+state_fuzzy,False
+394655,"Greenwood, SC",SC,24940,"Greenwood, SC",100,city+state_fuzzy,False
+394752,"Klamath Falls, OR",OR,28900,"Klamath Falls, OR",100,city+state_fuzzy,False
+394922,"North Wilkesboro, NC",NC,35900,"North Wilkesboro, NC",100,city+state_fuzzy,False
+394618,"Fremont, OH",OH,23380,"Fremont, OH",100,city+state_fuzzy,False
+394363,"Bartlesville, OK",OK,12780,"Bartlesville, OK",100,city+state_fuzzy,False
+394906,"New Castle, IN",IN,35220,"New Castle, IN",100,city+state_fuzzy,False
+394431,"Cadillac, MI",MI,15620,"Cadillac, MI",100,city+state_fuzzy,False
+394504,"Cortland, NY",NY,18660,"Cortland, NY",100,city+state_fuzzy,False
+394477,"Clinton, IA",IA,17540,"Clinton, IA",100,city+state_fuzzy,False
+395155,"Thomasville, GA",GA,45620,"Thomasville, GA",100,city+state_fuzzy,False
+394667,"Harrison, AR",AR,25460,"Harrison, AR",100,city+state_fuzzy,False
+395129,"Stephenville, TX",TX,44500,"Stephenville, TX",100,city+state_fuzzy,False
+394845,"McMinnville, TN",TN,32660,"McMinnville, TN",100,city+state_fuzzy,False
+394715,"Jacksonville, IL",IL,27300,"Jacksonville, IL",100,city+state_fuzzy,False
+394422,"Brownwood, TX",TX,15220,"Brownwood, TX",100,city+state_fuzzy,False
+394499,"Corinth, MS",MS,18420,"Corinth, MS",100,city+state_fuzzy,False
+394569,"Emporia, KS",KS,21380,"Emporia, KS",100,city+state_fuzzy,False
+395084,"Seneca Falls, NY",NY,42900,"Seneca Falls, NY",100,city+state_fuzzy,False
+394414,"Brevard, NC",NC,14820,"Brevard, NC",100,city+state_fuzzy,False
+394310,"Albert Lea, MN",MN,10660,"Albert Lea, MN",100,city+state_fuzzy,False
+394320,"Alpena, MI",MI,10980,"Alpena, MI",100,city+state_fuzzy,False
+753879,"Elkins, WV",WV,21180,"Elkins, WV",100,city+state_fuzzy,False
+394615,"Fredericksburg, TX",TX,23240,"Fredericksburg, TX",100,city+state_fuzzy,False
+394601,"Forrest City, AR",AR,22620,"Forrest City, AR",100,city+state_fuzzy,False
+394311,"Albertville, AL",AL,10700,"Albertville, AL",100,city+state_fuzzy,False
+394911,"New Philadelphia, OH",OH,35420,"New Philadelphia-Dover, OH",100,city+state_fuzzy,False
+394641,"Grants Pass, OR",OR,24420,"Grants Pass, OR",100,city+state_fuzzy,False
+394907,"New Castle, PA",PA,,,55,unmatched,True
+395212,"Watertown, WI",WI,48020,"Watertown-Fort Atkinson, WI",100,city+state_fuzzy,False
+394395,"Bloomsburg, PA",PA,14100,"Bloomsburg-Berwick, PA",100,city+state_fuzzy,False
+394465,"Chillicothe, OH",OH,17060,"Chillicothe, OH",100,city+state_fuzzy,False
+395132,"Stevens Point, WI",WI,44620,"Stevens Point-Plover, WI",100,city+state_fuzzy,False
+394877,"Morehead City, NC",NC,33980,"Morehead City, NC",100,city+state_fuzzy,False
+395021,"Richmond, IN",IN,39980,"Richmond, IN",100,city+state_fuzzy,False
+753903,"Marietta, OH",OH,31930,"Marietta, OH",100,city+state_fuzzy,False
+394362,"Barre, VT",VT,12740,"Barre, VT",100,city+state_fuzzy,False
+394456,"Charleston, IL",IL,16660,"Charleston-Mattoon, IL",100,city+state_fuzzy,False
+394432,"Calhoun, GA",GA,15660,"Calhoun, GA",100,city+state_fuzzy,False
+394517,"Danville, KY",KY,19220,"Danville, KY",100,city+state_fuzzy,False
+395204,"Warrensburg, MO",MO,47660,"Warrensburg, MO",100,city+state_fuzzy,False
+394634,"Gloversville, NY",NY,24100,"Gloversville, NY",100,city+state_fuzzy,False
+395073,"Scottsboro, AL",AL,42460,"Scottsboro, AL",100,city+state_fuzzy,False
+394963,"Paris, TX",TX,37580,"Paris, TX",100,city+state_fuzzy,False
+395091,"Shelbyville, TN",TN,43180,"Shelbyville, TN",100,city+state_fuzzy,False
+394628,"Gardnerville Ranchos, NV",NV,23820,"Gardnerville Ranchos, NV-CA",100,city+state_fuzzy,False
+394437,"Ca-¦on City, CO",CO,15860,"Cañon City, CO",100,city+state_fuzzy,False
+753916,"Sandpoint, ID",ID,41760,"Sandpoint, ID",100,city+state_fuzzy,False
+394375,"Bedford, IN",IN,13260,"Bedford, IN",100,city+state_fuzzy,False
+395037,"Rolla, MO",MO,40620,"Rolla, MO",100,city+state_fuzzy,False
+394785,"Lewisburg, PA",PA,30260,"Lewisburg, PA",100,city+state_fuzzy,False
+394297,"Aberdeen, SD",SD,10100,"Aberdeen, SD",100,city+state_fuzzy,False
+395032,"Rock Springs, WY",WY,40540,"Rock Springs, WY",100,city+state_fuzzy,False
+394397,"Blytheville, AR",AR,14180,"Blytheville, AR",100,city+state_fuzzy,False
+394384,"Big Rapids, MI",MI,13660,"Big Rapids, MI",100,city+state_fuzzy,False
+394491,"Columbus, NE",NE,18100,"Columbus, NE",100,city+state_fuzzy,False
+395196,"Wabash, IN",IN,47340,"Wabash, IN",100,city+state_fuzzy,False
+394854,"Mexico, MO",MO,33020,"Mexico, MO",100,city+state_fuzzy,False
+395236,"Woodward, OK",OK,49260,"Woodward, OK",100,city+state_fuzzy,False
+394494,"Connersville, IN",IN,18220,"Connersville, IN",100,city+state_fuzzy,False
+394986,"Plattsburgh, NY",NY,38460,"Plattsburgh, NY",100,city+state_fuzzy,False
+394829,"Marquette, MI",MI,32100,"Marquette, MI",100,city+state_fuzzy,False
+395016,"Red Bluff, CA",CA,39780,"Red Bluff, CA",100,city+state_fuzzy,False
+395044,"Rutland, VT",VT,40860,"Rutland, VT",100,city+state_fuzzy,False
+394336,"Ardmore, OK",OK,11620,"Ardmore, OK",100,city+state_fuzzy,False
+394446,"Cedar City, UT",UT,16260,"Cedar City, UT",100,city+state_fuzzy,False
+394819,"Malone, NY",NY,,,50,unmatched,True
+394789,"Lewistown, PA",PA,30380,"Lewistown, PA",100,city+state_fuzzy,False
+394426,"Burley, ID",ID,15420,"Burley, ID",100,city+state_fuzzy,False
+394427,"Burlington, IA",IA,15460,"Burlington, IA-IL",100,city+state_fuzzy,False
+394850,"Menomonie, WI",WI,32860,"Menomonie, WI",100,city+state_fuzzy,False
+394627,"Garden City, KS",KS,23780,"Garden City, KS",100,city+state_fuzzy,False
+394409,"Bradford, PA",PA,14620,"Bradford, PA",100,city+state_fuzzy,False
+395219,"West Plains, MO",MO,48460,"West Plains, MO",100,city+state_fuzzy,False
+395046,"Safford, AZ",AZ,40940,"Safford, AZ",100,city+state_fuzzy,False
+394300,"Ada, OK",OK,10220,"Ada, OK",100,city+state_fuzzy,False
+395072,"Scottsbluff, NE",NE,42420,"Scottsbluff, NE",100,city+state_fuzzy,False
+394799,"Lock Haven, PA",PA,30820,"Lock Haven, PA",100,city+state_fuzzy,False
+394451,"Centralia, IL",IL,16460,"Centralia, IL",100,city+state_fuzzy,False
+394713,"Jackson, WY",WY,27220,"Jackson, WY-ID",100,city+state_fuzzy,False
+753902,"Malvern, AR",AR,31680,"Malvern, AR",100,city+state_fuzzy,False
+394473,"Cleveland, MS",MS,17380,"Cleveland, MS",100,city+state_fuzzy,False
+753923,"The Dalles, OR",OR,45520,"The Dalles, OR",100,city+state_fuzzy,False
+394706,"Indianola, MS",MS,,,58,unmatched,True
+394758,"La Grande, OR",OR,29260,"La Grande, OR",100,city+state_fuzzy,False
+394912,"New Ulm, MN",MN,35580,"New Ulm, MN",100,city+state_fuzzy,False
+394643,"Great Bend, KS",KS,24460,"Great Bend, KS",100,city+state_fuzzy,False
+394858,"Middlesborough, KY",KY,33180,"Middlesborough, KY",100,city+state_fuzzy,False
+395077,"Searcy, AR",AR,42620,"Searcy, AR",100,city+state_fuzzy,False
+394699,"Huntsville, TX",TX,26660,"Huntsville, TX",100,city+state_fuzzy,False
+394298,"Aberdeen, WA",WA,10140,"Aberdeen, WA",100,city+state_fuzzy,False
+394626,"Gallup, NM",NM,23700,"Gallup, NM",100,city+state_fuzzy,False
+394884,"Mount Airy, NC",NC,34340,"Mount Airy, NC",100,city+state_fuzzy,False
+395092,"Shelton, WA",WA,43220,"Shelton, WA",100,city+state_fuzzy,False
+394701,"Hutchinson, KS",KS,26740,"Hutchinson, KS",100,city+state_fuzzy,False
+395131,"Sterling, IL",IL,44580,"Sterling, IL",100,city+state_fuzzy,False
+395122,"St. Marys, GA",GA,,,50,unmatched,True
+394838,"Mason City, IA",IA,32380,"Mason City, IA",100,city+state_fuzzy,False
+394717,"Jacksonville, TX",TX,27380,"Jacksonville, TX",100,city+state_fuzzy,False
+394625,"Galesburg, IL",IL,23660,"Galesburg, IL",100,city+state_fuzzy,False
+753911,"Ozark, AL",AL,37120,"Ozark, AL",100,city+state_fuzzy,False
+395087,"Seymour, IN",IN,42980,"Seymour, IN",100,city+state_fuzzy,False
+394817,"Madisonville, KY",KY,31580,"Madisonville, KY",100,city+state_fuzzy,False
+394616,"Freeport, IL",IL,23300,"Freeport, IL",100,city+state_fuzzy,False
+394567,"Ellensburg, WA",WA,21260,"Ellensburg, WA",100,city+state_fuzzy,False
+394448,"Cedartown, GA",GA,16340,"Cedartown, GA",100,city+state_fuzzy,False
+394424,"Bucyrus, OH",OH,15340,"Bucyrus, OH",100,city+state_fuzzy,False
+395158,"Tifton, GA",GA,45700,"Tifton, GA",100,city+state_fuzzy,False
+394934,"Okeechobee, FL",FL,36380,"Okeechobee, FL",100,city+state_fuzzy,False
+394663,"Hannibal, MO",MO,25300,"Hannibal, MO",100,city+state_fuzzy,False
+394771,"Laramie, WY",WY,29660,"Laramie, WY",100,city+state_fuzzy,False
+394506,"Coshocton, OH",OH,18740,"Coshocton, OH",100,city+state_fuzzy,False
+394781,"Lebanon, MO",MO,30060,"Lebanon, MO",100,city+state_fuzzy,False
+394536,"Dodge City, KS",KS,19980,"Dodge City, KS",100,city+state_fuzzy,False
+394730,"Juneau, AK",AK,27940,"Juneau, AK",100,city+state_fuzzy,False
+394670,"Hastings, NE",NE,25580,"Hastings, NE",100,city+state_fuzzy,False
+394376,"Beeville, TX",TX,13300,"Beeville, TX",100,city+state_fuzzy,False
+394508,"Crescent City, CA",CA,18860,"Crescent City, CA",100,city+state_fuzzy,False
+395154,"Thomaston, GA",GA,45580,"Thomaston, GA",100,city+state_fuzzy,False
+395181,"Uvalde, TX",TX,46620,"Uvalde, TX",100,city+state_fuzzy,False
+394953,"Paducah, KY",KY,37140,"Paducah, KY-IL",100,city+state_fuzzy,False
+394964,"Parkersburg, WV",WV,37620,"Parkersburg-Vienna, WV",100,city+state_fuzzy,False
+394936,"Olean, NY",NY,36460,"Olean, NY",100,city+state_fuzzy,False
+394738,"Keene, NH",NH,28300,"Keene, NH",100,city+state_fuzzy,False
+394764,"Lake City, FL",FL,29380,"Lake City, FL",100,city+state_fuzzy,False
+394899,"Nacogdoches, TX",TX,34860,"Nacogdoches, TX",100,city+state_fuzzy,False
+394787,"Lewiston, ID",ID,30300,"Lewiston, ID-WA",100,city+state_fuzzy,False
+395049,"Salina, KS",KS,41460,"Salina, KS",100,city+state_fuzzy,False
+394411,"Branson, MO",MO,14700,"Branson, MO",100,city+state_fuzzy,False
+753920,"Sonora, CA",CA,43760,"Sonora, CA",100,city+state_fuzzy,False
+394989,"Point Pleasant, WV",OH,,,50,unmatched,True
+394652,"Greenville, OH",OH,24820,"Greenville, OH",100,city+state_fuzzy,False
+394316,"Alice, TX",TX,10860,"Alice, TX",100,city+state_fuzzy,False
+394500,"Cornelia, GA",GA,18460,"Cornelia, GA",100,city+state_fuzzy,False
+395208,"Washington, NC",NC,47820,"Washington, NC",100,city+state_fuzzy,False
+394842,"McAlester, OK",OK,32540,"McAlester, OK",100,city+state_fuzzy,False
+395034,"Rockingham, NC",NC,40460,"Rockingham, NC",100,city+state_fuzzy,False
+394449,"Celina, OH",OH,16380,"Celina, OH",100,city+state_fuzzy,False
+395026,"Riverton, WY",WY,40180,"Riverton, WY",100,city+state_fuzzy,False
+394948,"Owatonna, MN",MN,36940,"Owatonna, MN",100,city+state_fuzzy,False
+394992,"Pontiac, IL",IL,38700,"Pontiac, IL",100,city+state_fuzzy,False
+395211,"Watertown, SD",SD,47980,"Watertown, SD",100,city+state_fuzzy,False
+395150,"Taylorville, IL",IL,45380,"Taylorville, IL",100,city+state_fuzzy,False
+394335,"Arcadia, FL",FL,11580,"Arcadia, FL",100,city+state_fuzzy,False
+394846,"McPherson, KS",KS,32700,"McPherson, KS",100,city+state_fuzzy,False
+753901,"Ludington, MI",MI,31220,"Ludington, MI",100,city+state_fuzzy,False
+394830,"Marshall, MN",MN,32140,"Marshall, MN",100,city+state_fuzzy,False
+394644,"Great Falls, MT",MT,24500,"Great Falls, MT",100,city+state_fuzzy,False
+394682,"Hinesville, GA",GA,25980,"Hinesville, GA",100,city+state_fuzzy,False
+395231,"Wilson, NC",NC,48980,"Wilson, NC",100,city+state_fuzzy,False
+394825,"Marinette, WI",WI,31940,"Marinette, WI-MI",100,city+state_fuzzy,False
+395040,"Roswell, NM",NM,40740,"Roswell, NM",100,city+state_fuzzy,False
+394889,"Mount Vernon, OH",OH,34540,"Mount Vernon, OH",100,city+state_fuzzy,False
+394939,"Oneonta, NY",NY,36580,"Oneonta, NY",100,city+state_fuzzy,False
+394605,"Fort Madison, IA",IA,22800,"Fort Madison, IA",100,city+state_fuzzy,False
+395216,"Waycross, GA",GA,48180,"Waycross, GA",100,city+state_fuzzy,False
+394604,"Fort Leonard Wood, MO",MO,22780,"Fort Leonard Wood, MO",100,city+state_fuzzy,False
+394742,"Kerrville, TX",TX,28500,"Kerrville, TX",100,city+state_fuzzy,False
+394887,"Mount Sterling, KY",KY,34460,"Mount Sterling, KY",100,city+state_fuzzy,False
+394883,"Moultrie, GA",GA,34220,"Moultrie, GA",100,city+state_fuzzy,False
+394476,"Clewiston, FL",FL,17500,"Clewiston, FL",100,city+state_fuzzy,False
+394436,"Campbellsville, KY",KY,15820,"Campbellsville, KY",100,city+state_fuzzy,False
+395165,"Troy, AL",AL,45980,"Troy, AL",100,city+state_fuzzy,False
+394383,"Berlin, NH",NH,,,40,unmatched,True
+395206,"Washington Court House, OH",OH,47920,"Washington Court House, OH",100,city+state_fuzzy,False
+394649,"Greensburg, IN",IN,24700,"Greensburg, IN",100,city+state_fuzzy,False
+753909,"Ottawa, KS",KS,36840,"Ottawa, KS",100,city+state_fuzzy,False
+394584,"Fallon, NV",NV,21980,"Fallon, NV",100,city+state_fuzzy,False
+395138,"Summerville, GA",GA,44900,"Summerville, GA",100,city+state_fuzzy,False
+395004,"Prineville, OR",OR,,,57,unmatched,True
+394441,"Cape Girardeau, MO",MO,16020,"Cape Girardeau, MO-IL",100,city+state_fuzzy,False
+394809,"Lufkin, TX",TX,31260,"Lufkin, TX",100,city+state_fuzzy,False
+395248,"Zanesville, OH",OH,49780,"Zanesville, OH",100,city+state_fuzzy,False
+394822,"Manitowoc, WI",WI,31820,"Manitowoc, WI",100,city+state_fuzzy,False
+395085,"Seneca, SC",SC,42860,"Seneca, SC",100,city+state_fuzzy,False
+394866,"Minot, ND",ND,33500,"Minot, ND",100,city+state_fuzzy,False
+394674,"Heber, UT",UT,25720,"Heber, UT",100,city+state_fuzzy,False
+395088,"Shawnee, OK",OK,43060,"Shawnee, OK",100,city+state_fuzzy,False
+395105,"Somerset, KY",KY,43700,"Somerset, KY",100,city+state_fuzzy,False
+394496,"Coos Bay, OR",OR,18300,"Coos Bay-North Bend, OR",100,city+state_fuzzy,False
+395063,"Sanford, NC",NC,41820,"Sanford, NC",100,city+state_fuzzy,False
+395071,"Sayre, PA",PA,42380,"Sayre, PA",100,city+state_fuzzy,False
+753877,"Cullowhee, NC",NC,,,44,unmatched,True
+394985,"Platteville, WI",WI,38420,"Platteville, WI",100,city+state_fuzzy,False
+394954,"Pahrump, NV",NV,37220,"Pahrump, NV",100,city+state_fuzzy,False
+394391,"Blackfoot, ID",ID,13940,"Blackfoot, ID",100,city+state_fuzzy,False
+394398,"Bogalusa, LA",LA,14220,"Bogalusa, LA",100,city+state_fuzzy,False
+394650,"Greenville, MS",MS,24740,"Greenville, MS",100,city+state_fuzzy,False
+394833,"Marshalltown, IA",IA,32260,"Marshalltown, IA",100,city+state_fuzzy,False
+394801,"Logansport, IN",IN,30900,"Logansport, IN",100,city+state_fuzzy,False
+394904,"Natchitoches, LA",LA,35060,"Natchitoches, LA",100,city+state_fuzzy,False
+394774,"Las Vegas, NM",NM,29780,"Las Vegas, NM",100,city+state_fuzzy,False
+394642,"Grants, NM",NM,,,46,unmatched,True
+394322,"Altus, OK",OK,11060,"Altus, OK",100,city+state_fuzzy,False
+394505,"Corvallis, OR",OR,18700,"Corvallis, OR",100,city+state_fuzzy,False
+753887,"Hermiston, OR",OR,25840,"Hermiston-Pendleton, OR",100,city+state_fuzzy,False
+394859,"Midland, MI",MI,33220,"Midland, MI",100,city+state_fuzzy,False
+394675,"Helena, MT",MT,25740,"Helena, MT",100,city+state_fuzzy,False
+394955,"Palatka, FL",FL,37260,"Palatka, FL",100,city+state_fuzzy,False
+394472,"Clearlake, CA",CA,17340,"Clearlake, CA",100,city+state_fuzzy,False
+394826,"Marion, IN",IN,31980,"Marion, IN",100,city+state_fuzzy,False
+394600,"Forest City, NC",NC,22580,"Forest City, NC",100,city+state_fuzzy,False
+394759,"Laconia, NH",NH,29060,"Laconia, NH",100,city+state_fuzzy,False
+394956,"Palestine, TX",TX,37300,"Palestine, TX",100,city+state_fuzzy,False
+394556,"Edwards, CO",CO,20780,"Edwards, CO",100,city+state_fuzzy,False
+394750,"Kinston, NC",NC,28820,"Kinston, NC",100,city+state_fuzzy,False
+394402,"Boone, NC",NC,14380,"Boone, NC",100,city+state_fuzzy,False
+394571,"Enterprise, AL",AL,21460,"Enterprise, AL",100,city+state_fuzzy,False
+394886,"Mount Pleasant, TX",TX,34420,"Mount Pleasant, TX",100,city+state_fuzzy,False
+394354,"Austin, MN",MN,12380,"Austin, MN",100,city+state_fuzzy,False
+395083,"Selma, AL",AL,42820,"Selma, AL",100,city+state_fuzzy,False
+394507,"Crawfordsville, IN",IN,18820,"Crawfordsville, IN",100,city+state_fuzzy,False
+394894,"Murray, KY",KY,34660,"Murray, KY",100,city+state_fuzzy,False
+395069,"Sault Ste. Marie, MI",MI,42300,"Sault Ste. Marie, MI",100,city+state_fuzzy,False
+394573,"Escanaba, MI",MI,21540,"Escanaba, MI",100,city+state_fuzzy,False
+394915,"Newport, TN",TN,35460,"Newport, TN",100,city+state_fuzzy,False
+394525,"Decatur, IN",IN,19540,"Decatur, IN",100,city+state_fuzzy,False
+395191,"Vidalia, GA",GA,47080,"Vidalia, GA",100,city+state_fuzzy,False
+394786,"Lewisburg, TN",TN,30280,"Lewisburg, TN",100,city+state_fuzzy,False
+395207,"Washington, IN",IN,47780,"Washington, IN",100,city+state_fuzzy,False
+395141,"Susanville, CA",CA,45000,"Susanville, CA",100,city+state_fuzzy,False
+394433,"Cambridge, MD",MD,15700,"Cambridge, MD",100,city+state_fuzzy,False
+394673,"Hays, KS",KS,25700,"Hays, KS",100,city+state_fuzzy,False
+395185,"Van Wert, OH",OH,46780,"Van Wert, OH",100,city+state_fuzzy,False
+394864,"Mineral Wells, TX",TX,33420,"Mineral Wells, TX",100,city+state_fuzzy,False
+394580,"Fairbanks, AK",AK,21820,"Fairbanks-College, AK",100,city+state_fuzzy,False
+394501,"Corning, NY",NY,18500,"Corning, NY",100,city+state_fuzzy,False
+394469,"Clarksburg, WV",WV,17220,"Clarksburg, WV",100,city+state_fuzzy,False
+395145,"Talladega, AL",AL,45180,"Talladega-Sylacauga, AL",100,city+state_fuzzy,False
+395106,"Somerset, PA",PA,43740,"Somerset, PA",100,city+state_fuzzy,False
+395024,"Rio Grande City, TX",TX,40100,"Rio Grande City-Roma, TX",100,city+state_fuzzy,False
+395020,"Rexburg, ID",ID,39940,"Rexburg, ID",100,city+state_fuzzy,False
+394592,"Fernley, NV",NV,,,37,unmatched,True
+394621,"Gaffney, SC",SC,23500,"Gaffney, SC",100,city+state_fuzzy,False
+394977,"Picayune, MS",MS,38100,"Picayune, MS",100,city+state_fuzzy,False
+394951,"Oxford, MS",MS,37060,"Oxford, MS",100,city+state_fuzzy,False
+394562,"Elizabeth City, NC",NC,21020,"Elizabeth City, NC",100,city+state_fuzzy,False
+395017,"Red Wing, MN",MN,39860,"Red Wing, MN",100,city+state_fuzzy,False
+395144,"Tahlequah, OK",OK,45140,"Tahlequah, OK",100,city+state_fuzzy,False
+394377,"Bellefontaine, OH",OH,13340,"Bellefontaine, OH",100,city+state_fuzzy,False
+394990,"Ponca City, OK",OK,38620,"Ponca City, OK",100,city+state_fuzzy,False
+394319,"Alma, MI",MI,10940,"Alma, MI",100,city+state_fuzzy,False
+395178,"Urbana, OH",OH,46500,"Urbana, OH",100,city+state_fuzzy,False
+395192,"Vincennes, IN",IN,47180,"Vincennes, IN",100,city+state_fuzzy,False
+394430,"Butte, MT",MT,15580,"Butte-Silver Bow, MT",100,city+state_fuzzy,False
+394557,"Effingham, IL",IL,20820,"Effingham, IL",100,city+state_fuzzy,False
+394815,"Madison, IN",IN,31500,"Madison, IN",100,city+state_fuzzy,False
+394749,"Kingsville, TX",TX,28780,"Kingsville, TX",100,city+state_fuzzy,False
+394855,"Miami, OK",OK,33060,"Miami, OK",100,city+state_fuzzy,False
+394708,"Iron Mountain, MI",MI,27020,"Iron Mountain, MI-WI",100,city+state_fuzzy,False
+394751,"Kirksville, MO",MO,28860,"Kirksville, MO",100,city+state_fuzzy,False
+753926,"Weatherford, OK",OK,48220,"Weatherford, OK",100,city+state_fuzzy,False
+394381,"Bennettsville, SC",SC,,,60,unmatched,True
+395159,"Toccoa, GA",GA,45740,"Toccoa, GA",100,city+state_fuzzy,False
+753884,"Hailey, ID",ID,25200,"Hailey, ID",100,city+state_fuzzy,False
+395038,"Rome, GA",GA,40660,"Rome, GA",100,city+state_fuzzy,False
+394410,"Brainerd, MN",MN,14660,"Brainerd, MN",100,city+state_fuzzy,False
+395175,"Ukiah, CA",CA,46380,"Ukiah, CA",100,city+state_fuzzy,False
+395133,"Stillwater, OK",OK,44660,"Stillwater, OK",100,city+state_fuzzy,False
+394489,"Columbus, IN",IN,18020,"Columbus, IN",100,city+state_fuzzy,False
+394445,"Casper, WY",WY,16220,"Casper, WY",100,city+state_fuzzy,False
+395010,"Quincy, IL",IL,39500,"Quincy, IL-MO",100,city+state_fuzzy,False
+394540,"Dublin, GA",GA,20140,"Dublin, GA",100,city+state_fuzzy,False
+394570,"Enid, OK",OK,21420,"Enid, OK",100,city+state_fuzzy,False
+394551,"Eagle Pass, TX",TX,20580,"Eagle Pass, TX",100,city+state_fuzzy,False
+394538,"Douglas, GA",GA,20060,"Douglas, GA",100,city+state_fuzzy,False
+394608,"Fort Polk South, LA",LA,,,41,unmatched,True
+395008,"Pullman, WA",WA,39420,"Pullman, WA",100,city+state_fuzzy,False
+394844,"McComb, MS",MS,32620,"McComb, MS",100,city+state_fuzzy,False
+394881,"Moscow, ID",ID,34140,"Moscow, ID",100,city+state_fuzzy,False
+395203,"Warren, PA",PA,47620,"Warren, PA",100,city+state_fuzzy,False
+394315,"Alexandria, MN",MN,10820,"Alexandria, MN",100,city+state_fuzzy,False
+394617,"Fremont, NE",NE,23340,"Fremont, NE",100,city+state_fuzzy,False
+395137,"Sulphur Springs, TX",TX,44860,"Sulphur Springs, TX",100,city+state_fuzzy,False
+394920,"North Platte, NE",NE,35820,"North Platte, NE",100,city+state_fuzzy,False
+394533,"Dickinson, ND",ND,19860,"Dickinson, ND",100,city+state_fuzzy,False
+394613,"Frankfort, IN",IN,23140,"Frankfort, IN",100,city+state_fuzzy,False
+394356,"Bainbridge, GA",GA,12460,"Bainbridge, GA",100,city+state_fuzzy,False
+394791,"Lexington, NE",NE,30420,"Lexington, NE",100,city+state_fuzzy,False
+395214,"Wauchula, FL",FL,,,47,unmatched,True
+394529,"Deming, NM",NM,19700,"Deming, NM",100,city+state_fuzzy,False
+394687,"Hood River, OR",OR,26220,"Hood River, OR",100,city+state_fuzzy,False
+394847,"Meadville, PA",PA,32740,"Meadville, PA",100,city+state_fuzzy,False
+395042,"Russellville, AR",AR,40780,"Russellville, AR",100,city+state_fuzzy,False
+394586,"Faribault, MN",MN,22060,"Faribault-Northfield, MN",100,city+state_fuzzy,False
+394629,"Georgetown, SC",SC,,,50,unmatched,True
+395199,"Walla Walla, WA",WA,47460,"Walla Walla, WA",100,city+state_fuzzy,False
+394693,"Hudson, NY",NY,26460,"Hudson, NY",100,city+state_fuzzy,False
+395124,"Starkville, MS",MS,44260,"Starkville, MS",100,city+state_fuzzy,False
+394861,"Milledgeville, GA",GA,33300,"Milledgeville, GA",100,city+state_fuzzy,False
+394326,"Amsterdam, NY",NY,11220,"Amsterdam, NY",100,city+state_fuzzy,False
+394903,"Natchez, MS",LA,35020,"Natchez, MS-LA",100,city+state_fuzzy,False
+753865,"Bardstown, KY",KY,,,50,unmatched,True
+395201,"Wapakoneta, OH",OH,47540,"Wapakoneta, OH",100,city+state_fuzzy,False
+394545,"Duncan, OK",OK,20340,"Duncan, OK",100,city+state_fuzzy,False
+395082,"Selinsgrove, PA",PA,42780,"Selinsgrove, PA",100,city+state_fuzzy,False
+394560,"El Dorado, AR",AR,20980,"El Dorado, AR",100,city+state_fuzzy,False
+394382,"Bennington, VT",VT,13540,"Bennington, VT",100,city+state_fuzzy,False
+394331,"Angola, IN",IN,11420,"Angola, IN",100,city+state_fuzzy,False
+395176,"Union City, TN",TN,46460,"Union City, TN",100,city+state_fuzzy,False
+753912,"Pinehurst, NC",NC,38240,"Pinehurst-Southern Pines, NC",100,city+state_fuzzy,False
+395190,"Victoria, TX",TX,47020,"Victoria, TX",100,city+state_fuzzy,False
+394568,"Elmira, NY",NY,21300,"Elmira, NY",100,city+state_fuzzy,False
+394744,"Key West, FL",FL,28580,"Key West-Key Largo, FL",100,city+state_fuzzy,False
+395205,"Warsaw, IN",IN,47700,"Warsaw, IN",100,city+state_fuzzy,False
+753881,"Glenwood Springs, CO",CO,,,68,unmatched,True
+394350,"Auburn, NY",NY,12180,"Auburn, NY",100,city+state_fuzzy,False
+394516,"Danville, IL",IL,19180,"Danville, IL",100,city+state_fuzzy,False
+394736,"Kapaa, HI",HI,28180,"Kapaa, HI",100,city+state_fuzzy,False
+394305,"Alamogordo, NM",NM,10460,"Alamogordo, NM",100,city+state_fuzzy,False
+394587,"Farmington, MO",MO,22100,"Farmington, MO",100,city+state_fuzzy,False
+394885,"Mount Pleasant, MI",MI,34380,"Mount Pleasant, MI",100,city+state_fuzzy,False
+394309,"Albemarle, NC",NC,10620,"Albemarle, NC",100,city+state_fuzzy,False
+395136,"Sturgis, MI",MI,44780,"Sturgis, MI",100,city+state_fuzzy,False
+394365,"Batavia, NY",NY,12860,"Batavia, NY",100,city+state_fuzzy,False
+394444,"Carson City, NV",NV,16180,"Carson City, NV",100,city+state_fuzzy,False
+394339,"Ashland, OH",OH,11740,"Ashland, OH",100,city+state_fuzzy,False
+394933,"Oil City, PA",PA,36340,"Oil City, PA",100,city+state_fuzzy,False
+394527,"Del Rio, TX",TX,19620,"Del Rio, TX",100,city+state_fuzzy,False
+394739,"Kendallville, IN",IN,28340,"Kendallville, IN",100,city+state_fuzzy,False
+394987,"Plymouth, IN",IN,38500,"Plymouth, IN",100,city+state_fuzzy,False
+394482,"Coldwater, MI",MI,17740,"Coldwater, MI",100,city+state_fuzzy,False
+394779,"Lawrenceburg, TN",TN,29980,"Lawrenceburg, TN",100,city+state_fuzzy,False
+394891,"Mountain Home, AR",AR,34260,"Mountain Home, AR",100,city+state_fuzzy,False
+394574,"Espa-¦ola, NM",NM,21580,"Española, NM",100,city+state_fuzzy,False
+394840,"Mayfield, KY",KY,32460,"Mayfield, KY",100,city+state_fuzzy,False
+394370,"Bay City, TX",TX,13060,"Bay City, TX",100,city+state_fuzzy,False
+395187,"Vernal, UT",UT,46860,"Vernal, UT",100,city+state_fuzzy,False
+394385,"Big Spring, TX",TX,13700,"Big Spring, TX",100,city+state_fuzzy,False
+395149,"Taos, NM",NM,45340,"Taos, NM",100,city+state_fuzzy,False
+394324,"Americus, GA",GA,11140,"Americus, GA",100,city+state_fuzzy,False
+394835,"Martin, TN",TN,32280,"Martin, TN",100,city+state_fuzzy,False
+753871,"Breckenridge, CO",CO,14720,"Breckenridge, CO",100,city+state_fuzzy,False
+394606,"Fort Morgan, CO",CO,22820,"Fort Morgan, CO",100,city+state_fuzzy,False
+395086,"Sevierville, TN",TN,42940,"Sevierville, TN",100,city+state_fuzzy,False
+394928,"Ocean City, NJ",NJ,,,57,unmatched,True
+394452,"Centralia, WA",WA,16500,"Centralia, WA",100,city+state_fuzzy,False
+395062,"Sandusky, OH",OH,41780,"Sandusky, OH",100,city+state_fuzzy,False
+394614,"Frankfort, KY",KY,23180,"Frankfort, KY",100,city+state_fuzzy,False
+753928,"Wisconsin Rapids, WI",WI,49220,"Wisconsin Rapids-Marshfield, WI",100,city+state_fuzzy,False
+395027,"Roanoke Rapids, NC",NC,40260,"Roanoke Rapids, NC",100,city+state_fuzzy,False
+394836,"Martinsville, VA",VA,32300,"Martinsville, VA",100,city+state_fuzzy,False
+394343,"Athens, OH",OH,11900,"Athens, OH",100,city+state_fuzzy,False
+394631,"Gillette, WY",WY,23940,"Gillette, WY",100,city+state_fuzzy,False
+394509,"Crossville, TN",TN,18900,"Crossville, TN",100,city+state_fuzzy,False
+394940,"Ontario, OR",OR,36620,"Ontario, OR-ID",100,city+state_fuzzy,False
+395157,"Tiffin, OH",OH,45660,"Tiffin, OH",100,city+state_fuzzy,False
+394566,"Elko, NV",NV,21220,"Elko, NV",100,city+state_fuzzy,False
+394344,"Athens, TN",TN,11940,"Athens, TN",100,city+state_fuzzy,False
+753905,"Newport, OR",OR,35440,"Newport, OR",100,city+state_fuzzy,False
+394379,"Bemidji, MN",MN,13420,"Bemidji, MN",100,city+state_fuzzy,False
+753889,"Hillsdale, MI",MI,25880,"Hillsdale, MI",100,city+state_fuzzy,False
+394961,"Paragould, AR",AR,37500,"Paragould, AR",100,city+state_fuzzy,False
+394558,"El Campo, TX",TX,20900,"El Campo, TX",100,city+state_fuzzy,False
+394341,"Astoria, OR",OR,11820,"Astoria, OR",100,city+state_fuzzy,False
+753866,"Big Stone Gap, VA",VA,,,50,unmatched,True
+394981,"Pittsburg, KS",KS,38260,"Pittsburg, KS",100,city+state_fuzzy,False
+394535,"Dixon, IL",IL,19940,"Dixon, IL",100,city+state_fuzzy,False
+394419,"Brookings, SD",SD,15100,"Brookings, SD",100,city+state_fuzzy,False
+753892,"Jackson, OH",OH,,,66,unmatched,True
+394481,"Coffeyville, KS",KS,,,31,unmatched,True
+394892,"Mountain Home, ID",ID,34300,"Mountain Home, ID",100,city+state_fuzzy,False
+394435,"Camden, AR",AR,15780,"Camden, AR",100,city+state_fuzzy,False
+394869,"Moberly, MO",MO,33620,"Moberly, MO",100,city+state_fuzzy,False
+394511,"Cullman, AL",AL,18980,"Cullman, AL",100,city+state_fuzzy,False
+394776,"Laurel, MS",MS,29860,"Laurel, MS",100,city+state_fuzzy,False
+394704,"Indiana, PA",PA,26860,"Indiana, PA",100,city+state_fuzzy,False
+394941,"Opelousas, LA",LA,36660,"Opelousas, LA",100,city+state_fuzzy,False
+394638,"Grand Island, NE",NE,24260,"Grand Island, NE",100,city+state_fuzzy,False
+394897,"Muskogee, OK",OK,34780,"Muskogee, OK",100,city+state_fuzzy,False
+394827,"Marion, OH",OH,32020,"Marion, OH",100,city+state_fuzzy,False
+394443,"Carlsbad, NM",NM,16100,"Carlsbad-Artesia, NM",100,city+state_fuzzy,False
+394591,"Fergus Falls, MN",MN,22260,"Fergus Falls, MN",100,city+state_fuzzy,False
+394923,"Norwalk, OH",OH,35940,"Norwalk, OH",100,city+state_fuzzy,False
+394547,"Durango, CO",CO,20420,"Durango, CO",100,city+state_fuzzy,False
+394503,"Corsicana, TX",TX,18620,"Corsicana, TX",100,city+state_fuzzy,False
+394878,"Morgan City, LA",LA,34020,"Morgan City, LA",100,city+state_fuzzy,False
+394478,"Clovis, NM",NM,17580,"Clovis, NM",100,city+state_fuzzy,False
+394548,"Durant, OK",OK,20460,"Durant, OK",100,city+state_fuzzy,False
+394695,"Huntingdon, PA",PA,26500,"Huntingdon, PA",100,city+state_fuzzy,False
+395228,"Willmar, MN",MN,48820,"Willmar, MN",100,city+state_fuzzy,False
+394349,"Auburn, IN",IN,12140,"Auburn, IN",100,city+state_fuzzy,False
+394677,"Henderson, NC",NC,25780,"Henderson, NC",100,city+state_fuzzy,False
+395230,"Wilmington, OH",OH,48940,"Wilmington, OH",100,city+state_fuzzy,False
+394624,"Gainesville, TX",TX,23620,"Gainesville, TX",100,city+state_fuzzy,False
+394690,"Houghton, MI",MI,26340,"Houghton, MI",100,city+state_fuzzy,False
+394654,"Greenwood, MS",MS,24900,"Greenwood, MS",100,city+state_fuzzy,False
+394526,"Defiance, OH",OH,19580,"Defiance, OH",100,city+state_fuzzy,False
+394914,"Newberry, SC",SC,35140,"Newberry, SC",100,city+state_fuzzy,False
+394550,"Dyersburg, TN",TN,20540,"Dyersburg, TN",100,city+state_fuzzy,False
+394696,"Huntington, IN",IN,26540,"Huntington, IN",100,city+state_fuzzy,False
+394413,"Brenham, TX",TX,14780,"Brenham, TX",100,city+state_fuzzy,False
+394947,"Ottumwa, IA",IA,36900,"Ottumwa, IA",100,city+state_fuzzy,False
+394777,"Laurinburg, NC",NC,29900,"Laurinburg, NC",100,city+state_fuzzy,False
+394795,"Lincoln, IL",IL,30660,"Lincoln, IL",100,city+state_fuzzy,False
+394812,"Macomb, IL",IL,31380,"Macomb, IL",100,city+state_fuzzy,False
+395110,"Spearfish, SD",SD,43940,"Spearfish, SD",100,city+state_fuzzy,False
+753921,"Steamboat Springs, CO",CO,44460,"Steamboat Springs, CO",100,city+state_fuzzy,False
+394865,"Minneapolis, MN",MN,33460,"Minneapolis-St. Paul-Bloomington, MN-WI",100,city+state_fuzzy,False
+394982,"Pittsburgh, PA",PA,38300,"Pittsburgh, PA",100,city+state_fuzzy,False
+394862,"Milwaukee, WI",WI,33340,"Milwaukee-Waukesha, WI",100,city+state_fuzzy,False
+395167,"Tucson, AZ",AZ,46060,"Tucson, AZ",100,city+state_fuzzy,False
+394619,"Fresno, CA",CA,23420,"Fresno, CA",100,city+state_fuzzy,False
+394440,"Cape Coral, FL",FL,15980,"Cape Coral-Fort Myers, FL",100,city+state_fuzzy,False
+394711,"Jackson, MS",MS,27140,"Jackson, MS",100,city+state_fuzzy,False
+394645,"Greeley, CO",CO,24540,"Greeley, CO",100,city+state_fuzzy,False
+395197,"Waco, TX",TX,47380,"Waco, TX",100,city+state_fuzzy,False
+395240,"Yakima, WA",WA,49420,"Yakima, WA",100,city+state_fuzzy,False
+394519,"Daphne, AL",AL,19300,"Daphne-Fairhope-Foley, AL",100,city+state_fuzzy,False
+394429,"Burlington, VT",VT,15540,"Burlington-South Burlington, VT",100,city+state_fuzzy,False
+394346,"Athens, GA",GA,12020,"Athens-Clarke County, GA",100,city+state_fuzzy,False
+394651,"Greenville, NC",NC,24780,"Greenville, NC",100,city+state_fuzzy,False
+394493,"Concord, NH",NH,18180,"Concord, NH",100,city+state_fuzzy,False
+395139,"Sumter, SC",SC,44940,"Sumter, SC",100,city+state_fuzzy,False
+394661,"Hammond, LA",LA,25220,"Hammond, LA",100,city+state_fuzzy,False
+395120,"St. Joseph, MO",MO,41140,"St. Joseph, MO-KS",100,city+state_fuzzy,False
+395213,"Watertown, NY",NY,48060,"Watertown-Fort Drum, NY",100,city+state_fuzzy,False
+394374,"Beckley, WV",WV,13220,"Beckley, WV",100,city+state_fuzzy,False
+394734,"Kankakee, IL",IL,28100,"Kankakee, IL",100,city+state_fuzzy,False
+394762,"LaGrange, GA",GA,29300,"LaGrange, GA-AL",100,city+state_fuzzy,False
+395056,"San Diego, CA",CA,41740,"San Diego-Chula Vista-Carlsbad, CA",100,city+state_fuzzy,False
+395005,"Providence, RI",RI,39300,"Providence-Warwick, RI-MA",100,city+state_fuzzy,False
+394952,"Oxnard, CA",CA,37100,"Oxnard-Thousand Oaks-Ventura, CA",100,city+state_fuzzy,False
+394648,"Greensboro, NC",NC,24660,"Greensboro-High Point, NC",100,city+state_fuzzy,False
+395235,"Winston, NC",NC,49180,"Winston-Salem, NC",100,city+state_fuzzy,False
+395244,"York, PA",PA,49620,"York-Hanover, PA",100,city+state_fuzzy,False
+395179,"Utica, NY",NY,46540,"Utica-Rome, NY",100,city+state_fuzzy,False
+394660,"Hagerstown, MD",MD,25180,"Hagerstown-Martinsburg, MD-WV",100,city+state_fuzzy,False
+394378,"Bellingham, WA",WA,13380,"Bellingham, WA",100,city+state_fuzzy,False
+394848,"Medford, OR",OR,32780,"Medford, OR",100,city+state_fuzzy,False
+395247,"Yuma, AZ",AZ,49740,"Yuma, AZ",100,city+state_fuzzy,False
+394680,"Hilo, HI",HI,25900,"Hilo-Kailua, HI",100,city+state_fuzzy,False
+394392,"Blacksburg, VA",VA,13980,"Blacksburg-Christiansburg-Radford, VA",100,city+state_fuzzy,False
+395215,"Wausau, WI",WI,48140,"Wausau, WI",100,city+state_fuzzy,False
+394393,"Bloomington, IN",IN,14020,"Bloomington, IN",100,city+state_fuzzy,False
+394703,"Idaho Falls, ID",ID,26820,"Idaho Falls, ID",100,city+state_fuzzy,False
+394639,"Grand Junction, CO",CO,24300,"Grand Junction, CO",100,city+state_fuzzy,False
+394442,"Carbondale, IL",IL,16060,"Carbondale, IL",100,city+state_fuzzy,False
+394633,"Glens Falls, NY",NY,24020,"Glens Falls, NY",100,city+state_fuzzy,False
+395089,"Sheboygan, WI",WI,43100,"Sheboygan, WI",100,city+state_fuzzy,False
+753872,"California, MD",MD,,,52,unmatched,True
+394518,"Danville, VA",VA,19260,"Danville, VA",100,city+state_fuzzy,False
+394849,"Memphis, TN",TN,32820,"Memphis, TN-MS-AR",100,city+state_fuzzy,False
+395022,"Richmond, VA",VA,40060,"Richmond, VA",100,city+state_fuzzy,False
+394807,"Louisville, KY",KY,31140,"Louisville/Jefferson County, KY-IN",96,city+state_fuzzy,False
+394399,"Boise City, ID",ID,14260,"Boise City, ID",100,city+state_fuzzy,False
+394816,"Madison, WI",WI,31540,"Madison, WI",100,city+state_fuzzy,False
+394528,"Deltona, FL",FL,19660,"Deltona-Daytona Beach-Ormond Beach, FL",100,city+state_fuzzy,False
+395075,"Scranton, PA",PA,42540,"Scranton--Wilkes-Barre, PA",100,city+state_fuzzy,False
+395245,"Youngstown, OH",OH,49660,"Youngstown-Warren, OH",100,city+state_fuzzy,False
+394746,"Killeen, TX",TX,28660,"Killeen-Temple, TX",100,city+state_fuzzy,False
+394372,"Beaumont, TX",TX,13140,"Beaumont-Port Arthur, TX",100,city+state_fuzzy,False
+394679,"Hickory, NC",NC,25860,"Hickory-Lenoir-Morganton, NC",100,city+state_fuzzy,False
+394813,"Macon, GA",GA,31420,"Macon-Bibb County, GA",100,city+state_fuzzy,False
+394454,"Champaign, IL",IL,16580,"Champaign-Urbana, IL",100,city+state_fuzzy,False
+394726,"Johnson City, TN",TN,27740,"Johnson City, TN",100,city+state_fuzzy,False
+394720,"Janesville, WI",WI,27500,"Janesville-Beloit, WI",100,city+state_fuzzy,False
+394930,"Odessa, TX",TX,36220,"Odessa, TX",100,city+state_fuzzy,False
+395125,"State College, PA",PA,44300,"State College, PA",100,city+state_fuzzy,False
+394598,"Florence, AL",AL,22520,"Florence-Muscle Shoals, AL",100,city+state_fuzzy,False
+394800,"Logan, UT",UT,30860,"Logan, UT-ID",100,city+state_fuzzy,False
+394756,"La Crosse, WI",WI,29100,"La Crosse-Onalaska, WI-MN",100,city+state_fuzzy,False
+395094,"Sherman, TX",TX,43300,"Sherman-Denison, TX",100,city+state_fuzzy,False
+395217,"Weirton, WV",OH,48260,"Weirton-Steubenville, WV-OH",100,city+state_fuzzy,False
+394404,"Boston, MA",MA,14460,"Boston-Cambridge-Newton, MA-NH",100,city+state_fuzzy,False
+395055,"San Antonio, TX",TX,41700,"San Antonio-New Braunfels, TX",100,city+state_fuzzy,False
+394902,"Nashville, TN",TN,34980,"Nashville-Davidson--Murfreesboro--Franklin, TN",100,city+state_fuzzy,False
+394312,"Albuquerque, NM",NM,10740,"Albuquerque, NM",100,city+state_fuzzy,False
+395115,"Springfield, MA",MA,44140,"Springfield, MA",100,city+state_fuzzy,False
+395160,"Toledo, OH",OH,45780,"Toledo, OH",100,city+state_fuzzy,False
+394871,"Modesto, CA",CA,33700,"Modesto, CA",100,city+state_fuzzy,False
+394590,"Fayetteville, AR",AR,22220,"Fayetteville-Springdale-Rogers, AR",100,city+state_fuzzy,False
+395183,"Vallejo, CA",CA,46700,"Vallejo, CA",100,city+state_fuzzy,False
+394697,"Huntington, WV",OH,26580,"Huntington-Ashland, WV-KY-OH",100,city+state_fuzzy,False
+394622,"Gainesville, FL",FL,23540,"Gainesville, FL",100,city+state_fuzzy,False
+394808,"Lubbock, TX",TX,31180,"Lubbock, TX",100,city+state_fuzzy,False
+753895,"Lafayette, IN",IN,29200,"Lafayette-West Lafayette, IN",100,city+state_fuzzy,False
+394716,"Jacksonville, NC",NC,27340,"Jacksonville, NC",100,city+state_fuzzy,False
+395011,"Racine, WI",WI,39540,"Racine-Mount Pleasant, WI",100,city+state_fuzzy,False
+753869,"Bloomington, IL",IL,14010,"Bloomington, IL",100,city+state_fuzzy,False
+394944,"Oshkosh, WI",WI,36780,"Oshkosh-Neenah, WI",100,city+state_fuzzy,False
+394731,"Kahului, HI",HI,27980,"Kahului-Wailuku, HI",100,city+state_fuzzy,False
+394802,"London, KY",KY,,,53,unmatched,True
+394821,"Manhattan, KS",KS,31740,"Manhattan, KS",100,city+state_fuzzy,False
+394325,"Ames, IA",IA,11180,"Ames, IA",100,city+state_fuzzy,False
+394810,"Lumberton, NC",NC,31300,"Lumberton, NC",100,city+state_fuzzy,False
+394635,"Goldsboro, NC",NC,24140,"Goldsboro, NC",100,city+state_fuzzy,False
+395039,"Roseburg, OR",OR,40700,"Roseburg, OR",100,city+state_fuzzy,False
+394358,"Baltimore, MD",MD,12580,"Baltimore-Columbia-Towson, MD",100,city+state_fuzzy,False
+394355,"Austin, TX",TX,12420,"Austin-Round Rock-San Marcos, TX",100,city+state_fuzzy,False
+394910,"New Orleans, LA",LA,35380,"New Orleans-Metairie, LA",100,city+state_fuzzy,False
+394338,"Asheville, NC",NC,11700,"Asheville, NC",100,city+state_fuzzy,False
+394502,"Corpus Christi, TX",TX,18580,"Corpus Christi, TX",100,city+state_fuzzy,False
+395096,"Shreveport, LA",LA,43340,"Shreveport-Bossier City, LA",100,city+state_fuzzy,False
+394332,"Ann Arbor, MI",MI,11460,"Ann Arbor, MI",100,city+state_fuzzy,False
+394602,"Fort Collins, CO",CO,22660,"Fort Collins-Loveland, CO",100,city+state_fuzzy,False
+395033,"Rockford, IL",IL,40420,"Rockford, IL",100,city+state_fuzzy,False
+395028,"Roanoke, VA",VA,40220,"Roanoke, VA",100,city+state_fuzzy,False
+394811,"Lynchburg, VA",VA,31340,"Lynchburg, VA",100,city+state_fuzzy,False
+394455,"Charleston, WV",WV,16620,"Charleston, WV",100,city+state_fuzzy,False
+394387,"Binghamton, NY",NY,13780,"Binghamton, NY",100,city+state_fuzzy,False
+395047,"Saginaw, MI",MI,40980,"Saginaw, MI",100,city+state_fuzzy,False
+395202,"Warner Robins, GA",GA,47580,"Warner Robins, GA",100,city+state_fuzzy,False
+394748,"Kingston, NY",NY,28740,"Kingston, NY",100,city+state_fuzzy,False
+395246,"Yuba City, CA",CA,49700,"Yuba City, CA",100,city+state_fuzzy,False
+395119,"St. George, UT",UT,41100,"St. George, UT",100,city+state_fuzzy,False
+395210,"Waterloo, IA",IA,47940,"Waterloo-Cedar Falls, IA",100,city+state_fuzzy,False
+394880,"Morristown, TN",TN,34100,"Morristown, TN",100,city+state_fuzzy,False
+395013,"Rapid City, SD",SD,39660,"Rapid City, SD",100,city+state_fuzzy,False
+395117,"Springfield, OH",OH,44220,"Springfield, OH",100,city+state_fuzzy,False
+394368,"Battle Creek, MI",MI,12980,"Battle Creek, MI",100,city+state_fuzzy,False
+394390,"Bismarck, ND",ND,13900,"Bismarck, ND",100,city+state_fuzzy,False
+394321,"Altoona, PA",PA,11020,"Altoona, PA",100,city+state_fuzzy,False
+394778,"Lawrence, KS",KS,29940,"Lawrence, KS",100,city+state_fuzzy,False
+394396,"Bluefield, WV",VA,14140,"Bluefield, WV-VA",100,city+state_fuzzy,False
+395023,"Richmond, KY",KY,40080,"Richmond-Berea, KY",100,city+state_fuzzy,False
+753915,"Salem, OH",OH,41400,"Salem, OH",100,city+state_fuzzy,False
+395166,"Truckee, CA",CA,46020,"Truckee-Grass Valley, CA",100,city+state_fuzzy,False
+395090,"Shelby, NC",NC,43140,"Shelby-Kings Mountain, NC",100,city+state_fuzzy,False
+394458,"Charlotte, NC",NC,16740,"Charlotte-Concord-Gastonia, NC-SC",100,city+state_fuzzy,False
+394466,"Cincinnati, OH",OH,17140,"Cincinnati, OH-KY-IN",100,city+state_fuzzy,False
+394935,"Oklahoma City, OK",OK,36420,"Oklahoma City, OK",100,city+state_fuzzy,False
+395012,"Raleigh, NC",NC,39580,"Raleigh-Cary, NC",100,city+state_fuzzy,False
+394653,"Greenville, SC",SC,24860,"Greenville-Anderson-Greer, SC",100,city+state_fuzzy,False
+394798,"Little Rock, AR",AR,30780,"Little Rock-North Little Rock-Conway, AR",100,city+state_fuzzy,False
+394531,"Des Moines, IA",IA,19780,"Des Moines-West Des Moines, IA",100,city+state_fuzzy,False
+395019,"Reno, NV",NV,39900,"Reno, NV",100,city+state_fuzzy,False
+395116,"Springfield, MO",MO,44180,"Springfield, MO",100,city+state_fuzzy,False
+394972,"Peoria, IL",IL,37900,"Peoria, IL",100,city+state_fuzzy,False
+394520,"Davenport, IA",IL,19340,"Davenport-Moline-Rock Island, IA-IL",100,city+state_fuzzy,False
+394576,"Eugene, OR",OR,21660,"Eugene-Springfield, OR",100,city+state_fuzzy,False
+394927,"Ocala, FL",FL,36100,"Ocala, FL",100,city+state_fuzzy,False
+394937,"Olympia, WA",WA,36500,"Olympia-Lacey-Tumwater, WA",100,city+state_fuzzy,False
+394803,"Longview, TX",TX,30980,"Longview, TX",100,city+state_fuzzy,False
+395065,"Santa Cruz, CA",CA,42100,"Santa Cruz-Watsonville, CA",100,city+state_fuzzy,False
+394732,"Kalamazoo, MI",MI,28020,"Kalamazoo-Portage, MI",100,city+state_fuzzy,False
+394334,"Appleton, WI",WI,11540,"Appleton, WI",100,city+state_fuzzy,False
+395174,"Tyler, TX",TX,46340,"Tyler, TX",100,city+state_fuzzy,False
+394597,"Florence, SC",SC,22500,"Florence, SC",100,city+state_fuzzy,False
+394896,"Muskegon, MI",MI,34740,"Muskegon-Norton Shores, MI",100,city+state_fuzzy,False
+394523,"Decatur, AL",AL,19460,"Decatur, AL",100,city+state_fuzzy,False
+395163,"Traverse City, MI",MI,45900,"Traverse City, MI",100,city+state_fuzzy,False
+394537,"Dothan, AL",AL,20020,"Dothan, AL",100,city+state_fuzzy,False
+394890,"Mount Vernon, WA",WA,34580,"Mount Vernon-Anacortes, WA",100,city+state_fuzzy,False
+394407,"Bozeman, MT",MT,14580,"Bozeman, MT",100,city+state_fuzzy,False
+394852,"Meridian, MS",MS,32940,"Meridian, MS",100,city+state_fuzzy,False
+394514,"Dallas, TX",TX,19100,"Dallas-Fort Worth-Arlington, TX",100,city+state_fuzzy,False
+394856,"Miami, FL",FL,33100,"Miami-Fort Lauderdale-West Palm Beach, FL",100,city+state_fuzzy,False
+394998,"Portland, OR",OR,38900,"Portland-Vancouver-Hillsboro, OR-WA",100,city+state_fuzzy,False
+394843,"McAllen, TX",TX,32580,"McAllen-Edinburg-Mission, TX",100,city+state_fuzzy,False
+394318,"Allentown, PA",PA,10900,"Allentown-Bethlehem-Easton, PA-NJ",100,city+state_fuzzy,False
+394484,"Colorado Springs, CO",CO,17820,"Colorado Springs, CO",100,city+state_fuzzy,False
+395006,"Provo, UT",UT,39340,"Provo-Orem-Lehi, UT",100,city+state_fuzzy,False
+394460,"Chattanooga, TN",TN,16860,"Chattanooga, TN-GA",100,city+state_fuzzy,False
+394698,"Huntsville, AL",AL,26620,"Huntsville, AL",100,city+state_fuzzy,False
+395048,"Salem, OR",OR,41420,"Salem, OR",100,city+state_fuzzy,False
+394658,"Gulfport, MS",MS,25060,"Gulfport-Biloxi, MS",100,city+state_fuzzy,False
+395070,"Savannah, GA",GA,42340,"Savannah, GA",100,city+state_fuzzy,False
+395164,"Trenton, NJ",NJ,45940,"Trenton-Princeton, NJ",100,city+state_fuzzy,False
+394796,"Lincoln, NE",NE,30700,"Lincoln, NE",100,city+state_fuzzy,False
+394585,"Fargo, ND",ND,22020,"Fargo, ND-MN",100,city+state_fuzzy,False
+394773,"Las Cruces, NM",NM,29740,"Las Cruces, NM",100,city+state_fuzzy,False
+394485,"Columbia, MO",MO,17860,"Columbia, MO",100,city+state_fuzzy,False
+395009,"Punta Gorda, FL",FL,39460,"Punta Gorda, FL",100,city+state_fuzzy,False
+394386,"Billings, MT",MT,13740,"Billings, MT",100,city+state_fuzzy,False
+394707,"Iowa City, IA",IA,26980,"Iowa City, IA",100,city+state_fuzzy,False
+394428,"Burlington, NC",NC,15500,"Burlington, NC",100,city+state_fuzzy,False
+394453,"Chambersburg, PA",PA,16540,"Chambersburg, PA",100,city+state_fuzzy,False
+394728,"Jonesboro, AR",AR,27860,"Jonesboro, AR",100,city+state_fuzzy,False
+394983,"Pittsfield, MA",MA,38340,"Pittsfield, MA",100,city+state_fuzzy,False
+395098,"Sierra Vista, AZ",AZ,43420,"Sierra Vista-Douglas, AZ",100,city+state_fuzzy,False
+395225,"Williamsport, PA",PA,48700,"Williamsport, PA",100,city+state_fuzzy,False
+394893,"Muncie, IN",IN,34620,"Muncie, IN",100,city+state_fuzzy,False
+394630,"Gettysburg, PA",PA,23900,"Gettysburg, PA",100,city+state_fuzzy,False
+394974,"Philadelphia, PA",PA,37980,"Philadelphia-Camden-Wilmington, PA-NJ-DE-MD",100,city+state_fuzzy,False
+395148,"Tampa, FL",FL,45300,"Tampa-St. Petersburg-Clearwater, FL",100,city+state_fuzzy,False
+394457,"Charleston, SC",SC,16700,"Charleston-North Charleston, SC",100,city+state_fuzzy,False
+395134,"Stockton, CA",CA,44700,"Stockton-Lodi, CA",100,city+state_fuzzy,False
+395224,"Wichita, KS",KS,48620,"Wichita, KS",100,city+state_fuzzy,False
+394898,"Myrtle Beach, SC",SC,34820,"Myrtle Beach-Conway-North Myrtle Beach, SC",100,city+state_fuzzy,False
+395195,"Visalia, CA",CA,47300,"Visalia, CA",100,city+state_fuzzy,False
+395015,"Reading, PA",PA,39740,"Reading, PA",100,city+state_fuzzy,False
+394421,"Brownsville, TX",TX,15180,"Brownsville-Harlingen, TX",100,city+state_fuzzy,False
+395051,"Salisbury, MD",DE,41540,"Salisbury, MD",37,manual,False
+394439,"Canton, OH",OH,15940,"Canton-Massillon, OH",100,city+state_fuzzy,False
+394646,"Green Bay, WI",WI,24580,"Green Bay, WI",100,city+state_fuzzy,False
+394741,"Kennewick, WA",WA,28420,"Kennewick-Richland, WA",100,city+state_fuzzy,False
+753875,"Crestview, FL",FL,18880,"Crestview-Fort Walton Beach-Destin, FL",100,city+state_fuzzy,False
+394555,"Eau Claire, WI",WI,20740,"Eau Claire, WI",100,city+state_fuzzy,False
+394306,"Albany, GA",GA,10500,"Albany, GA",100,city+state_fuzzy,False
+395152,"Texarkana, TX",TX,45500,"Texarkana, TX-AR",100,city+state_fuzzy,False
+394668,"Harrisonburg, VA",VA,25500,"Harrisonburg, VA",100,city+state_fuzzy,False
+394307,"Albany, OR",OR,10540,"Albany, OR",100,city+state_fuzzy,False
+753890,"Holland, MI",MI,26090,"Holland, MI",100,city+state_fuzzy,False
+394867,"Missoula, MT",MT,33540,"Missoula, MT",100,city+state_fuzzy,False
+394709,"Ithaca, NY",NY,27060,"Ithaca, NY",100,city+state_fuzzy,False
+394302,"Adrian, MI",MI,10300,"Adrian, MI",100,city+state_fuzzy,False
+394913,"New York, NY",NY,35620,"New York-Newark-Jersey City, NY-NJ",100,city+state_fuzzy,False
+394463,"Chicago, IL",IL,16980,"Chicago-Naperville-Elgin, IL-IN",100,city+state_fuzzy,False
+394692,"Houston, TX",TX,26420,"Houston-Pasadena-The Woodlands, TX",100,city+state_fuzzy,False
+395209,"Washington, DC",VA,47900,"Washington-Arlington-Alexandria, DC-VA-MD-WV",100,city+state_fuzzy,False
+395059,"San Jose, CA",CA,41940,"San Jose-Sunnyvale-Santa Clara, CA",100,city+state_fuzzy,False
+394415,"Bridgeport, CT",CT,14860,"Bridgeport-Stamford-Danbury, CT",100,city+state_fuzzy,False
+394931,"Ogden, UT",UT,36260,"Ogden, UT",100,city+state_fuzzy,False
+394549,"Durham, NC",NC,20500,"Durham-Chapel Hill, NC",100,city+state_fuzzy,False
+394957,"Palm Bay, FL",FL,37340,"Palm Bay-Melbourne-Titusville, FL",100,city+state_fuzzy,False
+395113,"Spokane, WA",WA,44060,"Spokane-Spokane Valley, WA",100,city+state_fuzzy,False
+395068,"Santa Rosa, CA",CA,42220,"Santa Rosa-Petaluma, CA",100,city+state_fuzzy,False
+394405,"Boulder, CO",CO,14500,"Boulder, CO",100,city+state_fuzzy,False
+394851,"Merced, CA",CA,32900,"Merced, CA",100,city+state_fuzzy,False
+394572,"Erie, PA",PA,21500,"Erie, PA",100,city+state_fuzzy,False
+394483,"College Station, TX",TX,17780,"College Station-Bryan, TX",100,city+state_fuzzy,False
+395161,"Topeka, KS",KS,45820,"Topeka, KS",100,city+state_fuzzy,False
+394763,"Lake Charles, LA",LA,29340,"Lake Charles, LA",100,city+state_fuzzy,False
+395114,"Springfield, IL",IL,44100,"Springfield, IL",100,city+state_fuzzy,False
+394872,"Monroe, LA",LA,33740,"Monroe, LA",100,city+state_fuzzy,False
+394480,"Coeur d'Alene, ID",ID,17660,"Coeur d'Alene, ID",100,city+state_fuzzy,False
+394710,"Jackson, MI",MI,27100,"Jackson, MI",100,city+state_fuzzy,False
+395079,"Sebastian, FL",FL,42680,"Sebastian-Vero Beach-West Vero Corridor, FL",100,city+state_fuzzy,False
+394685,"Homosassa Springs, FL",FL,26140,"Homosassa Springs, FL",100,city+state_fuzzy,False
+395168,"Tullahoma, TN",TN,46100,"Tullahoma-Manchester, TN",100,city+state_fuzzy,False
+394530,"Denver, CO",CO,19740,"Denver-Aurora-Centennial, CO",100,city+state_fuzzy,False
+394735,"Kansas City, MO",MO,28140,"Kansas City, MO-KS",100,city+state_fuzzy,False
+395194,"Virginia Beach, VA",VA,47260,"Virginia Beach-Chesapeake-Norfolk, VA-NC",100,city+state_fuzzy,False
+395053,"Salt Lake City, UT",UT,41620,"Salt Lake City-Murray, UT",100,city+state_fuzzy,False
+394669,"Hartford, CT",CT,25540,"Hartford-West Hartford-East Hartford, CT",100,city+state_fuzzy,False
+394388,"Birmingham, AL",AL,13820,"Birmingham, AL",100,city+state_fuzzy,False
+395238,"Worcester, MA",MA,49340,"Worcester, MA",100,city+state_fuzzy,False
+394367,"Baton Rouge, LA",LA,12940,"Baton Rouge, LA",100,city+state_fuzzy,False
+394766,"Lakeland, FL",FL,29460,"Lakeland-Winter Haven, FL",100,city+state_fuzzy,False
+395050,"Salinas, CA",CA,41500,"Salinas, CA",100,city+state_fuzzy,False
+395171,"Tuscaloosa, AL",AL,46220,"Tuscaloosa, AL",100,city+state_fuzzy,False
+394464,"Chico, CA",CA,17020,"Chico, CA",100,city+state_fuzzy,False
+394765,"Lake Havasu City, AZ",AZ,29420,"Lake Havasu City-Kingman, AZ",100,city+state_fuzzy,False
+395118,"St. Cloud, MN",MN,41060,"St. Cloud, MN",100,city+state_fuzzy,False
+394729,"Joplin, MO",MO,27900,"Joplin, MO-KS",100,city+state_fuzzy,False
+394299,"Abilene, TX",TX,10180,"Abilene, TX",100,city+state_fuzzy,False
+394917,"Niles, MI",MI,35660,"Niles, MI",100,city+state_fuzzy,False
+394662,"Hanford, CA",CA,25260,"Hanford-Corcoran, CA",100,city+state_fuzzy,False
+394723,"Jefferson City, MO",MO,27620,"Jefferson City, MO",100,city+state_fuzzy,False
+395102,"Sioux City, IA",IA,43580,"Sioux City, IA-NE-SD",100,city+state_fuzzy,False
+395000,"Pottsville, PA",PA,39060,"Pottsville, PA",100,city+state_fuzzy,False
+394783,"Lebanon, PA",PA,30140,"Lebanon, PA",100,city+state_fuzzy,False
+394900,"Napa, CA",CA,34900,"Napa, CA",100,city+state_fuzzy,False
+394588,"Farmington, NM",NM,22140,"Farmington, NM",100,city+state_fuzzy,False
+394857,"Michigan City, IN",IN,33140,"Michigan City-La Porte, IN",100,city+state_fuzzy,False
+394689,"Hot Springs, AR",AR,26300,"Hot Springs, AR",100,city+state_fuzzy,False
+394347,"Atlanta, GA",GA,12060,"Atlanta-Sandy Springs-Roswell, GA",100,city+state_fuzzy,False
+395078,"Seattle, WA",WA,42660,"Seattle-Tacoma-Bellevue, WA",100,city+state_fuzzy,False
+394640,"Grand Rapids, MI",MI,24340,"Grand Rapids-Wyoming-Kentwood, MI",100,city+state_fuzzy,False
+395169,"Tulsa, OK",OK,46140,"Tulsa, OK",100,city+state_fuzzy,False
+394561,"El Paso, TX",TX,21340,"El Paso, TX",100,city+state_fuzzy,False
+394486,"Columbia, SC",SC,17900,"Columbia, SC",100,city+state_fuzzy,False
+394352,"Augusta, GA",GA,12260,"Augusta-Richmond County, GA-SC",100,city+state_fuzzy,False
+394612,"Fort Wayne, IN",IN,23060,"Fort Wayne, IN",100,city+state_fuzzy,False
+394327,"Anchorage, AK",AK,11260,"Anchorage, AK",100,city+state_fuzzy,False
+394875,"Montgomery, AL",AL,33860,"Montgomery, AL",100,city+state_fuzzy,False
+395146,"Tallahassee, FL",FL,45220,"Tallahassee, FL",100,city+state_fuzzy,False
+394488,"Columbus, GA",GA,17980,"Columbus, GA-AL",100,city+state_fuzzy,False
+395109,"Spartanburg, SC",SC,43900,"Spartanburg, SC",100,city+state_fuzzy,False
+395229,"Wilmington, NC",NC,48900,"Wilmington, NC",100,city+state_fuzzy,False
+394406,"Bowling Green, KY",KY,14540,"Bowling Green, KY",100,city+state_fuzzy,False
+395007,"Pueblo, CO",CO,39380,"Pueblo, CO",100,city+state_fuzzy,False
+394314,"Alexandria, LA",LA,10780,"Alexandria, LA",100,city+state_fuzzy,False
+394595,"Flagstaff, AZ",AZ,22380,"Flagstaff, AZ",100,city+state_fuzzy,False
+394515,"Dalton, GA",GA,19140,"Dalton, GA",100,city+state_fuzzy,False
+394879,"Morgantown, WV",WV,34060,"Morgantown, WV",100,city+state_fuzzy,False
+394474,"Cleveland, TN",TN,17420,"Cleveland, TN",100,city+state_fuzzy,False
+394532,"Detroit, MI",MI,19820,"Detroit-Warren-Dearborn, MI",100,city+state_fuzzy,False
+394714,"Jacksonville, FL",FL,27260,"Jacksonville, FL",100,city+state_fuzzy,False
+394425,"Buffalo, NY",NY,15380,"Buffalo-Cheektowaga, NY",100,city+state_fuzzy,False
+394753,"Knoxville, TN",TN,28940,"Knoxville, TN",100,city+state_fuzzy,False
+753906,"North Port, FL",FL,35840,"North Port-Bradenton-Sarasota, FL",100,city+state_fuzzy,False
+394770,"Lansing, MI",MI,29620,"Lansing-East Lansing, MI",100,city+state_fuzzy,False
+394792,"Lexington, KY",KY,30460,"Lexington-Fayette, KY",100,city+state_fuzzy,False
+394995,"Port St. Lucie, FL",FL,38940,"Port St. Lucie, FL",100,city+state_fuzzy,False
+394761,"Lafayette, LA",LA,29180,"Lafayette, LA",100,city+state_fuzzy,False
+394471,"Clarksville, TN",TN,17300,"Clarksville, TN-KY",100,city+state_fuzzy,False
+394579,"Evansville, IN",IN,21780,"Evansville, IN",100,city+state_fuzzy,False
+395103,"Sioux Falls, SD",SD,43620,"Sioux Falls, SD-MN",100,city+state_fuzzy,False
+395030,"Rochester, MN",MN,40340,"Rochester, MN",100,city+state_fuzzy,False
+394380,"Bend, OR",OR,13460,"Bend, OR",100,city+state_fuzzy,False
+395151,"Terre Haute, IN",IN,45460,"Terre Haute, IN",100,city+state_fuzzy,False
+394671,"Hattiesburg, MS",MS,25620,"Hattiesburg, MS",100,city+state_fuzzy,False
+394553,"East Stroudsburg, PA",PA,20700,"East Stroudsburg, PA",100,city+state_fuzzy,False
+395170,"Tupelo, MS",MS,46180,"Tupelo, MS",100,city+state_fuzzy,False
+394873,"Monroe, MI",MI,33780,"Monroe, MI",100,city+state_fuzzy,False
+395223,"Wichita Falls, TX",TX,48660,"Wichita Falls, TX",100,city+state_fuzzy,False
+395036,"Rocky Mount, NC",NC,40580,"Rocky Mount, NC",100,city+state_fuzzy,False
+394780,"Lawton, OK",OK,30020,"Lawton, OK",100,city+state_fuzzy,False
+394824,"Mansfield, OH",OH,31900,"Mansfield, OH",100,city+state_fuzzy,False
+394804,"Longview, WA",WA,31020,"Longview-Kelso, WA",100,city+state_fuzzy,False
+395222,"Whitewater, WI",WI,48580,"Whitewater-Elkhorn, WI",100,city+state_fuzzy,False
+394524,"Decatur, IL",IL,19500,"Decatur, IL",100,city+state_fuzzy,False
+394733,"Kalispell, MT",MT,28060,"Kalispell, MT",100,city+state_fuzzy,False
+394492,"Columbus, OH",OH,18140,"Columbus, OH",100,city+state_fuzzy,False
+394705,"Indianapolis, IN",IN,26900,"Indianapolis-Carmel-Greenwood, IN",100,city+state_fuzzy,False
+394908,"New Haven, CT",CT,35300,"New Haven, CT",100,city+state_fuzzy,False
+394304,"Akron, OH",OH,10420,"Akron, OH",100,city+state_fuzzy,False
+394666,"Harrisburg, PA",PA,25420,"Harrisburg-Carlisle, PA",100,city+state_fuzzy,False
+394768,"Lancaster, PA",PA,29540,"Lancaster, PA",100,city+state_fuzzy,False
+394747,"Kingsport, TN",TN,28700,"Kingsport-Bristol, TN-VA",100,city+state_fuzzy,False
+395061,"San Luis Obispo, CA",CA,42020,"San Luis Obispo-Paso Robles, CA",100,city+state_fuzzy,False
+394924,"Norwich, CT",CT,35980,"Norwich-New London-Willimantic, CT",100,city+state_fuzzy,False
+394772,"Laredo, TX",TX,29700,"Laredo, TX",100,city+state_fuzzy,False
+394361,"Barnstable Town, MA",MA,12700,"Barnstable Town, MA",100,city+state_fuzzy,False
+394681,"Hilton Head Island, SC",SC,25940,"Hilton Head Island-Bluffton-Port Royal, SC",100,city+state_fuzzy,False
+394960,"Panama City, FL",FL,37460,"Panama City-Panama City Beach, FL",100,city+state_fuzzy,False
+394712,"Jackson, TN",TN,27180,"Jackson, TN",100,city+state_fuzzy,False
+394719,"Jamestown, NY",NY,27460,"Jamestown-Dunkirk, NY",100,city+state_fuzzy,False
+395128,"Staunton, VA",VA,44420,"Staunton-Stuarts Draft, VA",100,city+state_fuzzy,False
+395054,"San Angelo, TX",TX,41660,"San Angelo, TX",100,city+state_fuzzy,False
+395218,"Wenatchee, WA",WA,48300,"Wenatchee-East Wenatchee, WA",100,city+state_fuzzy,False
+394369,"Bay City, MI",MI,13020,"Bay City, MI",100,city+state_fuzzy,False
+394599,"Fond du Lac, WI",WI,22540,"Fond du Lac, WI",100,city+state_fuzzy,False
+394620,"Gadsden, AL",AL,23460,"Gadsden, AL",100,city+state_fuzzy,False
+394794,"Lima, OH",OH,30620,"Lima, OH",100,city+state_fuzzy,False
+395080,"Sebring, FL",FL,42700,"Sebring, FL",100,city+state_fuzzy,False
+753899,"Los Angeles, CA",CA,31080,"Los Angeles-Long Beach-Anaheim, CA",100,city+state_fuzzy,False
+394475,"Cleveland, OH",OH,17410,"Cleveland, OH",100,city+state_fuzzy,False
+394357,"Bakersfield, CA",CA,12540,"Bakersfield-Delano, CA",100,city+state_fuzzy,False
+394997,"Portland, ME",ME,38860,"Portland-South Portland, ME",100,city+state_fuzzy,False
+394971,"Pensacola, FL",FL,37860,"Pensacola-Ferry Pass-Brent, FL",100,city+state_fuzzy,False
+753917,"Santa Maria, CA",CA,42200,"Santa Maria-Santa Barbara, CA",100,city+state_fuzzy,False
+394901,"Naples, FL",FL,34940,"Naples-Marco Island, FL",100,city+state_fuzzy,False
+394412,"Bremerton, WA",WA,14740,"Bremerton-Silverdale-Port Orchard, WA",100,city+state_fuzzy,False
+394459,"Charlottesville, VA",VA,16820,"Charlottesville, VA",100,city+state_fuzzy,False
+394565,"Elkhart, IN",IN,21140,"Elkhart-Goshen, IN",100,city+state_fuzzy,False
+394623,"Gainesville, GA",GA,23580,"Gainesville, GA",100,city+state_fuzzy,False
+394559,"El Centro, CA",CA,20940,"El Centro, CA",100,city+state_fuzzy,False
+394351,"Auburn, AL",AL,12220,"Auburn-Opelika, AL",100,city+state_fuzzy,False
+395193,"Vineland, NJ",NJ,47220,"Vineland, NJ",100,city+state_fuzzy,False
+394359,"Bangor, ME",ME,12620,"Bangor, ME",100,city+state_fuzzy,False
+395182,"Valdosta, GA",GA,46660,"Valdosta, GA",100,city+state_fuzzy,False
+394577,"Eureka, CA",CA,21700,"Eureka-Arcata, CA",100,city+state_fuzzy,False
+394727,"Johnstown, PA",PA,27780,"Johnstown, PA",100,city+state_fuzzy,False
+395153,"The Villages, FL",FL,48680,"Wildwood-The Villages, FL",100,city+state_fuzzy,False
+394949,"Owensboro, KY",KY,36980,"Owensboro, KY",100,city+state_fuzzy,False
+394495,"Cookeville, TN",TN,18260,"Cookeville, TN",100,city+state_fuzzy,False
+394542,"Dubuque, IA",IA,20220,"Dubuque, IA",100,city+state_fuzzy,False
+395025,"Riverside, CA",CA,40140,"Riverside-San Bernardino-Ontario, CA",100,city+state_fuzzy,False
+395121,"St. Louis, MO",MO,41180,"St. Louis, MO-IL",100,city+state_fuzzy,False
+394943,"Orlando, FL",FL,36740,"Orlando-Kissimmee-Sanford, FL",100,city+state_fuzzy,False
+395045,"Sacramento, CA",CA,40900,"Sacramento-Roseville-Folsom, CA",100,city+state_fuzzy,False
+394775,"Las Vegas, NV",NV,29820,"Las Vegas-Henderson-North Las Vegas, NV",100,city+state_fuzzy,False
+395031,"Rochester, NY",NY,40380,"Rochester, NY",100,city+state_fuzzy,False
+753924,"Urban Honolulu, HI",HI,46520,"Urban Honolulu, HI",100,city+state_fuzzy,False
+394938,"Omaha, NE",NE,36540,"Omaha, NE-IA",100,city+state_fuzzy,False
+394820,"Manchester, NH",NH,31700,"Manchester-Nashua, NH",100,city+state_fuzzy,False
+394596,"Flint, MI",MI,22420,"Flint, MI",100,city+state_fuzzy,False
+395107,"South Bend, IN",IN,43780,"South Bend-Mishawaka, IN-MI",100,city+state_fuzzy,False
+394543,"Duluth, MN",MN,20260,"Duluth, MN-WI",100,city+state_fuzzy,False
+394348,"Atlantic City, NJ",NJ,12100,"Atlantic City-Hammonton, NJ",100,city+state_fuzzy,False
+394323,"Amarillo, TX",TX,11100,"Amarillo, TX",100,city+state_fuzzy,False
+394609,"Fort Smith, AR",AR,22900,"Fort Smith, AR-OK",100,city+state_fuzzy,False
+395162,"Torrington, CT",CT,45860,"Torrington, CT",100,city+state_fuzzy,False
+394860,"Midland, TX",TX,33260,"Midland, TX",100,city+state_fuzzy,False
+395066,"Santa Fe, NM",NM,42140,"Santa Fe, NM",100,city+state_fuzzy,False
+395173,"Twin Falls, ID",ID,46300,"Twin Falls, ID",100,city+state_fuzzy,False
+394788,"Lewiston, ME",ME,30340,"Lewiston-Auburn, ME",100,city+state_fuzzy,False
+394462,"Cheyenne, WY",WY,16940,"Cheyenne, WY",100,city+state_fuzzy,False
+394976,"Phoenix, AZ",AZ,38060,"Phoenix-Mesa-Chandler, AZ",100,city+state_fuzzy,False
+395057,"San Francisco, CA",CA,41860,"San Francisco-Oakland-Fremont, CA",100,city+state_fuzzy,False
+394308,"Albany, NY",NY,10580,"Albany-Schenectady-Troy, NY",100,city+state_fuzzy,False
+395143,"Syracuse, NY",NY,45060,"Syracuse, NY",100,city+state_fuzzy,False
+394589,"Fayetteville, NC",NC,22180,"Fayetteville, NC",100,city+state_fuzzy,False
+394870,"Mobile, AL",AL,33660,"Mobile, AL",100,city+state_fuzzy,False
+394447,"Cedar Rapids, IA",IA,16300,"Cedar Rapids, IA",100,city+state_fuzzy,False
+394691,"Houma, LA",LA,26380,"Houma-Bayou Cane-Thibodaux, LA",100,city+state_fuzzy,False
+395018,"Redding, CA",CA,39820,"Redding, CA",100,city+state_fuzzy,False
+394539,"Dover, DE",DE,20100,"Dover, DE",100,city+state_fuzzy,False
+394814,"Madera, CA",CA,,,50,unmatched,True
+394563,"Elizabethtown, KY",KY,21060,"Elizabethtown, KY",100,city+state_fuzzy,False
+395232,"Winchester, VA",VA,49020,"Winchester, VA-WV",100,city+state_fuzzy,False
+395221,"Wheeling, WV",OH,48540,"Wheeling, WV-OH",100,city+state_fuzzy,False
+394353,"Augusta, ME",ME,12300,"Augusta-Waterville, ME",100,city+state_fuzzy,False
+394905,"New Bern, NC",NC,35100,"New Bern, NC",100,city+state_fuzzy,False
+394333,"Anniston, AL",AL,11500,"Anniston-Oxford, AL",100,city+state_fuzzy,False
+394423,"Brunswick, GA",GA,15260,"Brunswick-St. Simons, GA",100,city+state_fuzzy,False
+394932,"Ogdensburg, NY",NY,32390,"Massena-Ogdensburg, NY",100,city+state_fuzzy,False
+395095,"Show Low, AZ",AZ,43320,"Show Low, AZ",100,city+state_fuzzy,False
+394637,"Grand Forks, ND",MN,24220,"Grand Forks, ND-MN",100,city+state_fuzzy,False
+394823,"Mankato, MN",MN,31860,"Mankato, MN",100,city+state_fuzzy,False
+395198,"Wahpeton, ND",ND,47420,"Wahpeton, ND-MN",100,city+state_fuzzy,False
+394945,"Oskaloosa, IA",IA,36820,"Oskaloosa, IA",100,city+state_fuzzy,False
+394403,"Borger, TX",TX,14420,"Borger, TX",100,city+state_fuzzy,False
+395003,"Price, UT",UT,39220,"Price, UT",100,city+state_fuzzy,False
+394498,"Cordele, GA",GA,18380,"Cordele, GA",100,city+state_fuzzy,False
+753908,"Othello, WA",WA,36830,"Othello, WA",100,city+state_fuzzy,False
+394371,"Beatrice, NE",NE,13100,"Beatrice, NE",100,city+state_fuzzy,False
+394578,"Evanston, WY",WY,21740,"Evanston, WY-UT",100,city+state_fuzzy,False
+394805,"Los Alamos, NM",NM,31060,"Los Alamos, NM",100,city+state_fuzzy,False
+394767,"Lamesa, TX",TX,,,54,unmatched,True
+394868,"Mitchell, SD",SD,33580,"Mitchell, SD",100,city+state_fuzzy,False
+394678,"Hereford, TX",TX,25820,"Hereford, TX",100,city+state_fuzzy,False
+394342,"Atchison, KS",KS,11860,"Atchison, KS",100,city+state_fuzzy,False
+395188,"Vernon, TX",TX,46900,"Vernon, TX",100,city+state_fuzzy,False
+395241,"Yankton, SD",SD,49460,"Yankton, SD",100,city+state_fuzzy,False
+394470,"Clarksdale, MS",MS,17260,"Clarksdale, MS",100,city+state_fuzzy,False
+394700,"Huron, SD",SD,26700,"Huron, SD",100,city+state_fuzzy,False
+394818,"Magnolia, AR",AR,31620,"Magnolia, AR",100,city+state_fuzzy,False
+394979,"Pierre, SD",SD,38180,"Pierre, SD",100,city+state_fuzzy,False
+395104,"Snyder, TX",TX,43660,"Snyder, TX",100,city+state_fuzzy,False
+395135,"Storm Lake, IA",IA,44740,"Storm Lake, IA",100,city+state_fuzzy,False
+394594,"Fitzgerald, GA",GA,22340,"Fitzgerald, GA",100,city+state_fuzzy,False
+394544,"Dumas, TX",TX,20300,"Dumas, TX",100,city+state_fuzzy,False
+753874,"Craig, CO",CO,,,50,unmatched,True
+394659,"Guymon, OK",OK,25100,"Guymon, OK",100,city+state_fuzzy,False
+394564,"Elk City, OK",OK,21120,"Elk City, OK",100,city+state_fuzzy,False
+394959,"Pampa, TX",TX,37420,"Pampa, TX",100,city+state_fuzzy,False
+394656,"Grenada, MS",MS,24980,"Grenada, MS",100,city+state_fuzzy,False
+395112,"Spirit Lake, IA",IA,44020,"Spirit Lake, IA",100,city+state_fuzzy,False
+394676,"Helena, AR",AR,,,47,unmatched,True
+753880,"Fairfield, IA",IA,,,40,unmatched,True
+753929,"Zapata, TX",TX,49820,"Zapata, TX",100,city+state_fuzzy,False
+394831,"Marshall, MO",MO,32180,"Marshall, MO",100,city+state_fuzzy,False
+394337,"Arkadelphia, AR",AR,11660,"Arkadelphia, AR",100,city+state_fuzzy,False
+394718,"Jamestown, ND",ND,27420,"Jamestown, ND",100,city+state_fuzzy,False
+394996,"Portales, NM",NM,,,53,unmatched,True
+394330,"Andrews, TX",TX,11380,"Andrews, TX",100,city+state_fuzzy,False
+395142,"Sweetwater, TX",TX,45020,"Sweetwater, TX",100,city+state_fuzzy,False
+394968,"Pecos, TX",TX,,,55,unmatched,True
+394793,"Liberal, KS",KS,30580,"Liberal, KS",100,city+state_fuzzy,False
+395130,"Sterling, CO",CO,44540,"Sterling, CO",100,city+state_fuzzy,False
+394784,"Levelland, TX",TX,,,50,unmatched,True
+394965,"Parsons, KS",KS,,,62,unmatched,True
+395111,"Spencer, IA",IA,43980,"Spencer, IA",100,city+state_fuzzy,False
+395186,"Vermillion, SD",SD,46820,"Vermillion, SD",100,city+state_fuzzy,False
+394743,"Ketchikan, AK",AK,28540,"Ketchikan, AK",100,city+state_fuzzy,False
+394418,"Brookings, OR",OR,15060,"Brookings, OR",100,city+state_fuzzy,False
+394837,"Maryville, MO",MO,32340,"Maryville, MO",100,city+state_fuzzy,False
+753914,"Port Lavaca, TX",TX,38920,"Port Lavaca, TX",100,city+state_fuzzy,False
+753925,"Vineyard Haven, MA",MA,47240,"Vineyard Haven, MA",100,city+state_fuzzy,False
+753927,"Winnemucca, NV",NV,49080,"Winnemucca, NV",100,city+state_fuzzy,False
+394841,"Maysville, KY",KY,,,76,unmatched,True
+395239,"Worthington, MN",MN,49380,"Worthington, MN",100,city+state_fuzzy,False
+395014,"Raymondville, TX",TX,39700,"Raymondville, TX",100,city+state_fuzzy,False

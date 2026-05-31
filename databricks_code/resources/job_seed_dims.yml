@@ -1,0 +1,36 @@
+resources:
+  jobs:
+    seed_dims:
+      name: "Marketpulse seed_dims [${bundle.target}]"
+      parameters:
+        - name: catalog
+          default: ${var.catalog}
+        - name: shared_lib_path
+          default: ${var.shared_lib_path}
+      # Reference-data seeding for the conformed Silver dimensions. Idempotent (MERGE on the
+      # natural key), so safe to re-run. Prereqs the operator owns: catalog_setup has created
+      # the reference Volume, the crosswalk CSVs are uploaded to it, and bronze_load has run
+      # (seed_dim_geo enriches household_rank from bronze.realtor_metro_monthly). No init/
+      # finalize tasks — these are setup seeds, not audited pipeline runs.
+      tasks:
+        - task_key: seed_dim_date
+          notebook_task:
+            notebook_path: ../setup/seed_dim_date.ipynb
+            base_parameters:
+              catalog: "{{job.parameters.catalog}}"
+              shared_lib_path: "{{job.parameters.shared_lib_path}}"
+
+        - task_key: seed_dim_geo
+          notebook_task:
+            notebook_path: ../setup/seed_dim_geo.ipynb
+            base_parameters:
+              catalog: "{{job.parameters.catalog}}"
+              shared_lib_path: "{{job.parameters.shared_lib_path}}"
+
+        # Static FRED series metadata (10 rows); no upstream data dependency.
+        - task_key: seed_dim_fred_series
+          notebook_task:
+            notebook_path: ../setup/seed_dim_fred_series.ipynb
+            base_parameters:
+              catalog: "{{job.parameters.catalog}}"
+              shared_lib_path: "{{job.parameters.shared_lib_path}}"

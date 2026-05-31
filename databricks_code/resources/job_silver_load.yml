@@ -1,0 +1,79 @@
+resources:
+  jobs:
+    silver_load:
+      name: "Marketpulse silver_load [${bundle.target}]"
+      parameters:
+        - name: catalog
+          default: ${var.catalog}
+        - name: shared_lib_path
+          default: ${var.shared_lib_path}
+      # Serverless spark_python_task tasks (init/finalize) need a job-level environment +
+      # task-level environment_key. Mirrors bronze_load. Prereqs the operator owns: bronze_load
+      # has run, and seed_dims has populated dim_geo/dim_date (the facts resolve geo_key/date_key).
+      environments:
+        - environment_key: default
+          spec:
+            environment_version: "2"
+      tasks:
+        # Mints the real UUID pipeline_run_id via the taskValue notebook_init reads.
+        - task_key: init_pipeline_log
+          spark_python_task:
+            python_file: ../libs/init_pipeline_run_log.py
+            parameters:
+              - "{{job.parameters.shared_lib_path}}"   # sys.argv[1]
+              - "{{job.parameters.catalog}}"           # sys.argv[2]
+          environment_key: default
+
+        # Silver fact loaders fan out from init in parallel (disjoint facts). fred is added
+        # here once built. Each: cast -> geo/date resolve -> quarantine -> MERGE.
+        - task_key: load_silver_realtor
+          depends_on:
+            - task_key: init_pipeline_log
+          notebook_task:
+            notebook_path: ../silver/load_silver_realtor.ipynb
+            base_parameters:
+              catalog: "{{job.parameters.catalog}}"
+              shared_lib_path: "{{job.parameters.shared_lib_path}}"
+
+        - task_key: load_silver_fhfa
+          depends_on:
+            - task_key: init_pipeline_log
+          notebook_task:
+            notebook_path: ../silver/load_silver_fhfa.ipynb
+            base_parameters:
+              catalog: "{{job.parameters.catalog}}"
+              shared_lib_path: "{{job.parameters.shared_lib_path}}"
+
+        - task_key: load_silver_zillow
+          depends_on:
+            - task_key: init_pipeline_log
+          notebook_task:
+            notebook_path: ../silver/load_silver_zillow.ipynb
+            base_parameters:
+              catalog: "{{job.parameters.catalog}}"
+              shared_lib_path: "{{job.parameters.shared_lib_path}}"
+
+        - task_key: load_silver_fred
+          depends_on:
+            - task_key: init_pipeline_log
+          notebook_task:
+            notebook_path: ../silver/load_silver_fred.ipynb
+            base_parameters:
+              catalog: "{{job.parameters.catalog}}"
+              shared_lib_path: "{{job.parameters.shared_lib_path}}"
+
+        # Closes the pipeline_log row. run_if: ALL_DONE -> fires regardless of upstream outcome;
+        # pipeline_log_finalize derives final status by scanning pipeline_step_log.
+        - task_key: finalize_pipeline_log
+          depends_on:
+            - task_key: load_silver_realtor
+            - task_key: load_silver_fhfa
+            - task_key: load_silver_zillow
+            - task_key: load_silver_fred
+          run_if: ALL_DONE
+          spark_python_task:
+            python_file: ../libs/finalize_pipeline_run_log.py
+            parameters:
+              - "{{job.parameters.shared_lib_path}}"   # sys.argv[1]
+              - "{{job.parameters.catalog}}"           # sys.argv[2]
+          environment_key: default

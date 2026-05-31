@@ -68,12 +68,15 @@ SOURCES: tuple[SourceSpec, ...] = (
                 fmt="csv",
                 expected_header=("hpi_type", "hpi_flavor", "frequency", "level", "place_name",
                                  "place_id", "yr", "period", "index_nsa", "index_sa")),
-            SourceFile("hpi_purchase_only_metro_quarterly.xlsx",
-                url="https://www.fhfa.gov/hpi/download/quarterly_datasets/hpi_po_metro.xlsx",
-                fmt="xlsx", note="opaque bytes; banner/sheet parsing is a Bronze concern"),
-            SourceFile("hpi_all_transactions_metro_quarterly.xlsx",
-                url="https://www.fhfa.gov/hpi/download/quarterly_datasets/hpi_at_metro.xlsx",
-                fmt="xlsx", note="2-row banner; header handled in Bronze, not here"),
+
+
+ # Commented out.  It was determined the data in these files are included in hpi_master.csv
+ #           SourceFile("hpi_purchase_only_metro_quarterly.xlsx",
+ #               url="https://www.fhfa.gov/hpi/download/quarterly_datasets/hpi_po_metro.xlsx",
+ #               fmt="xlsx", note="opaque bytes; banner/sheet parsing is a Bronze concern"),
+ #           SourceFile("hpi_all_transactions_metro_quarterly.xlsx",
+ #               url="https://www.fhfa.gov/hpi/download/quarterly_datasets/hpi_at_metro.xlsx",
+ #               fmt="xlsx", note="2-row banner; header handled in Bronze, not here"),
         ),
     ),
     SourceSpec(

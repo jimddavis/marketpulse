@@ -99,9 +99,21 @@ The **shape of Silver** is the load-bearing decision in this doc. Read on.
 
 ### Conceptual Bronze tables
 
-(Columns shown conceptually — not actual DDL.)
+(Columns shown conceptually — not actual DDL. Authoritative DDL now lives in
+`databricks_code/libs/ddl/bronze_ddl.py`.)
 
-#### `bronze.zillow_metro_wide` — Zillow ZHVI / ZORI / Inventory
+> **REVISED 2026-05-30 — 6 Bronze tables, not the original 8.** Three points below
+> were superseded after this section was first written; the three confirmed decisions
+> are reflected inline:
+> 1. **Zillow is now LONG at Bronze, not wide.** The `wide_to_long` transpose step was
+>    built and verified, landing typed long Parquet at `raw/zillow/_long/`. Bronze reads
+>    that Parquet — the "keep it wide, unpivot at Silver" rationale is retired.
+> 2. **FHFA = 1 table, not 3.** The two quarterly xlsx (PO, AT) are verified subsets of
+>    `hpi_master.csv` and are commented out of the manifest. Only `fhfa_hpi_master` remains.
+> 3. **FRED and Realtor stay consolidated** (one table each, by schema-shape) — confirmed
+>    against a "table per file" alternative, which was rejected.
+
+#### `bronze.zillow_zhvi`, `bronze.zillow_zori`, `bronze.zillow_inventory` — Zillow long
 
 ```
 + region_id                  STRING
@@ -109,15 +121,23 @@ The **shape of Silver** is the load-bearing decision in this doc. Read on.
 + region_name                STRING
 + region_type                STRING
 + state_name                 STRING
-+ <one column per month-end-date: '2025-05-31', '2025-06-30', ...>  STRING
-+ source_file_path           STRING   ← which Zillow CSV this came from
++ period_date                DATE     ← typed (wide_to_long period_end); NOT all-STRING
++ value                      DOUBLE   ← typed; nullable (Zillow legitimately omits values)
++ source_file_path           STRING   ← logical CSV name, injected from ZILLOW_FEEDS
 + inserted_ts                TIMESTAMP
 + run_id                     BIGINT
 ```
 
-One table per Zillow file (ZHVI / ZORI / inventory) — three tables total. The wide format is preserved at Bronze; unpivoting happens at Silver. **Don't unpivot at Bronze** because then you've lost the ability to spot-check "did this specific file write correctly."
+Three tables, one per feed, read from the `raw/zillow/_long/<stem>_long/` Parquet datasets
+produced by the wide→long transpose step (NOT the wide CSVs). `period_date`/`value` are the
+**documented exception** to bronze-all-STRING (CLAUDE.md §11.1) — the Parquet is already
+typed. The Parquet keeps source CamelCase id names (`RegionID`, …); the loader aliases them
+to the snake_case columns above. The `_long` Parquet carries no original-CSV provenance, so
+the loader injects `source_file_path` as the logical CSV name from `ZILLOW_FEEDS`.
 
-Idempotency strategy: **MERGE on `(region_id, source_file_path)`** with `row_hash` over the date columns. Re-running with the same Zillow file is a no-op; a refreshed Zillow file with updated values updates the row.
+Idempotency strategy: **MERGE on `(region_id, period_date)`**. Single `value` payload →
+`UPDATE SET *` on match, so no `row_hash` is needed. A refreshed snapshot with revised values
+updates in place; re-running the same snapshot is a no-op.
 
 #### `bronze.realtor_metro_monthly`
 
@@ -135,34 +155,29 @@ Realtor publishes one snapshot file + one history file with the same schema. **B
 
 Idempotency: **MERGE on `(cbsa_code, month_date_yyyymm)`** with `row_hash` over the metric columns. The same metro-month from snapshot vs history collapse to one row.
 
-#### `bronze.fhfa_hpi_master`, `bronze.fhfa_hpi_po_metro`, `bronze.fhfa_hpi_at_metro`
+#### `bronze.fhfa_hpi_master`
 
-Three Bronze tables — one per FHFA file — because the schemas differ materially (master CSV has 10 columns; PO XLSX has 6; AT XLSX has 6 with different naming and a parenthesized standard error column).
+One Bronze table — master CSV only. The two quarterly xlsx (PO, AT) were dropped: they are
+verified subsets of `hpi_master.csv` and are commented out of the manifest. The master file
+actually has **12** columns (`rstderr`, `note` follow `index_sa`), all preserved as STRING.
 
 ```
 bronze.fhfa_hpi_master
 + hpi_type, hpi_flavor, frequency, level, place_name, place_id,
-  yr, period, index_nsa, index_sa     (all STRING)
-+ source_file_path, inserted_ts, run_id
-
-bronze.fhfa_hpi_po_metro
-+ cbsa, metro_name, yr, qtr, index_nsa, index_sa   (all STRING)
-+ source_file_path, inserted_ts, run_id
-
-bronze.fhfa_hpi_at_metro
-+ Area_Name, CBSACode, Year, Quarter, Index_NSA, Standard_Error  (all STRING)
+  yr, period, index_nsa, index_sa, rstderr, note     (all STRING)
 + source_file_path, inserted_ts, run_id
 ```
 
-Yes, the column-name inconsistency between PO (`cbsa`) and AT (`CBSACode`) is irritating. **Preserve it at Bronze**; standardize at Silver. That gives you ground truth to point at when someone asks "why does AT capitalize CBSACode?"
-
-Idempotency: **MERGE on `(place_id, yr, period)`** for master; analogous keys for PO/AT. All three files re-publish on every release.
+Idempotency: **MERGE on `(hpi_type, hpi_flavor, frequency, level, place_id, yr, period)`** —
+the full grain. The master file mixes monthly + quarterly frequencies and multiple
+`hpi_type`/`hpi_flavor` variants per place, so the shorter `(place_id, yr, period)` key would
+collapse distinct rows. Verified against the downloaded file. Re-publishes on every release.
 
 #### `bronze.fred_series_observations`
 
 ```
-+ series_id                  STRING   ← MORTGAGE30US, MEHOINUSA672N, UNRATE
-+ date                       STRING   ← observation date 'YYYY-MM-DD'
++ series_id                  STRING   ← MORTGAGE30US, MEHOINUSA672N, UNRATE — injected from the manifest (not in the file)
++ observation_date           STRING   ← source col 'date', renamed off the reserved word; 'YYYY-MM-DD'
 + value                      STRING   ← '6.36' or '.' for missing
 + realtime_start             STRING
 + realtime_end               STRING
@@ -171,9 +186,9 @@ Idempotency: **MERGE on `(place_id, yr, period)`** for master; analogous keys fo
 + run_id                     BIGINT
 ```
 
-Unlike the bulk-CSV sources, FRED is an API. Multiple series go into a single Bronze table with `series_id` as the partitioning column. The "file path" is conceptually the API call.
+Unlike the bulk-CSV sources, FRED is an API. The 10 series go into a single Bronze table with `series_id` as the discriminator — `series_id` is injected by the loader from the manifest, since the CSV itself carries only `date,value,realtime_start,realtime_end`. The "file path" is conceptually the API call.
 
-Idempotency: **MERGE on `(series_id, date, realtime_start)`** — the `realtime_start` is essential because FRED publishes vintages; the same `(series, date)` can have multiple revisions over time. For non-vintage queries (current values only), `realtime_start` equals the API call date and effectively de-duplicates by source-call.
+Idempotency: **MERGE on `(series_id, observation_date, realtime_start)`** — the `realtime_start` is essential because FRED publishes vintages; the same `(series, date)` can have multiple revisions over time. For non-vintage queries (current values only), `realtime_start` equals the API call date and effectively de-duplicates by source-call.
 
 ### Per-source download mechanics — already documented
 
@@ -235,8 +250,8 @@ silver schema:
   fact_zillow_metro_monthly
     geo_key (FK → dim_geo)
     date_key (FK → dim_date)
-    zhvi                     ← DOUBLE, smoothed mid-tier home value USD
-    zori                     ← DOUBLE, asking rent USD/month
+    typical_home_value       ← DOUBLE, ZHVI: smoothed mid-tier home value USD
+    typical_rent             ← DOUBLE, ZORI: observed asking rent USD/month
     inventory_active         ← BIGINT
     source_file_path
     inserted_ts, updated_ts

@@ -44,17 +44,18 @@ def create_volume_schema(spark, catalog):
 # Group B: Volumes and Directories
 # ---------------------------------------------------------------------------
 
-def create_volumes(spark, dbutils, catalog, volume_definitions):
+def create_volumes(spark, dbutils, catalog, volume_definitions, schema="raw"):
     """
     volume_definitions: list of {"name": str, "needs_archive": bool}
-    Creates each volume under catalog.raw and, when needs_archive is True,
-    creates the archive subfolder inside the volume path.
+    Creates each volume under catalog.<schema> (default 'raw') and, when needs_archive
+    is True, creates the archive subfolder inside the volume path. `schema` lets reference
+    data (e.g. the geography crosswalks) live in its own schema, separate from raw sources.
     """
     created = []
     for vol in volume_definitions:
         name      = vol["name"]
-        full_name = f"{catalog}.raw.{name}"
-        vol_path  = f"/Volumes/{catalog}/raw/{name}"
+        full_name = f"{catalog}.{schema}.{name}"
+        vol_path  = f"/Volumes/{catalog}/{schema}/{name}"
         try:
             spark.sql(f"CREATE VOLUME IF NOT EXISTS {full_name}")
             if vol.get("needs_archive"):
