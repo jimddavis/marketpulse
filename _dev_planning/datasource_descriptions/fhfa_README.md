@@ -183,6 +183,42 @@ The reference quarter is set by `(hpi_flavor, level)`:
   (193% cumulative gain over 30 years).
 - Other (flavor, level) pairs: see XLSX banners.
 
+
+
+  What "rebased" means
+
+  An FHFA HPI value isn't a price. It's a ratio to a reference quarter, multiplied by 100. The reference quarter is defined to equal 100. Every other value says "prices were X% of
+  the reference quarter."
+
+  index = (price level this quarter / price level in reference quarter) × 100
+
+  So 293 doesn't mean $293, or $293k, or anything in dollars. It means prices are 2.93× what they were in the reference quarter (1995-Q1 here).
+
+  Why that's "hard to read in isolation"
+
+  "In isolation" means: looking at one number, for one metro, at one point in time, with nothing to compare it against. Three concrete problems:
+
+  1. The number has no inherent unit. If a colleague says "Austin's HPI is 293," you've learned nothing concrete. Not the price of a house. Not how fast prices are rising. Just
+  "2.93× a baseline quarter you have to go look up." The number only becomes meaningful relative to another index value — either the same metro at a different time, or a known
+  reference. A single value alone is inert.
+
+  2. You can't compare two metros' levels directly — even though it looks like you can. This is the trap. Austin = 293 and Phoenix = 310 does not mean Phoenix homes are more
+  expensive than Austin's. Each metro is rebased to its own 1995-Q1 price level. Phoenix's 310 means "Phoenix prices are 3.10× Phoenix-in-1995"; Austin's 293 means "2.93×
+  Austin-in-1995." Those are two different baselines in dollars. The index measures growth since the base quarter, not price level — so cross-metro level comparisons are
+  meaningless. (Cross-metro growth-rate comparisons are valid — that's what the index is for.)
+
+  3. The base quarter is arbitrary and invisible in the value. 100 corresponds to 1995-Q1 only because someone chose that anchor. Rebase to 2000-Q1 and every number changes, while
+  the actual housing market is identical. So the raw level carries an arbitrary convention baked in that a reader can't see from the number itself.
+
+  What IS readable without context
+
+  Differences and ratios between index values, within one metro:
+
+  - Ratio of two quarters = total growth. 293 / 100 = 2.93 → prices up 193% since base. 293 / 265 (a year earlier) = 1.106 → up 10.6% year-over-year. That number — 10.6% — is
+  meaningful in isolation. Anyone understands "Austin home prices rose 10.6% last year." Nobody intuits "Austin's HPI is 293."
+
+
+
 **Common analysis recipes.**
 
 ```

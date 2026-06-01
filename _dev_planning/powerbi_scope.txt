@@ -1,0 +1,36 @@
+That clarifies the whole shape of this. And here's the thing — "hate UI, love data" isn't a compromise you're working around; it is the senior analytics-engineering philosophy.
+  The mature AE pattern is: push all transformation and business logic upstream into a well-modeled, governed layer, and keep the BI tool a thin, dumb presentation surface. A
+  reviewer who hears "I do the logic in the modeled layer so the semantic model stays thin and governed" reads that as experienced, not lazy. So your instinct is a narrative
+  asset, not a liability — we'll lean into it.
+
+  The screenshot that actually persuades an AE reviewer
+
+  This is the part that should relieve you: the single most persuasive screenshot for a data-modeling role isn't a dashboard — it's the Power BI Model View showing your star
+  schema (fact tables joined to conformed dimensions, relationships drawn, cardinalities set). That image says "I model data" in one glance, and it requires zero design taste —
+  the layout is auto-arranged, you just position boxes. Pair it with one clean report page (not a multi-page report), and you've got your two screenshots. That's the entire UI
+  surface you need to touch.
+
+  So the reporting scope collapses to: connect → build the model (relationships) → a handful of measures → one page → two screenshots. Minimal canvas time, maximum signal.
+
+  Power BI has moved since Covid — what's worth knowing
+
+  You used it ~2020; the relevant changes for your angle (grade: mostly Microsoft-side, Verified unless noted):
+
+  - "Datasets" are now "Semantic models" (2023 rename). Power BI is now under the Microsoft Fabric umbrella. Just using current terminology signals currency.
+  - .pbip Power BI Project format — the semantic model + report can be saved as text/JSON (TMDL), git-trackable. This is the big one for you: it makes Power BI
+  source-controllable, which aligns perfectly with your git-based, code-first workflow. A PBI project committed to the same repo is a strong AE signal. (Grade: Projected on exact
+  GA status of the report side (PBIR) — worth a doc check before we rely on it.)
+  - The Databricks → Power BI seam: Unity Catalog has a "Publish to Power BI" path that generates a semantic model from UC tables, plus the native Databricks connector (Import /
+  DirectQuery). Demonstrating that integration is exactly the AE seam a Databricks-shop interviewer cares about. (Grade: Projected — this is a platform integration that changes;
+  I'll WebFetch the current mechanism when we get to building, not now.)
+  - DAX: field parameters, calculation groups in Desktop, the DAX query view (2024). You don't need these — but 3–5 hand-written DAX measures, including one modern feature,
+  demonstrates current familiarity without UI work.
+
+  Updated division of labor (the documented decision is the artifact)
+
+  - Gold (rich): YoY/QoQ, rolling averages, the cross-source affordability composite, metro rank/percentile. Heavy lifting, canonical definitions, the hazard×housing join.
+  - PBI semantic model (thin): relationships + a small, deliberate set of DAX measures — partly to keep slicer-responsive logic where it belongs, partly to show you can write DAX.
+  - One paragraph in the README explaining the split and why. That paragraph is worth more than any visual.
+
+  This gives you a clean interview story: "As an analytics engineer I model upstream in Gold and keep the semantic model thin; the few DAX measures are the seam, and the PBI
+  project is git-tracked alongside the pipeline."
