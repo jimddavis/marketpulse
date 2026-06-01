@@ -14,7 +14,7 @@ scope.
   `comp_flag_`/`years_` companions).
 
 **Targets (DDL done):**
-- `bronze.fema_nri_counties` — 29 data + 3 audit, all `STRING`, per-column `COMMENT`.
+- `bronze.fema_nri_counties` — 31 data + 3 audit, all `STRING`, per-column `COMMENT`.
 - `bronze.climate_normals_stations` — 18 data + 3 audit, all `STRING`, per-column `COMMENT`.
 
 **Template:** both loaders follow the canonical `bronze/load_fhfa.ipynb` cell order
@@ -27,8 +27,10 @@ scope.
 ## 1. Decision — Column scope: the curated selection, all-STRING
 
 Already decided + reviewed (READMEs' "Selected columns for ingestion"):
-- **NRI** = 29 (4 identity + 5 composite + 10 hazards × {score, rating}). The full 467-col
-  CSV stays in the Volume as the fidelity record; Bronze carries the analytical subset.
+- **NRI** = 31 (4 identity + 7 composite + 10 hazards × {score, rating}). The full 467-col
+  CSV stays in the Volume as the fidelity record; Bronze carries the analytical subset. The
+  composite 7 = risk {score, rating}, `eal_valt`, sovi {score, rating}, resl {score, rating}
+  — every index a uniform score+rating pair (`sovi_score`/`resl_score` added 2026-06-01; see §10.4).
 - **Climate Normals** = 18 (5 identity + 13 measure NORMAL values). The `comp_flag_`/`years_`
   companions are dropped (no reporting use; remain in `_processed` if a QC pass is ever
   wanted).
@@ -55,8 +57,9 @@ and the 29 we want are scattered through them. So the NRI loader deviates (recor
   columns are simply not selected.
 
 **Required source columns (UPPER, in the CSV):** `STCOFIPS, COUNTY, STATEABBRV, POPULATION,
-RISK_SCORE, RISK_RATNG, EAL_VALT, SOVI_RATNG, RESL_RATNG,` and `{HRCN,CFLD,IFLD,TRND,WFIR,
-ERQK,HAIL,SWND,HWAV,WNTW}_{RISKS,RISKR}` — a single-source-of-truth constant in cell 2.
+RISK_SCORE, RISK_RATNG, EAL_VALT, SOVI_SCORE, SOVI_RATNG, RESL_SCORE, RESL_RATNG,` and
+`{HRCN,CFLD,IFLD,TRND,WFIR,ERQK,HAIL,SWND,HWAV,WNTW}_{RISKS,RISKR}` — a single-source-of-truth
+constant in cell 2.
 
 ---
 
@@ -178,6 +181,19 @@ Both mirror `load_fhfa` exactly:
    minutes; Bronze is iterated often). Fold into `weather_download` at the final/production
    stage.
 3. Column scope, all-STRING, audit, naming — settled in §1–§5.
+4. **SOVI/RESL score+rating reconciliation (2026-06-01)** — the original curated set took the
+   *score* for the composite RISK and all 10 hazards (`RISK_SCORE`, `*_RISKS`) but the *rating*
+   for SOVI/RESL (`SOVI_RATNG`, `RESL_RATNG`) — an inconsistent split with no stated reason, and
+   one that left `weather_silver_gold_design` §1/§4 (scores-only serving, `sovi_score`/`resl_score`
+   pop-weighted) with no source column to read. **Resolved: add `SOVI_SCORE`/`RESL_SCORE`
+   alongside the retained ratings** (29 → 31 curated cols), making every index a uniform
+   score+rating pair — consistent with the scores-only serving rule and with how RISK is carried.
+   Both numeric scores already exist in the landed 467-col CSV (cols 31/34), so this is a
+   **select-more-columns reload, not a re-download**: `_migrate_fema_nri` (in `weather_data.py`,
+   mirroring `silver_ddl._migrate_dim_geo`) `ALTER ... ADD COLUMN`s them onto the existing table,
+   then `load_fema_nri` re-MERGEs on `stcofips` to populate. The unused ratings stay as Bronze
+   fidelity, exactly like the unused `risk_ratng`/`*_riskr`. (Swap-out was rejected: it would
+   make SOVI/RESL the only indices lacking a rating — a different asymmetry.)
 
 Nothing outstanding — the design is ready to implement.
 

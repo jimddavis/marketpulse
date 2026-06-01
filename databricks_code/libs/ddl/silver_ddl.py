@@ -4,7 +4,7 @@
 # _run_ddl from ddl._utils (same contract as audit_ddl / bronze_ddl). Design + decisions:
 # _dev_planning/bronze_silver_pipeline_overview.md (reconciled 2026-05-31).
 #
-# Two conformed dims + four per-source facts + one consolidated quarantine:
+# Two conformed dims + six per-source facts + one consolidated quarantine:
 #   dim_geo                       grain = CBSA. Universe seeded from the OMB/Census CBSA
 #                                 delineation. geo_key is GENERATED ALWAYS AS IDENTITY, so
 #                                 seeders use INSERT INTO ... SELECT and never supply it.
@@ -24,6 +24,13 @@
 #                                 keeping it long means no grain-mixing in the fact. The wide
 #                                 monthly forward-filled view is a GOLD serving concern (per the
 #                                 overview's "cadence reconciliation is a Gold concern").
+#   fact_fema_hazard_cbsa         grain = CBSA, geo-keyed, NO date (static hazard characteristic).
+#                                 FEMA NRI counties rolled up via the county->CBSA bridge: dollars/
+#                                 population SUM, risk scores population-weighted mean. Joins dim_geo
+#                                 on cbsa_code. Scores-only (ratings dropped).
+#   fact_noaa_climate_cbsa        grain = CBSA, geo-keyed, NO date (static climate characteristic).
+#                                 NOAA Climate Normals stations rolled up via the station->CBSA
+#                                 crosswalk: mean-of-stations per measure. Joins dim_geo on cbsa_code.
 #   quarantine                    one consolidated table (source_system discriminator) for
 #                                 rows that fail cast or geo lookup; raw_payload = to_json of
 #                                 the offending Bronze row, so nothing is silently dropped.
@@ -34,7 +41,41 @@
 # Audit columns: dims + facts carry inserted_ts + updated_ts (Silver, per CLAUDE.md §11.3).
 # PRIMARY KEY constraints document the grain (UC informational, not enforced).
 
-from ddl._utils import _run_ddl
+from ddl._utils import _run_ddl, _ok, _fail
+
+# Columns added to dim_geo after its initial release (the conformed geography for the weather
+# Silver/Gold tier). Each is (name, type, comment); MUST mirror the dim_geo CREATE TABLE
+# definition below so fresh and migrated catalogs converge. Applied by _migrate_dim_geo.
+_DIM_GEO_ADDED_COLUMNS = [
+    ("census_region", "STRING",
+     "US Census region (Northeast/Midwest/South/West) derived from primary_state; null for "
+     "territories outside the four Census regions (e.g. PR)"),
+    ("cbsa_population", "BIGINT",
+     "Total CBSA population (sum of FEMA NRI county population over the CBSA); shared weight "
+     "for population-weighted State/Region rollups"),
+]
+
+
+def _migrate_dim_geo(spark, silver_schema):
+    """Idempotently add the post-release dim_geo columns to an existing table.
+
+    CREATE IF NOT EXISTS is a no-op on an existing table, so it never alters one — a catalog
+    provisioned before these columns existed needs an explicit ALTER. Guarded by column
+    presence, so it is a no-op on fresh catalogs (which get the columns from CREATE TABLE)
+    and safe to re-run.
+    """
+    table = f"{silver_schema}.dim_geo"
+    try:
+        existing = {field.name for field in spark.table(table).schema}
+        added = []
+        for name, col_type, comment in _DIM_GEO_ADDED_COLUMNS:
+            if name not in existing:
+                escaped = comment.replace("'", "''")
+                spark.sql(f"ALTER TABLE {table} ADD COLUMN {name} {col_type} COMMENT '{escaped}'")
+                added.append(name)
+        return _ok(f"dim_geo migration ok ({len(added)} column(s) added).", added)
+    except Exception as e:
+        return _fail("dim_geo migration failed.", e)
 
 
 def create_silver_tables(spark, silver_schema):
@@ -50,6 +91,8 @@ def create_silver_tables(spark, silver_schema):
                 primary_state      STRING COMMENT 'Primary (first-listed) state postal code of the CBSA',
                 state_list         STRING COMMENT 'Hyphen-joined state postals the CBSA spans, e.g. NY-NJ-PA',
                 household_rank     INT COMMENT 'Realtor.com household rank (1 = most populous); null where Realtor lacks the CBSA',
+                census_region      STRING COMMENT 'US Census region (Northeast/Midwest/South/West) derived from primary_state; null for territories outside the four Census regions (e.g. PR)',
+                cbsa_population    BIGINT COMMENT 'Total CBSA population (sum of FEMA NRI county population over the CBSA); shared weight for population-weighted State/Region rollups',
                 inserted_ts        TIMESTAMP,
                 updated_ts         TIMESTAMP,
                 CONSTRAINT pk_dim_geo PRIMARY KEY (geo_key)
@@ -140,11 +183,56 @@ def create_silver_tables(spark, silver_schema):
                 CONSTRAINT pk_fact_fred_series PRIMARY KEY (series_id, observation_date)
             )
         """),
+        # ---- Weather/hazard facts (CBSA grain, geo-keyed, NO date — static characteristics) ----
+        (f"{silver_schema}.fact_fema_hazard_cbsa", f"""
+            CREATE TABLE IF NOT EXISTS {silver_schema}.fact_fema_hazard_cbsa (
+                geo_key            BIGINT NOT NULL,
+                population         BIGINT COMMENT 'Resident population of the CBSA (SUM of FEMA NRI county population); also the weight behind the intensive scores in this row',
+                eal_valt           BIGINT COMMENT 'Expected Annual Loss, total, in US dollars (SUM of county EAL across all hazards/consequence types)',
+                risk_score         DOUBLE COMMENT 'Composite National Risk Index score, 0 to 100 (population-weighted mean of county scores)',
+                sovi_score         DOUBLE COMMENT 'Social Vulnerability score, 0 to 100 (population-weighted mean; CDC/ATSDR SVI-derived)',
+                resl_score         DOUBLE COMMENT 'Community Resilience score, 0 to 100 (population-weighted mean; BRIC-derived)',
+                hrcn_risks         DOUBLE COMMENT 'Hurricane Risk Index score, 0 to 100 (population-weighted mean)',
+                cfld_risks         DOUBLE COMMENT 'Coastal Flooding Risk Index score, 0 to 100 (population-weighted mean)',
+                ifld_risks         DOUBLE COMMENT 'Inland Flooding Risk Index score, 0 to 100 (population-weighted mean)',
+                trnd_risks         DOUBLE COMMENT 'Tornado Risk Index score, 0 to 100 (population-weighted mean)',
+                wfir_risks         DOUBLE COMMENT 'Wildfire Risk Index score, 0 to 100 (population-weighted mean)',
+                erqk_risks         DOUBLE COMMENT 'Earthquake Risk Index score, 0 to 100 (population-weighted mean)',
+                hail_risks         DOUBLE COMMENT 'Hail Risk Index score, 0 to 100 (population-weighted mean)',
+                swnd_risks         DOUBLE COMMENT 'Strong Wind Risk Index score, 0 to 100 (population-weighted mean)',
+                hwav_risks         DOUBLE COMMENT 'Heat Wave Risk Index score, 0 to 100 (population-weighted mean)',
+                wntw_risks         DOUBLE COMMENT 'Winter Weather Risk Index score, 0 to 100 (population-weighted mean)',
+                inserted_ts        TIMESTAMP,
+                updated_ts         TIMESTAMP,
+                CONSTRAINT pk_fact_fema_hazard PRIMARY KEY (geo_key)
+            )
+        """),
+        (f"{silver_schema}.fact_noaa_climate_cbsa", f"""
+            CREATE TABLE IF NOT EXISTS {silver_schema}.fact_noaa_climate_cbsa (
+                geo_key            BIGINT NOT NULL,
+                ann_tavg_normal    DOUBLE COMMENT 'Annual average temperature normal, Fahrenheit (mean across CBSA stations, 1991-2020)',
+                djf_tavg_normal    DOUBLE COMMENT 'Winter (Dec-Feb) average temperature normal, Fahrenheit (mean-of-stations)',
+                mam_tavg_normal    DOUBLE COMMENT 'Spring (Mar-May) average temperature normal, Fahrenheit (mean-of-stations)',
+                jja_tavg_normal    DOUBLE COMMENT 'Summer (Jun-Aug) average temperature normal, Fahrenheit (mean-of-stations)',
+                son_tavg_normal    DOUBLE COMMENT 'Autumn (Sep-Nov) average temperature normal, Fahrenheit (mean-of-stations)',
+                ann_tmax_normal    DOUBLE COMMENT 'Annual average daily maximum temperature normal, Fahrenheit (mean-of-stations)',
+                ann_tmin_normal    DOUBLE COMMENT 'Annual average daily minimum temperature normal, Fahrenheit (mean-of-stations)',
+                jja_tmax_normal    DOUBLE COMMENT 'Summer average daily maximum temperature normal, Fahrenheit — the avg summer high (mean-of-stations)',
+                djf_tmin_normal    DOUBLE COMMENT 'Winter average daily minimum temperature normal, Fahrenheit — the avg winter low (mean-of-stations)',
+                ann_prcp_normal    DOUBLE COMMENT 'Annual precipitation normal, inches (mean-of-stations)',
+                ann_snow_normal    DOUBLE COMMENT 'Annual snowfall normal, inches (mean-of-stations)',
+                ann_htdd_normal    DOUBLE COMMENT 'Annual heating degree days normal, Fahrenheit degree-days base 65F (mean-of-stations)',
+                ann_cldd_normal    DOUBLE COMMENT 'Annual cooling degree days normal, Fahrenheit degree-days base 65F (mean-of-stations)',
+                inserted_ts        TIMESTAMP,
+                updated_ts         TIMESTAMP,
+                CONSTRAINT pk_fact_noaa_climate PRIMARY KEY (geo_key)
+            )
+        """),
         # ---- Quarantine (consolidated; source_system discriminator) ---------------------
         (f"{silver_schema}.quarantine", f"""
             CREATE TABLE IF NOT EXISTS {silver_schema}.quarantine (
                 quarantine_id      STRING NOT NULL,
-                source_system      STRING NOT NULL,  -- 'zillow' / 'realtor' / 'fhfa' / 'fred'
+                source_system      STRING NOT NULL,  -- 'zillow' / 'realtor' / 'fhfa' / 'fred' / 'fema_nri' / 'climate_normals'
                 source_file_path   STRING,
                 natural_key        STRING,           -- human-readable key of the offending row
                 raw_payload        STRING,           -- to_json(struct(*)) of the Bronze row
@@ -153,4 +241,14 @@ def create_silver_tables(spark, silver_schema):
             )
         """),
     ]
-    return _run_ddl(spark, statements)
+    result = _run_ddl(spark, statements)
+    if result["status"] != "succeeded":
+        return result
+
+    # Back-fill the post-release dim_geo columns onto any pre-existing table (idempotent).
+    migrated = _migrate_dim_geo(spark, silver_schema)
+    if migrated["status"] != "succeeded":
+        return migrated
+    if migrated["objects_created"]:
+        result["message"] += f" dim_geo migration: added {', '.join(migrated['objects_created'])}."
+    return result

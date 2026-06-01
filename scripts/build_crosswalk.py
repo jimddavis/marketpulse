@@ -4,9 +4,12 @@
 # ///
 """Build the geography crosswalk reference data for Silver dim_geo.
 
-Outputs two committed CSVs under data/crosswalks/:
+Outputs three committed CSVs under data/crosswalks/:
   cbsa_master.csv             canonical CBSA universe from the OMB/Census 2023 delineation
                               (cbsa_code, cbsa_title, cbsa_type, primary_state, state_list)
+  county_to_cbsa.csv          county -> CBSA bridge (stcofips, cbsa_code) from the same OMB
+                              delineation; stcofips matches NRI exactly. Feeds the FEMA NRI
+                              county->CBSA rollup and the dim_geo cbsa_population enrichment.
   zillow_region_to_cbsa.csv   Zillow RegionID -> cbsa_code, with match_method/score and a
                               `needs_review` flag for low-confidence / unmatched rows
 
@@ -115,7 +118,21 @@ def load_cbsa_master() -> pd.DataFrame:
     out = pd.DataFrame(rows).sort_values("cbsa_code").reset_index(drop=True)
     print(f"  CBSA universe: {len(out)} ({(out.cbsa_type=='metro').sum()} metro, "
           f"{(out.cbsa_type=='micro').sum()} micro)")
-    return out, index
+
+    # County->CBSA bridge: one row per county. stcofips = 2-char state FIPS + 3-char county
+    # FIPS, zero-padded, to match NRI's stcofips exactly. The NRI Silver rollup and the
+    # dim_geo cbsa_population enrichment both join on this.
+    county = df[["FIPS State Code", "FIPS County Code", "CBSA Code"]].rename(
+        columns={"CBSA Code": "cbsa_code"})
+    county["stcofips"] = (county["FIPS State Code"].str.zfill(2)
+                          + county["FIPS County Code"].str.zfill(3))
+    # Dedup defensively: a county maps to exactly one CBSA in the OMB delineation, but guard
+    # against any near-duplicate rows (e.g. CT planning-region transition artifacts).
+    county = (county[["stcofips", "cbsa_code"]]
+              .drop_duplicates(subset="stcofips")
+              .sort_values("stcofips").reset_index(drop=True))
+    print(f"  county->CBSA bridge: {len(county)} counties")
+    return out, index, county
 
 
 def load_zillow_metros() -> pd.DataFrame:
@@ -194,8 +211,9 @@ def apply_overrides(xwalk: pd.DataFrame, cbsa: pd.DataFrame) -> pd.DataFrame:
 
 def main() -> None:
     OUT_DIR.mkdir(parents=True, exist_ok=True)
-    cbsa, index = load_cbsa_master()
+    cbsa, index, county = load_cbsa_master()
     cbsa.to_csv(OUT_DIR / "cbsa_master.csv", index=False)
+    county.to_csv(OUT_DIR / "county_to_cbsa.csv", index=False)
 
     zillow = load_zillow_metros()
     xwalk = match(zillow, index)
@@ -206,6 +224,7 @@ def main() -> None:
     review = (xwalk["needs_review"] & xwalk["cbsa_code"].notna()).sum()
     unmatched = xwalk["cbsa_code"].isna().sum()
     print(f"\nWrote {OUT_DIR}/cbsa_master.csv ({len(cbsa)} rows)")
+    print(f"Wrote {OUT_DIR}/county_to_cbsa.csv ({len(county)} rows)")
     print(f"Wrote {OUT_DIR}/zillow_region_to_cbsa.csv ({len(xwalk)} rows)")
     print(f"  matched high-confidence : {matched - review}")
     print(f"  matched needs_review    : {review}")

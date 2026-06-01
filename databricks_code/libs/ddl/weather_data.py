@@ -16,10 +16,14 @@
 #
 # COLUMN SCOPE (the project's "Selected columns for ingestion" — see the _local_downloads/*/
 # README.md and weather_sources_download_design.md):
-#   - fema_nri_counties: the curated 29 columns — 4 identity + 5 composite + 10 hazards x
+#   - fema_nri_counties: the curated 31 columns — 4 identity + 7 composite + 10 hazards x
 #     {risk score, risk rating}. The full 467-col CSV (loss-model internals + ArcGIS
 #     OBJECTID/Shape__* artifacts) is preserved in the Volume; carrying all 467 would be an
 #     unmaintainable anti-pattern with no analytical value. Source UPPER_SNAKE names lowercased.
+#     The composite 7 = risk (score+rating), eal_valt, sovi (score+rating), resl (score+rating)
+#     — every index a uniform score+rating pair. sovi_score/resl_score were added 2026-06-01
+#     reconciling the original ratings-only sovi/resl curation to the scores-only Silver/Gold
+#     serving rule (weather_silver_gold_design §1/§4); see weather_bronze_load_design §10.
 #   - climate_normals_stations: 18 columns — 5 identity + 13 measure NORMAL values. The
 #     comp_flag_/years_ QC companions were DROPPED: they have no reporting use in this
 #     real-estate app and get averaged away at the station->CBSA rollup; they remain in the
@@ -29,7 +33,44 @@
 # Hazard prefixes (NRI): hrcn=hurricane cfld=coastal-flood ifld=inland-flood trnd=tornado
 # wfir=wildfire erqk=earthquake hail=hail swnd=strong-wind hwav=heat-wave wntw=winter-weather.
 
-from ddl._utils import _run_ddl
+from ddl._utils import _run_ddl, _ok, _fail
+
+# Columns added to fema_nri_counties after its initial release (2026-06-01): the SOVI/RESL
+# numeric scores, reconciling the originally ratings-only sovi/resl curation to the scores-only
+# Silver/Gold serving rule. Each is (name, type, comment); MUST mirror the CREATE TABLE column
+# definitions below so fresh and migrated catalogs converge. Applied by _migrate_fema_nri.
+_NRI_ADDED_COLUMNS = [
+    ("sovi_score", "STRING",
+     "Social Vulnerability score, 0 to 100 (national percentile; CDC/ATSDR SVI-derived) — the "
+     "population-weighted-mean input for the CBSA hazard rollup"),
+    ("resl_score", "STRING",
+     "Community Resilience score, 0 to 100 (national percentile; BRIC-derived) — the "
+     "population-weighted-mean input for the CBSA hazard rollup"),
+]
+
+
+def _migrate_fema_nri(spark, bronze_schema):
+    """Idempotently add the post-release sovi_score/resl_score columns to an existing table.
+
+    CREATE IF NOT EXISTS is a no-op on an existing table, so it never alters one — a catalog
+    provisioned before these columns existed needs an explicit ALTER. Guarded by column
+    presence, so it is a no-op on fresh catalogs (which get the columns from CREATE TABLE)
+    and safe to re-run. Mirrors silver_ddl._migrate_dim_geo. The loader's MERGE matches by
+    column NAME, so the trailing position of ALTER-added columns vs the mid-table CREATE
+    position is immaterial (Delta INSERT */UPDATE SET * is name-based).
+    """
+    table = f"{bronze_schema}.fema_nri_counties"
+    try:
+        existing = {field.name for field in spark.table(table).schema}
+        added = []
+        for name, col_type, comment in _NRI_ADDED_COLUMNS:
+            if name not in existing:
+                escaped = comment.replace("'", "''")
+                spark.sql(f"ALTER TABLE {table} ADD COLUMN {name} {col_type} COMMENT '{escaped}'")
+                added.append(name)
+        return _ok(f"fema_nri_counties migration ok ({len(added)} column(s) added).", added)
+    except Exception as e:
+        return _fail("fema_nri_counties migration failed.", e)
 
 
 def create_weather_bronze_tables(spark, bronze_schema):
@@ -44,7 +85,9 @@ def create_weather_bronze_tables(spark, bronze_schema):
                 risk_score           STRING    COMMENT 'Composite National Risk Index score, 0 to 100 (national percentile across US counties)',
                 risk_ratng           STRING    COMMENT 'Composite National Risk Index rating (Very Low to Very High)',
                 eal_valt             STRING    COMMENT 'Expected Annual Loss, total, in US dollars (all hazards, all consequence types)',
+                sovi_score           STRING    COMMENT 'Social Vulnerability score, 0 to 100 (national percentile; CDC/ATSDR SVI-derived) — the population-weighted-mean input for the CBSA hazard rollup',
                 sovi_ratng           STRING    COMMENT 'Social Vulnerability rating (CDC/ATSDR SVI-derived)',
+                resl_score           STRING    COMMENT 'Community Resilience score, 0 to 100 (national percentile; BRIC-derived) — the population-weighted-mean input for the CBSA hazard rollup',
                 resl_ratng           STRING    COMMENT 'Community Resilience rating (BRIC-derived)',
                 hrcn_risks           STRING    COMMENT 'Hurricane - Risk Index score, 0 to 100',
                 hrcn_riskr           STRING    COMMENT 'Hurricane - Risk Index rating (Very Low to Very High)',
@@ -100,4 +143,17 @@ def create_weather_bronze_tables(spark, bronze_schema):
             )
         """),
     ]
-    return _run_ddl(spark, statements)
+    result = _run_ddl(spark, statements)
+    if result["status"] != "succeeded":
+        return result
+
+    # Back-fill the post-release sovi_score/resl_score columns onto any pre-existing table
+    # (idempotent; no-op on a fresh catalog that got them from CREATE TABLE).
+    migrated = _migrate_fema_nri(spark, bronze_schema)
+    if migrated["status"] != "succeeded":
+        return migrated
+    if migrated["objects_created"]:
+        result["message"] += (
+            f" fema_nri_counties migration: added {', '.join(migrated['objects_created'])}."
+        )
+    return result
