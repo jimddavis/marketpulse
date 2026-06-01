@@ -1,0 +1,114 @@
+resources:
+  jobs:
+    gold_load:
+      name: "Marketpulse gold_load [${bundle.target}]"
+      parameters:
+        - name: catalog
+          default: ${var.catalog}
+        - name: shared_lib_path
+          default: ${var.shared_lib_path}
+      # Serverless spark_python_task tasks (init/finalize) need a job-level environment +
+      # task-level environment_key. Mirrors silver_load. Prereq the operator owns: silver_load
+      # has run (the Gold dims carry silver.dim_geo/dim_date and the two static silver facts).
+      environments:
+        - environment_key: default
+          spec:
+            environment_version: "2"
+      tasks:
+        # Mints the real UUID pipeline_run_id via the taskValue notebook_init reads.
+        - task_key: init_pipeline_log
+          spark_python_task:
+            python_file: ../libs/init_pipeline_run_log.py
+            parameters:
+              - "{{job.parameters.shared_lib_path}}"   # sys.argv[1]
+              - "{{job.parameters.catalog}}"           # sys.argv[2]
+          environment_key: default
+
+        # G1 — the three Gold dimension builds fan out from init in parallel (independent:
+        # each rebuilds its own target via INSERT OVERWRITE from Silver). G2 fact builds will
+        # be added here later, depending on these dims. dim_metro_environment validates geo_key
+        # against silver.dim_geo, so it does not depend on build_dim_geo.
+        - task_key: build_dim_geo
+          depends_on:
+            - task_key: init_pipeline_log
+          notebook_task:
+            notebook_path: ../gold/build_dim_geo.ipynb
+            base_parameters:
+              catalog: "{{job.parameters.catalog}}"
+              shared_lib_path: "{{job.parameters.shared_lib_path}}"
+
+        - task_key: build_dim_date
+          depends_on:
+            - task_key: init_pipeline_log
+          notebook_task:
+            notebook_path: ../gold/build_dim_date.ipynb
+            base_parameters:
+              catalog: "{{job.parameters.catalog}}"
+              shared_lib_path: "{{job.parameters.shared_lib_path}}"
+
+        - task_key: build_dim_metro_environment
+          depends_on:
+            - task_key: init_pipeline_log
+          notebook_task:
+            notebook_path: ../gold/build_dim_metro_environment.ipynb
+            base_parameters:
+              catalog: "{{job.parameters.catalog}}"
+              shared_lib_path: "{{job.parameters.shared_lib_path}}"
+
+        # G2 — fact builds. Each depends on the dims it FK-references (facts validate geo_key/date_key
+        # against the Gold dims). zillow/realtor/fhfa need geo + date; fred is national (date only).
+        - task_key: build_fact_zillow
+          depends_on:
+            - task_key: build_dim_geo
+            - task_key: build_dim_date
+          notebook_task:
+            notebook_path: ../gold/build_fact_zillow.ipynb
+            base_parameters:
+              catalog: "{{job.parameters.catalog}}"
+              shared_lib_path: "{{job.parameters.shared_lib_path}}"
+
+        - task_key: build_fact_realtor
+          depends_on:
+            - task_key: build_dim_geo
+            - task_key: build_dim_date
+          notebook_task:
+            notebook_path: ../gold/build_fact_realtor.ipynb
+            base_parameters:
+              catalog: "{{job.parameters.catalog}}"
+              shared_lib_path: "{{job.parameters.shared_lib_path}}"
+
+        - task_key: build_fact_fhfa
+          depends_on:
+            - task_key: build_dim_geo
+            - task_key: build_dim_date
+          notebook_task:
+            notebook_path: ../gold/build_fact_fhfa.ipynb
+            base_parameters:
+              catalog: "{{job.parameters.catalog}}"
+              shared_lib_path: "{{job.parameters.shared_lib_path}}"
+
+        - task_key: build_fact_fred
+          depends_on:
+            - task_key: build_dim_date
+          notebook_task:
+            notebook_path: ../gold/build_fact_fred.ipynb
+            base_parameters:
+              catalog: "{{job.parameters.catalog}}"
+              shared_lib_path: "{{job.parameters.shared_lib_path}}"
+
+        # Closes the pipeline_log row. run_if: ALL_DONE -> fires regardless of upstream outcome;
+        # pipeline_log_finalize derives final status by scanning pipeline_step_log. Depends on the
+        # fact builds (the leaves); the dims are transitive upstream.
+        - task_key: finalize_pipeline_log
+          depends_on:
+            - task_key: build_fact_zillow
+            - task_key: build_fact_realtor
+            - task_key: build_fact_fhfa
+            - task_key: build_fact_fred
+          run_if: ALL_DONE
+          spark_python_task:
+            python_file: ../libs/finalize_pipeline_run_log.py
+            parameters:
+              - "{{job.parameters.shared_lib_path}}"   # sys.argv[1]
+              - "{{job.parameters.catalog}}"           # sys.argv[2]
+          environment_key: default
