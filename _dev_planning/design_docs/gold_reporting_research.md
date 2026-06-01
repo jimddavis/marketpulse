@@ -166,20 +166,36 @@ designed page. Skip a multi-page report.
 
 ---
 
-## Open questions for Gold design
+## Decisions for Gold design (resolved 2026-06-01)
 
-1. **Metro universe for cross-source concepts:** standardize on FHFA's 373 (inner) or keep housing at
-   859/935 and treat FHFA appreciation as a sparse add-on? (The coverage-bottleneck call.)
-2. **Confirm the Gold/DAX split** for the borderline ratios (price-to-rent, CPI-real) — proposed as Gold
-   here; reasonable people could push to DAX.
-3. **Declare PK/FK constraints in Gold** specifically to drive Power BI auto-relationships? *(Recommend
-   yes — near-free, and it builds your #1 screenshot.)*
-4. **Realtor Oct-2022 break** — surface as a Gold flag/column, or document-only?
-5. **RESL polarity** (higher = more resilient, opposite to other scores) — confirm direction before any
-   composite "risk" score (carried from the mapping doc).
-6. **UC Metric Views vs plain Gold tables + PBI model** — adopt the very-current Metric Views path, or
-   keep plain Gold tables? Depends on the `MEASURE()`/connector friction (open question #9 territory) —
-   verify the integration before committing.
+These six were the open questions; all are now decided and bind the Gold `/sc:design` pass.
+
+1. **Metro universe — SPARSE OUTER.** Keep housing at full Zillow/Realtor coverage (859/935); join FHFA
+   appreciation as a **sparse add-on** (NULL where FHFA's 373-metro coverage is absent). Maximizes
+   coverage and is honest about the gap, rather than discarding ~486 Zillow metros to an inner join.
+2. **Gold/DAX split — AS DOCUMENTED (§C).** The placement table stands: cross-source / canonical /
+   expensive derivations (FHFA YoY, price-to-rent, gross-yield, affordability composite, CPI-real, FRED
+   wide strip, hazard banding) materialize in **Gold**; slicer-responsive time-intelligence (Zillow/
+   Realtor MoM-YoY, rolling avgs, rank/percentile, metro-vs-national spread) stays in **DAX**.
+3. **Declare PK/FK constraints in Gold — YES.** Each Gold fact declares its PK and FKs to the conformed
+   dims. Near-free, and it drives the Power BI connector's auto-built model-view relationships (the #1
+   screenshot).
+4. **Realtor Sep–Nov 2022 methodology break — DOCUMENT-ONLY (via COMMENT).** Realtor.com re-based its
+   inventory / time-on-market metrics in late 2022; values before/after are not directly comparable, and
+   our realtor fact (starts 2016) straddles the break. Treatment: a one-line `COMMENT` on the affected
+   realtor measures noting the source re-basing — **no per-row era flag** (over-engineering for a single
+   known break). *(Break is Verified — FRED series notes, e.g. `MEDDAYONMARUS`.)*
+5. **RESL polarity — KEEP AS IS.** FEMA's Community Resilience score keeps its native direction (higher =
+   more resilient, opposite to the hazard scores). Readers understand "90% resilient > 20% resilient"; do
+   not invert. Any composite "risk" score must account for this polarity difference explicitly.
+6. **Serving layer — PLAIN GOLD TABLES + THIN PBI MODEL (spine); UC Metric Views OPTIONAL/DOCUMENTED.**
+   Build the verified path: star-schema Gold Delta tables + a thin Power BI semantic model where
+   slicer-responsive measures live in DAX. This is the transferable skill being assessed and produces the
+   #1/#2 screenshots with verified connector behavior. **Optionally**, after the core works, add **one**
+   UC Metric View over a single Gold table as a currency demonstration — but only if a probe confirms the
+   PBI connector consumes it on this edition (research flagged `MEASURE()`/connector friction needing
+   Tabular Editor's "Semantic Bridge"); otherwise keep Metric Views as a documented "evaluated" note.
+   **Do not make a Metric View load-bearing.**
 
 ---
 
