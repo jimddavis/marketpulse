@@ -30,7 +30,7 @@ The six decisions from the research doc, plus the three star-schema answers (202
    direction explicitly.
 6. **Serving = plain Gold tables + thin PBI model**; UC Metric View optional/documented appendix only.
 7. **(answer) Separate native-grain facts** — Gold mirrors Silver's fact set; no consolidated wide fact.
-8. **(answer) 1:1 `dim_metro_profile`** holds the static hazard + climate attributes.
+8. **(answer) 1:1 `dim_metro_environment`** holds the static hazard + climate attributes.
 9. **(answer) Unit suffixes only where the source was cryptic** — realtor/zillow names unchanged.
 
 ---
@@ -51,10 +51,10 @@ static profile dimension on the geo side.
                          gold.dim_geo   (PK geo_key)
                                │ geo_key (FK)
    fact_zillow / realtor / fhfa ──┤
-                               └── gold.dim_metro_profile (PK/FK geo_key, 1:1 — static hazard+climate)
+                               └── gold.dim_metro_environment (PK/FK geo_key, 1:1 — static hazard+climate)
 ```
 
-**Objects (8):** 3 dimensions (`dim_geo`, `dim_date`, `dim_metro_profile`) + 4 facts
+**Objects (7):** 3 dimensions (`dim_geo`, `dim_date`, `dim_metro_environment`) + 4 facts
 (`fact_zillow_metro_monthly`, `fact_realtor_metro_monthly`, `fact_fhfa_metro_quarterly`,
 `fact_fred_national_monthly`). `dim_fred_series` is **not** carried into Gold — see §2.1.
 
@@ -86,7 +86,7 @@ into those columns' COMMENTs. A series dimension with no fact to join is dead we
 
 *Open item (graded §6):* whether to refine `dim_geo` on the way into Gold (e.g. apply the optional
 `_pct`-style suffixes — no, per decision #9) or carry it verbatim. Default: **carry verbatim** + add no
-new columns; `dim_metro_profile` holds the new static enrichment.
+new columns; `dim_metro_environment` holds the new static enrichment.
 
 ### 2.2 Write strategy — full rebuild (overwrite) for every Gold table
 
@@ -104,7 +104,7 @@ every Gold table uses **overwrite-rebuild** (truncate-and-reload semantics), not
 ### 2.3 Surrogate keys
 
 Facts keep their **composite natural PK** `(geo_key, date_key)` — the grain. No single-column identity
-surrogate is added (none is needed; nothing references a fact by a surrogate). `dim_metro_profile` is 1:1
+surrogate is added (none is needed; nothing references a fact by a surrogate). `dim_metro_environment` is 1:1
 with `dim_geo`, so its PK **is** `geo_key` (also the FK to `dim_geo`) — no own identity. This means the
 only `GENERATED ALWAYS AS IDENTITY` column in the lineage stays upstream in Silver `dim_geo`; Gold
 inherits its values. (Consistent with CLAUDE.md's "never `monotonically_increasing_id`" — we reuse a
@@ -138,7 +138,7 @@ here)". Types match the Silver source unless a derivation changes them.
 - **Constraints:** `PK(date_key)`.
 - **Write:** overwrite; `expected = 1,020` (current dim_date row count — verify at build).
 
-### 3.3 `gold.dim_metro_profile` (dimension — 1:1 static enrichment) **(new table)**
+### 3.3 `gold.dim_metro_environment` (dimension — 1:1 static enrichment) **(new table)**
 - **Grain:** CBSA, static (no date). **Source:** `silver.fact_fema_hazard_cbsa` (15 cols) +
   `silver.fact_noaa_climate_cbsa` (13 cols), joined on `geo_key`.
 - **Key:** `geo_key BIGINT NOT NULL` — **PK** and **FK → dim_geo**.
@@ -261,7 +261,7 @@ facts in the affordability composite (§5.3). Canonical, expensive to redo per r
   needs Realtor inputs too.
 
 ### 5.4 Hazard banding (optional) — see the dedicated risk-aggregation design
-`overall_risk_band` on `dim_metro_profile` — static, no slicer dependence, canonical: a categorical risk
+`overall_risk_band` on `dim_metro_environment` — static, no slicer dependence, canonical: a categorical risk
 rating that serves as a Power BI slicer / legend / grouping attribute (which a raw score cannot be).
 
 **The banding rule, the two-column shape (label + ordinal sort key), the no-rating bucket, the RESL
@@ -283,8 +283,8 @@ What Gold must guarantee so the high-signal screenshots (research §D #1/#2) com
 2. **PK + FK declared on every Gold table** (decision #3). The connector preserves UC FKs as PBI model
    relationships → the model-view diagram auto-builds (research §E, Verified). **One-active-path note:**
    each fact has exactly one geo FK and one date FK (single path), so no inactive-relationship ambiguity.
-   `dim_metro_profile → dim_geo` is a 1:1 snowflake extension on the geo side — relate profile to dim_geo
-   only (not directly to facts) to avoid a second fact→geo path.
+   `dim_metro_environment → dim_geo` is a 1:1 snowflake extension on the geo side — relate
+   `dim_metro_environment` to dim_geo only (not directly to facts) to avoid a second fact→geo path.
 3. **Names final** (this doc + mapping doc) — no renames after PBI binds.
 
 **UC Metric View = optional appendix only.** Do not build it into the spine. If pursued post-core, gate
@@ -300,12 +300,12 @@ Mirrors how the Silver/weather phases were staged (DDL → loaders → assertion
 
 **Phase G0 — `gold_ddl.py` (foundation, blocks everything).** Replace the stub: `create_gold_tables`
 following the `silver_ddl.py` shape (`_run_ddl`, `_ok/_fail`, `CREATE TABLE IF NOT EXISTS`, declared
-PK + **FK** constraints). All 8 objects. *Dependency: none. One workstream.*
+PK + **FK** constraints). All 7 objects. *Dependency: none. One workstream.*
 
 **Phase G1 — dimension builds (parallel after G0):**
 - G1a `dim_geo` carry-forward (verbatim from Silver, same keys).
 - G1b `dim_date` carry-forward.
-- G1c `dim_metro_profile` (outer-join hazard+climate, rename per mapping doc, optional banding).
+- G1c `dim_metro_environment` (outer-join hazard+climate, rename per mapping doc, optional banding).
 *All three independent; depend only on G0.*
 
 **Phase G2 — fact builds (parallel after G1; facts FK the dims):**

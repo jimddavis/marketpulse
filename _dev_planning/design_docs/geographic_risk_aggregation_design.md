@@ -16,7 +16,7 @@ committed (§8).
 
 **Grounded in:** `silver_capability_snapshot.md` (coverage), `silver_ddl.py`
 (`fact_fema_hazard_cbsa` / `fact_noaa_climate_cbsa` schema), `silver_gold_column_name_mapping.md` §5/§6
-(names + RESL polarity note), `gold_layer_design.md` §3.3/§5.4 (`dim_metro_profile`).
+(names + RESL polarity note), `gold_layer_design.md` §3.3/§5.4 (`dim_metro_environment`).
 
 ---
 
@@ -120,7 +120,7 @@ A categorical band earns its place because a raw score is bad at exactly the thi
 
 **Why this forces Gold placement (not DAX):** a Power BI **slicer / legend / axis must be a column** (a
 dimension attribute); a DAX *measure* cannot occupy a slicer or legend. So for the band to do jobs 1–3 it
-**must be a stored column** on `dim_metro_profile`. This is the same Gold-vs-DAX logic used throughout:
+**must be a stored column** on `dim_metro_environment`. This is the same Gold-vs-DAX logic used throughout:
 static + slicer-independent + must-be-a-filterable-attribute → materialize in Gold.
 
 **Two concrete schema implications for §5.4** (if the band is adopted at CBSA grain):
@@ -182,7 +182,7 @@ precisely so it *cannot* be silently mis-averaged by a careless implicit aggrega
 ## 6. Table strategy — separate pre-aggregated tables, but only where needed
 
 - **Additive measures** need **no** per-grain tables. They live once at the finest grain
-  (`dim_metro_profile` / the hazard data at CBSA) and DAX sums them up a `dim_geo` hierarchy
+  (`dim_metro_environment` / the hazard data at CBSA) and DAX sums them up a `dim_geo` hierarchy
   (CBSA → state → census_region → national) on demand. Duplicating `eal_valt` into a region table would
   be redundant and a maintenance hazard.
 - **Re-derived scores/ratings** at a coarser grain, *if ever required*, get a **thin dedicated Gold table
@@ -220,7 +220,7 @@ The project owner now intends to build region/state risk rollup. It remains **de
 (v1) into a focused v1.5**, because the **refactoring cost of deferring it is ≈ 0**:
 
 - The **additive base** (`expected_annual_loss_usd`, `population`) is already preserved in Silver
-  `fact_fema_hazard_cbsa` **and carried into Gold `dim_metro_profile`** (v1). v2 reads from Gold — no
+  `fact_fema_hazard_cbsa` **and carried into Gold `dim_metro_environment`** (v1). v2 reads from Gold — no
   Bronze/Silver reach-back.
 - The **geography hierarchy** (`primary_state`, `census_region`) is already on `dim_geo` and carried into
   Gold (v1).
@@ -231,7 +231,7 @@ So building it in v1 vs v1.5 is the *same* work (a new table + the algorithm + F
 it now saves no rework and would expand the v1 critical path (G0→G5) and delay the metro-level star.
 
 **Enablers locked in v1 to keep the deferral free:**
-1. `dim_metro_profile` **retains** `expected_annual_loss_usd` + `population` — flagged "do not trim" in
+1. `dim_metro_environment` **retains** `expected_annual_loss_usd` + `population` — flagged "do not trim" in
    `gold_layer_design.md` §3.3. This is the single guard rail; dropping them would turn the ~0-cost
    rollup into a DDL migration + reload.
 2. The geo hierarchy (`primary_state`, `census_region`) is exposed in the Gold model so **region works as
@@ -275,7 +275,7 @@ the volatile part**:
 - Any **derived region-score table** reads *only* from that base and is **rebuilt wholesale** (overwrite
   write-strategy, per `gold_layer_design.md` §2.2).
 - So **swapping the aggregation algorithm, or adding a new grain** (state, Census division, region,
-  national), is a **single-table rebuild** — zero impact on the base hazard data, `dim_metro_profile`, or
+  national), is a **single-table rebuild** — zero impact on the base hazard data, `dim_metro_environment`, or
   any metro-level report.
 
 "An established algorithm from the internet" vs "our own": FEMA's methodology *is* the established one but
@@ -322,7 +322,7 @@ the volatile part**:
 
 ## 11. Relationship to other docs / non-goals
 
-- **Expands** `gold_layer_design.md` §5.4 (hazard banding) and §3.3 (`dim_metro_profile`). If §5.4 is
+- **Expands** `gold_layer_design.md` §5.4 (hazard banding) and §3.3 (`dim_metro_environment`). If §5.4 is
   promoted from "optional" to "include," it should cross-reference this note for the banding rule.
 - **Does not** change the Silver layer (the `risk_ratng` drop and the pop-weighted CBSA score stand).
 - **Does not** design region rollup tables, the re-percentiling algorithm, or any code — those are out of
