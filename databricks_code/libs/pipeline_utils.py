@@ -84,7 +84,7 @@ class Utils:
         folder = "/".join(folder_parts) if folder_parts else "(root)"
         return {
             "notebook_folder":    folder,
-            "notebook_name":      p.name,
+            "notebook_name":      posix_path.name,
             "notebook_path_full": full_path,
         }
 
