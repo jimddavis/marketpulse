@@ -74,8 +74,8 @@ class Utils:
                 "notebook_path_full": f"error: {e}",
             }
 
-        p = PurePosixPath(full_path)
-        folder_parts = p.parts[1:-1]   # drop leading '/' and the notebook name itself
+        posix_path = PurePosixPath(full_path)
+        folder_parts = posix_path.parts[1:-1]   # drop leading '/' and the notebook name itself
         if len(folder_parts) >= 2 and folder_parts[0] == "Workspace":
             folder_parts = folder_parts[1:]        # drop 'Workspace'
         if len(folder_parts) >= 2 and folder_parts[0] == "Users":

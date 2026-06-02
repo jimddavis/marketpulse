@@ -150,7 +150,7 @@ def _merge_one_row(spark: Any, table: str, schema: StructType, values: tuple,
     """
     df = spark.createDataFrame([values], schema=schema)
     df.createOrReplaceTempView(view_name)
-    on = " AND ".join(f"t.{k} = s.{k}" for k in key_cols)
+    on = " AND ".join(f"t.{key_col} = s.{key_col}" for key_col in key_cols)
     spark.sql(f"""
         MERGE INTO {table} AS t
         USING {view_name} AS s
