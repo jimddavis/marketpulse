@@ -86,16 +86,18 @@ handlers + out-of-scope files).
 **Baseline captured this session:** `tests/data_fetch` = **114 passed**. `data_fetch` work
 is therefore fully guarded locally.
 
-> **⚠ Constraint — local Spark is currently broken.** The installed PySpark requires
-> **Java 17** (`UnsupportedClassVersionError`, class file v61), but only JDK 8 and 11 are
-> present (`/usr/lib/jvm/`), so every Spark-touching local test fails with
-> `JAVA_GATEWAY_EXITED`. This affects `tests/wide_to_long` and any local notebook
-> emulation. **Resolve before Phase 2/4 verification** by installing a JDK 17 (e.g.
-> Temurin 17) and exporting `JAVA_HOME` to it. Until then, `wide_to_long` and notebook
-> renames are verified by static parse + a Databricks dev run, **not** local tests. This
-> is the single biggest risk to "test between steps" and should be fixed first if we want
-> local guardrails for Phases 2–4. *(Parked finding — fixing the JDK is out of scope for
-> the rename task itself; flagged here per CLAUDE.md §7.)*
+> **⚠ Constraint — local Spark is unavailable, and we are proceeding without it
+> (decided 2026-06-01).** The installed PySpark requires **Java 17**
+> (`UnsupportedClassVersionError`, class file v61), but only JDK 8 and 11 are present
+> (`/usr/lib/jvm/`), so every Spark-touching local test fails with `JAVA_GATEWAY_EXITED`.
+> **We are NOT fixing this for the rename task.** Consequently, all Spark-touching code —
+> `tests/wide_to_long`, every notebook (bronze/silver/setup), and the Spark paths in
+> `pipeline_logging`/`pipeline_utils` — is verified by **static parse (`py_compile` /
+> cell-AST parse) + `databricks bundle validate` + a Databricks dev job run**, never by
+> local pytest. Only `tests/data_fetch` (114, no Spark) gives a local test gate; it guards
+> Phase 1 fully. Accept that Phases 2 (wide_to_long) and 4 (notebooks) have **no local
+> test guardrail** — the dev run is the gate. *(Parked: installing JDK 17 would restore
+> local guardrails later, but it is out of scope here per CLAUDE.md §7.)*
 
 A reusable static gate for notebooks (no Spark needed):
 
@@ -147,9 +149,9 @@ revertible in isolation.
 
 ### Phase 0 — Prep (no code renames)
 
-- **0.1 Lock the baseline.** Confirm `tests/data_fetch` = 114 pass. Decide the JDK-17 fix
-  for Spark (install Temurin 17 → `JAVA_HOME`) or accept static-only verification for
-  Phases 2/4 and record that choice here. Keep `scan_single_letter.py` as the oracle.
+- **0.1 Lock the baseline.** Confirm `tests/data_fetch` = 114 pass. Local Spark is **not**
+  being fixed (see §3 constraint) — Phases 2/4 use static parse + dev run as their gate.
+  Keep `scan_single_letter.py` as the oracle.
 - **0.2 Update CLAUDE.md.** Add `e` (exception handlers, and exception-typed params) to
   the §13 / §16 / anti-patterns exceptions list, with a one-line reason. This makes the
   rule self-consistent with its own examples before we start enforcing it. *Verify:* doc
@@ -179,10 +181,9 @@ revertible in isolation.
 - **2.1 `pipeline_logging.py` (`k` comp ~line153), `pipeline_utils.py` (`p` assign ~line77).**
   No direct unit tests. *Verify:* `py_compile` + `ruff` + `databricks bundle validate`.
   These run inside notebooks/Databricks, so a dev pipeline run in Phase 4 re-exercises them.
-- **2.2 `wide_to_long/detect.py` (`f`×2), `validate.py` (`c`×2).** *Verify:* `pytest
-  tests/wide_to_long` **iff** JDK 17 is installed (Step 0.1); otherwise `py_compile` +
-  `ruff`, then rely on the `load_zillow_long` dev run. Renames are confined to
-  comprehension bodies — low risk.
+- **2.2 `wide_to_long/detect.py` (`f`×2), `validate.py` (`c`×2).** *Verify:* `py_compile`
+  + `ruff` (local Spark tests are unavailable per §3), then rely on the `load_zillow_long`
+  dev run. Renames are confined to comprehension bodies — low risk.
 
 ### Phase 3 — scripts
 
@@ -232,7 +233,7 @@ separate job runs.
 
 | Risk | Mitigation |
 |---|---|
-| Local Spark broken (JDK 17) → no local guardrail for `wide_to_long`/notebooks | Fix in Step 0.1, or accept static-parse + dev-run verification (documented per step). |
+| No local guardrail for `wide_to_long`/notebooks (local Spark unavailable, not being fixed) | Accepted: static parse + `bundle validate` + dev job run is the gate. Renames here are cell-local/comprehension-only, so risk is low; per-notebook commits keep any failure bisectable. |
 | Blanket `replace_all` renames a single letter that means different things | Per-site renaming only; explicit warning for `build_crosswalk.py` `s`. |
 | Rename collides with / shadows an existing name in scope | `ruff`/`pyflakes` after each `.py` step; static cell parse for notebooks. |
 | Notebook JSON corruption from hand-editing source arrays | Edit cell source strings only; re-validate with `databricks bundle validate` + the JSON/AST cell parser before any run. |
