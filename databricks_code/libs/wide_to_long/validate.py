@@ -44,9 +44,9 @@ def validate_all(columns: list[str]) -> Detection:
     #    not as InterleavedColumnError.)
     fmt = detection.fmt
     foreign_in_ids = [
-        c
-        for c in detection.id_columns
-        if any(other.matches(c) for other in REGISTRY if other.name != fmt.name)
+        column
+        for column in detection.id_columns
+        if any(other.matches(column) for other in REGISTRY if other.name != fmt.name)
     ]
     if foreign_in_ids:
         raise MixedDateFormatsError(
@@ -60,7 +60,7 @@ def validate_all(columns: list[str]) -> Detection:
     #    the locked format itself proves the tail isn't truly contiguous
     #    — there's a non-date column to its right that pushed it out
     #    of the tail span.
-    same_format_in_ids = [c for c in detection.id_columns if fmt.matches(c)]
+    same_format_in_ids = [column for column in detection.id_columns if fmt.matches(column)]
     if same_format_in_ids:
         raise InterleavedColumnError(
             "Non-date column appears to the right of a date column.",

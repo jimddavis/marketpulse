@@ -61,8 +61,8 @@ def detect_format(columns: list[str]) -> Detection:
             "Multiple date formats produced equal maximum tail spans.",
             input_columns=columns,
             detected=f"tail span {max_span} matched by: "
-            + ", ".join(f.name for f in winners),
-            offending=[f.name for f in winners],
+            + ", ".join(date_fmt.name for date_fmt in winners),
+            offending=[date_fmt.name for date_fmt in winners],
         )
 
     chosen = winners[0]
