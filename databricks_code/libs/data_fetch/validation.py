@@ -25,11 +25,11 @@ class ValidationError(Exception):
 
 def sha256_of(path: str) -> str:
     """Streamed sha256 hex digest of the file at `path` (design §7.6)."""
-    h = hashlib.sha256()
+    hasher = hashlib.sha256()
     with open(path, "rb") as fh:
         for chunk in iter(lambda: fh.read(_HASH_CHUNK), b""):
-            h.update(chunk)
-    return h.hexdigest()
+            hasher.update(chunk)
+    return hasher.hexdigest()
 
 
 def validate_download(path: str, *, fmt: str, expected_header: tuple[str, ...] | None,

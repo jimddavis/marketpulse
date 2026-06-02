@@ -55,8 +55,8 @@ class DotenvSecretResolver:
                 line = line.strip()
                 if not line or line.startswith("#") or "=" not in line:
                     continue
-                k, _, v = line.partition("=")
-                values[k.strip()] = v.strip().strip('"').strip("'")
+                key, _, value = line.partition("=")
+                values[key.strip()] = value.strip().strip('"').strip("'")
         return values
 
     def _find_env(self) -> str | None:
