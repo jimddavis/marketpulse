@@ -67,7 +67,7 @@ class RunSummary:
     outcomes: tuple[FileOutcome, ...]
 
     def by_status(self, status: str) -> list[FileOutcome]:
-        return [o for o in self.outcomes if o.status == status]
+        return [outcome for outcome in self.outcomes if outcome.status == status]
 
     def describe(self) -> str:
         return (f"download run: {len(self.by_status(STATUS_SUCCEEDED))} succeeded, "
@@ -97,9 +97,9 @@ class DownloadRunner:
         for spec in sources:
             provider = self._provider_for(spec)
             for f in spec.files:
-                p = provider.probe(spec, f)
-                results.append(HealthCheckResult(spec.name, f.landed_filename, p.ok,
-                                                 p.http_status, p.content_length, p.detail))
+                probe_result = provider.probe(spec, f)
+                results.append(HealthCheckResult(spec.name, f.landed_filename, probe_result.ok,
+                                                 probe_result.http_status, probe_result.content_length, probe_result.detail))
         return results
 
     def run_file(self, provider: Provider, spec: SourceSpec, f: SourceFile) -> FileOutcome:
@@ -228,11 +228,11 @@ def main(argv: list[str] | None = None) -> int:
 
     if args.healthcheck:
         results = healthcheck(SOURCES, ctx, secrets=secrets)
-        for r in results:
-            flag = "OK " if r.ok else "BAD"
-            print(f"  [{flag}] {r.source_system}/{r.landed_filename}  "
-                  f"http={r.http_status} size={r.content_length} {r.detail or ''}")
-        return 0 if all(r.ok for r in results) else 1
+        for result in results:
+            flag = "OK " if result.ok else "BAD"
+            print(f"  [{flag}] {result.source_system}/{result.landed_filename}  "
+                  f"http={result.http_status} size={result.content_length} {result.detail or ''}")
+        return 0 if all(result.ok for result in results) else 1
 
     if not args.root:
         parser.error("--root is required unless --healthcheck")
