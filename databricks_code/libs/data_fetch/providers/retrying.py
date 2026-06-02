@@ -56,11 +56,11 @@ class RetryingProvider:
         self._rng = rng
         self.last_attempts = 0
 
-    def fetch_to(self, scratch_path: str, spec: SourceSpec, f: SourceFile,
+    def fetch_to(self, scratch_path: str, spec: SourceSpec, source_file: SourceFile,
                  *, resume_from: int, ctx: RunContext) -> ProviderFetch:
         for attempt in range(1, self._max_attempts + 1):
             try:
-                result = self._inner.fetch_to(scratch_path, spec, f,
+                result = self._inner.fetch_to(scratch_path, spec, source_file,
                                               resume_from=resume_from, ctx=ctx)
                 self.last_attempts = attempt
                 return result
@@ -71,11 +71,11 @@ class RetryingProvider:
                 self._sleep(self._delay(attempt, e))
         raise AssertionError("retry loop exited without returning")  # unreachable
 
-    def probe(self, spec: SourceSpec, f: SourceFile) -> ProbeResult:
-        return self._inner.probe(spec, f)   # cheap healthcheck — delegated, no retry
+    def probe(self, spec: SourceSpec, source_file: SourceFile) -> ProbeResult:
+        return self._inner.probe(spec, source_file)   # cheap healthcheck — delegated, no retry
 
-    def canonical_url(self, spec: SourceSpec, f: SourceFile) -> str:
-        return self._inner.canonical_url(spec, f)   # pure, no I/O — delegated
+    def canonical_url(self, spec: SourceSpec, source_file: SourceFile) -> str:
+        return self._inner.canonical_url(spec, source_file)   # pure, no I/O — delegated
 
     def _is_transient(self, e: BaseException) -> bool:
         if isinstance(e, _TRANSIENT_NETWORK):

@@ -40,42 +40,42 @@ class FredApiProvider:
 
     # -- fetch ---------------------------------------------------------------
 
-    def fetch_to(self, scratch_path: str, spec: SourceSpec, f: SourceFile,
+    def fetch_to(self, scratch_path: str, spec: SourceSpec, source_file: SourceFile,
                  *, resume_from: int, ctx: RunContext) -> ProviderFetch:
-        if not f.series_id:
+        if not source_file.series_id:
             raise ValueError(
-                f"fred_api source {spec.name!r} file {f.landed_filename!r} has no series_id"
+                f"fred_api source {spec.name!r} file {source_file.landed_filename!r} has no series_id"
             )
         key = self._api_key(spec)
         # Full history → no observation_start (design §5). `resume_from` is ignored:
         # the API yields a single JSON document, not a resumable byte stream.
         _, payload = self._request_json(
             f"{_FRED_BASE}/series/observations",
-            params={"series_id": f.series_id, "api_key": key, "file_type": "json"},
+            params={"series_id": source_file.series_id, "api_key": key, "file_type": "json"},
         )
         bytes_written = self._write_csv(scratch_path, payload.get("observations", []))
         return ProviderFetch(
             bytes_written=bytes_written,
             http_status=None,                       # FRED JSON path → null http_status_code (design §5, §9)
-            canonical_url=self._canonical_url(f.series_id),
+            canonical_url=self._canonical_url(source_file.series_id),
         )
 
     # -- probe ---------------------------------------------------------------
 
-    def canonical_url(self, spec: SourceSpec, f: SourceFile) -> str:
+    def canonical_url(self, spec: SourceSpec, source_file: SourceFile) -> str:
         # KEY-FREE observations endpoint (series_id only) — same value fetch_to stamps.
-        if f.series_id:
-            return self._canonical_url(f.series_id)
-        return f"{spec.name}/{f.landed_filename}"
+        if source_file.series_id:
+            return self._canonical_url(source_file.series_id)
+        return f"{spec.name}/{source_file.landed_filename}"
 
-    def probe(self, spec: SourceSpec, f: SourceFile) -> ProbeResult:
-        if not f.series_id:
-            return ProbeResult(ok=False, detail=f"no series_id for {f.landed_filename!r}")
+    def probe(self, spec: SourceSpec, source_file: SourceFile) -> ProbeResult:
+        if not source_file.series_id:
+            return ProbeResult(ok=False, detail=f"no series_id for {source_file.landed_filename!r}")
         try:
             key = self._api_key(spec)
             status, payload = self._request_json(   # /series metadata only (design §5)
                 f"{_FRED_BASE}/series",
-                params={"series_id": f.series_id, "api_key": key, "file_type": "json"},
+                params={"series_id": source_file.series_id, "api_key": key, "file_type": "json"},
             )
         except ProviderHttpError as e:
             return ProbeResult(ok=False, http_status=e.status_code, detail=str(e))

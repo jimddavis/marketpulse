@@ -43,7 +43,7 @@ def _wrap(outcomes, **kw):
 
 
 def _fetch(provider):
-    return provider.fetch_to("scratch", spec=None, f=None, resume_from=0, ctx=None)
+    return provider.fetch_to("scratch", spec=None, source_file=None, resume_from=0, ctx=None)
 
 
 # -- happy path / no retry ---------------------------------------------------
@@ -113,5 +113,5 @@ def test_honors_retry_after_over_backoff():
 
 def test_probe_delegates_without_retry():
     provider, inner, sleeps = _wrap([])
-    res = provider.probe(spec=None, f=None)
+    res = provider.probe(spec=None, source_file=None)
     assert res.ok and inner.probe_calls == 1 and sleeps == []

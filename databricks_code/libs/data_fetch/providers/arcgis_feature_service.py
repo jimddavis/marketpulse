@@ -50,12 +50,12 @@ class ArcGisFeatureServiceProvider:
 
     # -- fetch ---------------------------------------------------------------
 
-    def fetch_to(self, scratch_path: str, spec: SourceSpec, f: SourceFile,
+    def fetch_to(self, scratch_path: str, spec: SourceSpec, source_file: SourceFile,
                  *, resume_from: int, ctx: RunContext) -> ProviderFetch:
-        query_url = f.url
+        query_url = source_file.url
         if not query_url:
             raise ValueError(
-                f"arcgis_feature_service source {spec.name!r} file {f.landed_filename!r} has no url"
+                f"arcgis_feature_service source {spec.name!r} file {source_file.landed_filename!r} has no url"
             )
 
         # Page through the layer: each request returns up to _PAGE_SIZE attribute rows plus
@@ -84,15 +84,15 @@ class ArcGisFeatureServiceProvider:
 
     # -- probe ---------------------------------------------------------------
 
-    def canonical_url(self, spec: SourceSpec, f: SourceFile) -> str:
+    def canonical_url(self, spec: SourceSpec, source_file: SourceFile) -> str:
         # The query URL itself — KEY-FREE, no secret to strip. Falls back to a stable
         # identifier for a malformed manifest entry (fetch_to raises on it).
-        return f.url or f"{spec.name}/{f.landed_filename}"
+        return source_file.url or f"{spec.name}/{source_file.landed_filename}"
 
-    def probe(self, spec: SourceSpec, f: SourceFile) -> ProbeResult:
-        query_url = f.url
+    def probe(self, spec: SourceSpec, source_file: SourceFile) -> ProbeResult:
+        query_url = source_file.url
         if not query_url:
-            return ProbeResult(ok=False, detail=f"no url for {f.landed_filename!r}")
+            return ProbeResult(ok=False, detail=f"no url for {source_file.landed_filename!r}")
         params = {"where": "1=1", "returnCountOnly": "true", "f": "json"}
         timeout = (HTTP_CONNECT_TIMEOUT, HTTP_READ_TIMEOUT)
         try:

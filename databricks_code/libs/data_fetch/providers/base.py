@@ -33,7 +33,7 @@ class ProbeResult:
 
 @runtime_checkable
 class Provider(Protocol):
-    def fetch_to(self, scratch_path: str, spec: SourceSpec, f: SourceFile,
+    def fetch_to(self, scratch_path: str, spec: SourceSpec, source_file: SourceFile,
                  *, resume_from: int, ctx: RunContext) -> ProviderFetch:
         """Write the file's raw bytes to `scratch_path` on LOCAL disk.
 
@@ -43,11 +43,11 @@ class Provider(Protocol):
         """
         ...
 
-    def probe(self, spec: SourceSpec, f: SourceFile) -> ProbeResult:
+    def probe(self, spec: SourceSpec, source_file: SourceFile) -> ProbeResult:
         """Cheap reachability check for healthcheck mode — no full download (§7.1)."""
         ...
 
-    def canonical_url(self, spec: SourceSpec, f: SourceFile) -> str:
+    def canonical_url(self, spec: SourceSpec, source_file: SourceFile) -> str:
         """The KEY-FREE canonical URL for this file — the same value fetch_to stamps on
         ProviderFetch.canonical_url, but computable WITHOUT a fetch (no I/O). The runner
         seeds the download_log source_url with this so a file that fails BEFORE the fetch

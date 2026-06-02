@@ -33,12 +33,12 @@ class HttpFileProvider:
 
     # -- fetch ---------------------------------------------------------------
 
-    def fetch_to(self, scratch_path: str, spec: SourceSpec, f: SourceFile,
+    def fetch_to(self, scratch_path: str, spec: SourceSpec, source_file: SourceFile,
                  *, resume_from: int, ctx: RunContext) -> ProviderFetch:
-        url = f.url
+        url = source_file.url
         if not url:
             raise ValueError(
-                f"http_file source {spec.name!r} file {f.landed_filename!r} has no url"
+                f"http_file source {spec.name!r} file {source_file.landed_filename!r} has no url"
             )
         timeout = (HTTP_CONNECT_TIMEOUT, HTTP_READ_TIMEOUT)
 
@@ -76,15 +76,15 @@ class HttpFileProvider:
 
     # -- probe ---------------------------------------------------------------
 
-    def canonical_url(self, spec: SourceSpec, f: SourceFile) -> str:
+    def canonical_url(self, spec: SourceSpec, source_file: SourceFile) -> str:
         # The URL itself — no key to strip. Falls back to a stable identifier for a
         # malformed manifest entry so the value is never null (fetch_to raises on it).
-        return f.url or f"{spec.name}/{f.landed_filename}"
+        return source_file.url or f"{spec.name}/{source_file.landed_filename}"
 
-    def probe(self, spec: SourceSpec, f: SourceFile) -> ProbeResult:
-        url = f.url
+    def probe(self, spec: SourceSpec, source_file: SourceFile) -> ProbeResult:
+        url = source_file.url
         if not url:
-            return ProbeResult(ok=False, detail=f"no url for {f.landed_filename!r}")
+            return ProbeResult(ok=False, detail=f"no url for {source_file.landed_filename!r}")
         headers = {"User-Agent": spec.user_agent or BROWSER_UA, "Range": "bytes=0-0"}
         timeout = (HTTP_CONNECT_TIMEOUT, HTTP_READ_TIMEOUT)
         try:

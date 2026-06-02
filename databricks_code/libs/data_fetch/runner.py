@@ -88,41 +88,41 @@ class DownloadRunner:
         outcomes: list[FileOutcome] = []
         for spec in sources:
             provider = self._provider_for(spec)
-            for f in spec.files:
-                outcomes.append(self.run_file(provider, spec, f))   # raises on failure
+            for source_file in spec.files:
+                outcomes.append(self.run_file(provider, spec, source_file))   # raises on failure
         return RunSummary(tuple(outcomes))
 
     def healthcheck(self, sources) -> list[HealthCheckResult]:
         results: list[HealthCheckResult] = []
         for spec in sources:
             provider = self._provider_for(spec)
-            for f in spec.files:
-                probe_result = provider.probe(spec, f)
-                results.append(HealthCheckResult(spec.name, f.landed_filename, probe_result.ok,
+            for source_file in spec.files:
+                probe_result = provider.probe(spec, source_file)
+                results.append(HealthCheckResult(spec.name, source_file.landed_filename, probe_result.ok,
                                                  probe_result.http_status, probe_result.content_length, probe_result.detail))
         return results
 
-    def run_file(self, provider: Provider, spec: SourceSpec, f: SourceFile) -> FileOutcome:
-        scratch = os.path.join(self._ctx.scratch_dir, f"{spec.name}__{f.landed_filename}")
-        dest = self._writer.destination(spec.name, f.landed_filename)
+    def run_file(self, provider: Provider, spec: SourceSpec, source_file: SourceFile) -> FileOutcome:
+        scratch = os.path.join(self._ctx.scratch_dir, f"{spec.name}__{source_file.landed_filename}")
+        dest = self._writer.destination(spec.name, source_file.landed_filename)
         started = self._ctx.now()
         download_id = str(uuid.uuid4())
         # Seed source_url for the FAILED-before-fetch case from the provider's own KEY-FREE
         # URL shaping (no provider-specific logic here); overwritten with fetch.canonical_url
         # on success — both produce the same string, so the namespace is consistent.
-        canonical_url = provider.canonical_url(spec, f)
+        canonical_url = provider.canonical_url(spec, source_file)
         bytes_dl: int | None = None
         http_status: int | None = None
         sha: str | None = None
         attempts = 1
         try:
-            fetch = provider.fetch_to(scratch, spec, f, resume_from=0, ctx=self._ctx)
+            fetch = provider.fetch_to(scratch, spec, source_file, resume_from=0, ctx=self._ctx)
             attempts = getattr(provider, "last_attempts", 1)
             canonical_url = fetch.canonical_url
             bytes_dl = fetch.bytes_written
             http_status = fetch.http_status
 
-            validate_download(scratch, fmt=f.fmt, expected_header=f.expected_header,
+            validate_download(scratch, fmt=source_file.fmt, expected_header=source_file.expected_header,
                               expected_size=fetch.content_length)
             sha = sha256_of(scratch)
 
@@ -130,15 +130,15 @@ class DownloadRunner:
             # Skip only if the bytes are unchanged AND the file is still on disk. The audit
             # log alone is insufficient: a file deleted out-of-band (e.g. the Volume cleared)
             # must re-download, not no-op (§7.6). final_size() returns 0 when absent.
-            already_present = self._writer.final_size(spec.name, f.landed_filename) > 0
+            already_present = self._writer.final_size(spec.name, source_file.landed_filename) > 0
             if prior is not None and prior == sha and already_present:
                 status, landed = STATUS_SKIPPED, dest      # identical bytes already landed AND still present — no promote
             else:
                 status = STATUS_SUCCEEDED
-                landed = self._writer.promote(scratch, spec.name, f.landed_filename)
+                landed = self._writer.promote(scratch, spec.name, source_file.landed_filename)
             self._record(download_id, spec, canonical_url, landed, status,
                          http_status, bytes_dl, sha, attempts, started, None)
-            return FileOutcome(spec.name, f.landed_filename, status,
+            return FileOutcome(spec.name, source_file.landed_filename, status,
                                canonical_url, landed, bytes_dl, sha, attempts)
         except Exception as e:
             attempts = getattr(provider, "last_attempts", attempts)
