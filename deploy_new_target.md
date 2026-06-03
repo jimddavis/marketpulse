@@ -197,7 +197,6 @@ schema show `succeeded` for each job run.
 - **Idempotency:** every step is safe to re-run. Bronze loaders MERGE on natural keys; seeds MERGE on
   `cbsa_code` (keeping `geo_key` stable); Silver MERGEs on `geo_key`; quarantine writes
   delete-by-`source_system` then re-append.
-- **`step_log_test`** is a test job, not part of the data pipeline — skip it.
 - **Production mode** targets deploy under `/Workspace/Users/zieder0022@gmail.com/.bundle/...`; the
   `shared_lib_path` resolves at deploy time, and `catalog_ddl` self-discovers the libs path.
 - **Annual vs monthly cadence:** `weather_download`/`weather_bronze` are annual-refresh sources kept

@@ -6,7 +6,6 @@ workspace:
 
 include:
   - resources/*.yml
-  - error_testing/*.yml   # disposable failure-condition harness (see error_testing/README.md)
 
 variables:
   catalog:
