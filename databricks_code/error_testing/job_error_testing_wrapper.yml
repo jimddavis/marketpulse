@@ -1,0 +1,26 @@
+resources:
+  jobs:
+    error_testing_wrapper:
+      name: "Marketpulse error_testing_wrapper [${bundle.target}]"
+      # Probe for open #4 (run_job_task wrapper). Confirms TWO things the single-job harness can't:
+      #   (a) {{job.run_id}} inside the CHILD's finalize resolves to the CHILD run id (not this
+      #       wrapper's) — i.e. the cross-check get_run() enumerates the child's loader tasks, not
+      #       the wrapper's run_job_task shells. Proven if child finalize reports "step4_a" failed.
+      #   (b) surface 2: a child FAILED rolls this run_job_task wrapper red.
+      # Mirrors full_bronze.yml. Default fail_labels=step4_a so a plain run triggers the failure path;
+      # run with --params fail_labels= (empty) for the happy-path control.
+      parameters:
+        - name: catalog
+          default: ${var.catalog}
+        - name: shared_lib_path
+          default: ${var.shared_lib_path}
+        - name: fail_labels
+          default: "step4_a"
+      tasks:
+        - task_key: run_error_testing
+          run_job_task:
+            job_id: ${resources.jobs.error_testing.id}
+            job_parameters:
+              catalog: "{{job.parameters.catalog}}"
+              shared_lib_path: "{{job.parameters.shared_lib_path}}"
+              fail_labels: "{{job.parameters.fail_labels}}"

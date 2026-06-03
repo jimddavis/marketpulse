@@ -83,4 +83,6 @@ resources:
             parameters:
               - "{{job.parameters.shared_lib_path}}"   # sys.argv[1]
               - "{{job.parameters.catalog}}"           # sys.argv[2]
+              - "{{job.run_id}}"                       # sys.argv[3] — this job run's id, for the
+                                                       # WorkspaceClient task-outcome cross-check
           environment_key: default

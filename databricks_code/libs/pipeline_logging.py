@@ -184,14 +184,27 @@ def pipeline_log_upsert(
                    values, ["pipeline_run_id"], "_pipeline_log_src")
 
 
-def pipeline_log_finalize(spark: Any, audit_schema: str, pipeline_run_id: str) -> None:
+def pipeline_log_finalize(
+    spark: Any,
+    audit_schema: str,
+    pipeline_run_id: str,
+    databricks_failures: list[dict[str, str]] | None = None,
+) -> None:
     """Close out a pipeline_log row at end of run. MAY RAISE.
 
-    Reads pipeline_name + started_timestamp from the existing row, scans
-    pipeline_step_log for failures attributable to this run, and upserts the row
-    with final status, ended_timestamp, duration, and an aggregated error_message.
-    Trusts the audit table (pipeline_step_log), not the Databricks task outcomes.
+    Reads pipeline_name + started_timestamp from the existing row, then derives the
+    final status from TWO sources:
+      1. pipeline_step_log rows for this run with status='failed' (our audit trail), and
+      2. databricks_failures — failed sibling tasks observed directly from Databricks'
+         task outcomes (WorkspaceClient.get_run), passed in by the caller.
+
+    Source 2 catches failures that never reached our logging — e.g. an error before a
+    notebook opens its pipeline_step_log row. The audit table is blind to those, so a
+    status derived from it alone can read 'succeeded' for a run that really failed.
+    Each databricks_failures entry is a dict {"task_key": str, "error": str}.
     """
+    databricks_failures = databricks_failures or []
+
     header = spark.sql(f"""
         SELECT pipeline_name, started_timestamp
         FROM {audit_schema}.pipeline_log
@@ -217,13 +230,25 @@ def pipeline_log_finalize(spark: Any, audit_schema: str, pipeline_run_id: str) -
           AND status = '{STATUS_FAILED}'
     """).collect()[0]
 
-    if failed["failed_count"] > 0:
+    logged_failures = failed["failed_count"] > 0
+
+    if logged_failures or databricks_failures:
         status = STATUS_FAILED
-        error_message = (
-            f"{failed['failed_count']} step(s) failed: "
-            f"{', '.join(failed['failed_notebooks'])}. "
-            f"See {audit_schema}.pipeline_step_log for details."
-        )
+        # Aggregate both sources into one message so the audit row records what failed
+        # whether or not the step ever logged a row.
+        parts = []
+        if logged_failures:
+            parts.append(
+                f"{failed['failed_count']} logged step(s) failed: "
+                f"{', '.join(failed['failed_notebooks'])}."
+            )
+        if databricks_failures:
+            detail = "; ".join(
+                f"{failure['task_key']}: {failure['error']}" for failure in databricks_failures
+            )
+            parts.append(f"{len(databricks_failures)} Databricks task(s) failed: {detail}")
+        parts.append(f"See {audit_schema}.pipeline_step_log and the run's task matrix.")
+        error_message = " ".join(parts)
     else:
         status = STATUS_SUCCEEDED
         error_message = None

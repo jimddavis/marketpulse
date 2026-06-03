@@ -1,0 +1,43 @@
+Findings (most severe first)
+
+  1. Detector only catches FAILED — misses TIMEDOUT, CANCELED, etc. (correctness / masking gap)
+
+  finalize_pipeline_run_log.py ~line 64: task.state.result_state == RunResultState.FAILED. The SDK's terminal states include TIMEDOUT, CANCELED, MAXIMUM_CONCURRENT_RUNS_REACHED —
+  all non-success. A data task that times out gets TIMEDOUT, not FAILED, and (being killed) writes no failed step row either → the cross-check ignores it → finalize doesn't raise
+  → job goes SUCCESS_WITH_FAILURES, pipeline_log reads succeeded. The exact masking we're trying to kill, reopened for timeouts. Fix: treat any latest-attempt terminal state that
+  isn't success/excluded as a failure — e.g. result_state in {FAILED, TIMEDOUT, CANCELED, MAXIMUM_CONCURRENT_RUNS_REACHED} (deliberately excluding
+  UPSTREAM_FAILED/UPSTREAM_CANCELED, since the root FAILED task is already caught directly, and EXCLUDED/SUCCESS).
+
+  2. Jobs-API call now gates the audit close — a transient blip false-fails a green run (robustness regression)
+
+  The old finalize only touched our own tables, so it always closed the pipeline_log row. The new version calls WorkspaceClient().jobs.get_run(...) at the top, before
+  pipeline_log_finalize. If that call (or WorkspaceClient() construction) throws on a transient — even on a fully successful run — finalize crashes: the row is left at RUNNING and
+  the job flips to FAILED for no real reason. Fix: wrap the whole cross-check in try/except; on failure, log a warning, fall back to databricks_failures=[], and still call
+  pipeline_log_finalize so the row always closes (degrade to old audit-only behavior rather than false-fail).
+
+  3. get_run_output per failed task can abort before the row is closed (robustness)
+
+  ~line 66: get_run_output(run_id=task.run_id) is called per failed task with no guard. One flaky/unsupported output read raises → finalize dies before pipeline_log_finalize runs
+  → the audit row is never written, defeating the "commit before raise" design. Fix: same try/except theme — wrap each fetch, degrade the message to "(error detail unavailable)"
+  so a real failure is still recorded and the row still closes.
+
+  4. {{job.run_id}} inside run_job_task children is unverified (correctness — Projected)
+
+  The full_bronze/silver/gold wrappers invoke the per-phase jobs via run_job_task. We proved the diagnostic on gold_load run directly, not through a wrapper. If {{job.run_id}} in
+  a child resolves to the parent wrapper's run id, get_run would return the wrapper's run_job_task tasks (not our data tasks) and find nothing → masking. It should resolve to the
+  child's own run (each run_job_task child is its own job run), so this is likely fine — but it's the one thing the bronze rebuild test should explicitly confirm via a wrapper
+  run.
+
+  Checked and cleared (so you know the coverage)
+
+  - SQL injection / quoting from raw error text → safe. _merge_one_row binds error_message as a createDataFrame value with UPDATE SET */INSERT *; quotes/newlines in the Databricks
+  error don't reach SQL text.
+  - Caller breakage from the new signature → none. pipeline_log_finalize's only caller is finalize_pipeline_run_log.py; the 4th param is optional/defaulted.
+  - Minor/latent (not a finding): get_run task pagination only matters for >100-task runs; ours are <12, so no current risk.
+
+  My take
+
+  #1 and #2 are worth fixing before commit — #1 is a genuine hole in the feature's purpose, and #2 turns a transient into a false red (and an unclosed audit row), which would be
+  confusing and erode trust in the very signal we're building. #3 folds into the same try/except as #2. #4 is just a test-coverage note for the wrapper.
+
+  Want me to apply fixes for #1–#3 now (offline, no compute), and add the wrapper run to the test plan for #4?

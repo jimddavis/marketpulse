@@ -95,6 +95,22 @@ After approval:
 
 This applies even when the plan seems obvious — it is a control surface for the user.
 
+### 3.1 Test before you commit
+
+**Do not `git commit` a change until it has been TESTED — not merely written or statically
+checked.** "Tested" means exercised against its real gate:
+
+- **Locally testable code** (e.g. `data_fetch`, pure Python): the unit-test suite passes.
+- **Spark / notebook / DDL / job code with no local test** (local Spark is unavailable per §3 of
+  the rename design / project gotchas): a **deploy + dev job run** completes and is **verified**
+  (row counts, audit-log rows, expected behavior).
+
+A clean `py_compile` / `databricks bundle validate` / scanner / lint pass is a **pre-commit check**,
+not a test — necessary but not sufficient to commit. **Commit only once the real gate is green.**
+When the gate is a downstream dev run, **defer the commit until that run passes** (this overrides any
+per-step "commit after static parse" cadence a plan might suggest). Still commit only when the user
+asks, and on a branch when on the default branch.
+
 ---
 
 ## 4. Confidence grading
