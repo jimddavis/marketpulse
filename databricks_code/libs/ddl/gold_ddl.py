@@ -23,7 +23,7 @@
 # dim_fred_series is NOT carried into Gold — FRED pivots wide, so series become columns (design §2.1).
 #
 # Derived columns (price_to_rent_ratio, gross_rental_yield_pct, home_price_index_pct_change_yoy) are
-# declared here but NULL until the G2 build populates them. CPI-real is deferred to G2 (a column-add).
+# declared here but NULL until the G2 build populates them.
 #
 # PK constraints are declared inline (UC informational, not enforced — documents the grain). FK
 # constraints are added in a SECOND guarded pass (_add_gold_foreign_keys) because ALTER...ADD FOREIGN

@@ -1,9 +1,4 @@
-"""Shared utility module — STUB.
-
-Implement when the first Bronze notebook needs it. Function signatures
-and docstrings below define the contract the rest of the pipeline
-assumes. Do not change a signature without updating every caller (see
-project CLAUDE.md § 6 — load-bearing values).
+"""Shared utility module .
 
 Conventions enforced by this module (project CLAUDE.md § 12):
 - No module-level side effects.
@@ -17,6 +12,7 @@ Conventions enforced by this module (project CLAUDE.md § 12):
 from __future__ import annotations
 
 import traceback
+from datetime import timezone
 from pathlib import PurePosixPath
 from typing import Any
 
@@ -89,29 +85,6 @@ class Utils:
         }
 
     @staticmethod
-    def archive_source_files(
-        dbutils: Any,
-        source_path: str,
-        archive_subfolder: str = "archive",
-    ) -> dict[str, Any]:
-        """Move successfully-loaded source files to an archive subfolder.
-
-        Returns
-        -------
-        dict with keys: 'status' ('succeeded' | 'failed'), 'archived_count',
-        'archive_path', optional 'error_message'.
-
-        Implementation notes:
-        - Use `dbutils.fs.mv` for atomic moves within the same Volume.
-        - Archive path: {source_path}/{archive_subfolder}/{run_id}/
-        - Skip files matching `*.tmp` or starting with `.`.
-        - This function MUST NOT raise — orchestration code calls it after
-          a successful write; an archive failure should be logged but not
-          roll back the successful Bronze write.
-        """
-        raise NotImplementedError("Implement when first Bronze notebook needs file archiving")
-
-    @staticmethod
     def normalize_aware_datetime(dt):
         """Ensure a datetime is timezone-aware (UTC).
 
@@ -119,7 +92,6 @@ class Utils:
         but `datetime.now(timezone.utc)` returns offset-aware. Subtraction
         mixes the two and raises TypeError. Normalize at helper boundaries.
         """
-        from datetime import timezone
         if dt is None:
             return None
         if dt.tzinfo is None:
