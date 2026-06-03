@@ -1,0 +1,48 @@
+resources:
+  jobs:
+    full_bronze:
+      name: "Marketpulse full_bronze [${bundle.target}]"
+      # Fully populates the BRONZE layer. PREREQS the operator owns: catalog_setup has run
+      # (catalog / schemas / volumes / tables exist) and the committed reference files are uploaded
+      # to their Volumes. Composes the existing per-phase jobs via run_job_task — two parallel
+      # source families, each: raw acquisition -> bronze load.
+      #   housing: download_sources -> bronze_load
+      #   weather: weather_download -> weather_bronze
+      # Each child job owns its own init/finalize pipeline_log row.
+      parameters:
+        - name: catalog
+          default: ${var.catalog}
+        - name: shared_lib_path
+          default: ${var.shared_lib_path}
+      tasks:
+        - task_key: download_sources
+          run_job_task:
+            job_id: ${resources.jobs.download_sources.id}
+            job_parameters:
+              catalog: "{{job.parameters.catalog}}"
+              shared_lib_path: "{{job.parameters.shared_lib_path}}"
+
+        - task_key: weather_download
+          run_job_task:
+            job_id: ${resources.jobs.weather_download.id}
+            job_parameters:
+              catalog: "{{job.parameters.catalog}}"
+              shared_lib_path: "{{job.parameters.shared_lib_path}}"
+
+        - task_key: bronze_load
+          depends_on:
+            - task_key: download_sources
+          run_job_task:
+            job_id: ${resources.jobs.bronze_load.id}
+            job_parameters:
+              catalog: "{{job.parameters.catalog}}"
+              shared_lib_path: "{{job.parameters.shared_lib_path}}"
+
+        - task_key: weather_bronze
+          depends_on:
+            - task_key: weather_download
+          run_job_task:
+            job_id: ${resources.jobs.weather_bronze.id}
+            job_parameters:
+              catalog: "{{job.parameters.catalog}}"
+              shared_lib_path: "{{job.parameters.shared_lib_path}}"

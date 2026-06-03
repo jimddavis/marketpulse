@@ -1,0 +1,21 @@
+resources:
+  jobs:
+    full_gold:
+      name: "Marketpulse full_gold [${bundle.target}]"
+      # Fully populates the GOLD layer. PREREQ the operator owns: full_silver has run (silver tables
+      # populated). Gold is already a single, complete job (gold_load: init -> 3 dims -> 4 facts ->
+      # finalize), so this is a thin entry-point wrapper for naming symmetry with full_bronze /
+      # full_silver. Run gold_load directly if you prefer; this exists only as the uniform per-layer
+      # entry point.
+      parameters:
+        - name: catalog
+          default: ${var.catalog}
+        - name: shared_lib_path
+          default: ${var.shared_lib_path}
+      tasks:
+        - task_key: gold_load
+          run_job_task:
+            job_id: ${resources.jobs.gold_load.id}
+            job_parameters:
+              catalog: "{{job.parameters.catalog}}"
+              shared_lib_path: "{{job.parameters.shared_lib_path}}"

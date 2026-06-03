@@ -1,0 +1,40 @@
+resources:
+  jobs:
+    full_silver:
+      name: "Marketpulse full_silver [${bundle.target}]"
+      # Fully populates the SILVER layer. PREREQ the operator owns: full_bronze has run (bronze
+      # tables populated). Seeds the conformed dims first, then runs the housing and weather silver
+      # loads (both resolve geo_key/date_key against the dims, so both depend on seed_dims).
+      #   seed_dims -> silver_load (housing)
+      #   seed_dims -> weather_silver_gold (weather silver facts)
+      # Each child job owns its own init/finalize pipeline_log row.
+      parameters:
+        - name: catalog
+          default: ${var.catalog}
+        - name: shared_lib_path
+          default: ${var.shared_lib_path}
+      tasks:
+        - task_key: seed_dims
+          run_job_task:
+            job_id: ${resources.jobs.seed_dims.id}
+            job_parameters:
+              catalog: "{{job.parameters.catalog}}"
+              shared_lib_path: "{{job.parameters.shared_lib_path}}"
+
+        - task_key: silver_load
+          depends_on:
+            - task_key: seed_dims
+          run_job_task:
+            job_id: ${resources.jobs.silver_load.id}
+            job_parameters:
+              catalog: "{{job.parameters.catalog}}"
+              shared_lib_path: "{{job.parameters.shared_lib_path}}"
+
+        - task_key: weather_silver_gold
+          depends_on:
+            - task_key: seed_dims
+          run_job_task:
+            job_id: ${resources.jobs.weather_silver_gold.id}
+            job_parameters:
+              catalog: "{{job.parameters.catalog}}"
+              shared_lib_path: "{{job.parameters.shared_lib_path}}"
