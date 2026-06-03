@@ -1,7 +1,7 @@
 resources:
   jobs:
     bronze_load:
-      name: "Marketpulse bronze_load [${bundle.target}]"
+      name: "Marketpulse [${bundle.target}] bronze_load"
       parameters:
         - name: catalog
           default: ${var.catalog}
@@ -25,6 +25,7 @@ resources:
             parameters:
               - "{{job.parameters.shared_lib_path}}"   # sys.argv[1]
               - "{{job.parameters.catalog}}"           # sys.argv[2]
+              - "{{job.name}}"                         # sys.argv[3] — pipeline_log name (this job)
           environment_key: default
 
         # Bronze: FHFA HPI master CSV -> {BRONZE}.fhfa_hpi_master (MERGE, no archive).

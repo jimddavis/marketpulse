@@ -1,7 +1,7 @@
 resources:
   jobs:
     full_silver:
-      name: "Marketpulse full_silver [${bundle.target}]"
+      name: "Marketpulse [${bundle.target}] full_silver"
       # Fully populates the SILVER layer. PREREQ the operator owns: full_bronze has run (bronze
       # tables populated). Seeds the conformed dims first, then runs the housing and weather silver
       # loads (both resolve geo_key/date_key against the dims, so both depend on seed_dims).

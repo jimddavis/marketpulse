@@ -1,7 +1,7 @@
 resources:
   jobs:
     full_gold:
-      name: "Marketpulse full_gold [${bundle.target}]"
+      name: "Marketpulse [${bundle.target}] full_gold"
       # Fully populates the GOLD layer. PREREQ the operator owns: full_silver has run (silver tables
       # populated). Gold is already a single, complete job (gold_load: init -> 3 dims -> 4 facts ->
       # finalize), so this is a thin entry-point wrapper for naming symmetry with full_bronze /

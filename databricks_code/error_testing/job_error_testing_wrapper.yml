@@ -1,7 +1,7 @@
 resources:
   jobs:
     error_testing_wrapper:
-      name: "Marketpulse error_testing_wrapper [${bundle.target}]"
+      name: "Marketpulse [${bundle.target}] error_testing_wrapper"
       # Probe for open #4 (run_job_task wrapper). Confirms TWO things the single-job harness can't:
       #   (a) {{job.run_id}} inside the CHILD's finalize resolves to the CHILD run id (not this
       #       wrapper's) — i.e. the cross-check get_run() enumerates the child's loader tasks, not

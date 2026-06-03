@@ -1,7 +1,7 @@
 resources:
   jobs:
     weather_download:
-      name: "Marketpulse weather_download [${bundle.target}]"
+      name: "Marketpulse [${bundle.target}] weather_download"
       # Annual weather/hazard refresh — SEPARATE from the monthly download_sources job.
       # Operator-triggered (Free Edition has no scheduler). Downloads FEMA NRI + NOAA
       # Climate Normals into their raw Volumes, then normalizes the Normals tarball into a
@@ -28,6 +28,7 @@ resources:
             parameters:
               - "{{job.parameters.shared_lib_path}}"   # sys.argv[1]
               - "{{job.parameters.catalog}}"           # sys.argv[2]
+              - "{{job.name}}"                         # sys.argv[3] — pipeline_log name (this job)
           environment_key: default
 
         - task_key: download_weather_sources

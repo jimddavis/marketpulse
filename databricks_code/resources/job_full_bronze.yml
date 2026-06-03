@@ -1,7 +1,7 @@
 resources:
   jobs:
     full_bronze:
-      name: "Marketpulse full_bronze [${bundle.target}]"
+      name: "Marketpulse [${bundle.target}] full_bronze"
       # Fully populates the BRONZE layer. PREREQS the operator owns: catalog_setup has run
       # (catalog / schemas / volumes / tables exist) and the committed reference files are uploaded
       # to their Volumes. Composes the existing per-phase jobs via run_job_task — two parallel

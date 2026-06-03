@@ -1,7 +1,7 @@
 resources:
   jobs:
     seed_dims:
-      name: "Marketpulse seed_dims [${bundle.target}]"
+      name: "Marketpulse [${bundle.target}] seed_dims"
       parameters:
         - name: catalog
           default: ${var.catalog}

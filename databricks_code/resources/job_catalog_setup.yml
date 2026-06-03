@@ -1,7 +1,7 @@
 resources:
   jobs:
     catalog_setup:
-      name: "Marketpulse catalog_setup  [${bundle.target}] "
+      name: "Marketpulse [${bundle.target}] catalog_setup"
       parameters:
         - name: catalog
           default: ${var.catalog}
