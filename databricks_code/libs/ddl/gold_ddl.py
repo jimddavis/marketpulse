@@ -9,7 +9,9 @@
 #                      geo_key is a plain BIGINT PK here, NOT GENERATED ALWAYS AS IDENTITY:
 #                      Gold inherits Silver's geo_key (the G1 build does INSERT...SELECT geo_key),
 #                      so re-generating identity would mint non-matching keys (design §2.1/§2.3).
-#   dim_date           day (period-end). Carried verbatim; date_key is the deterministic yyyymmdd INT.
+#   dim_date           day (every calendar day; daily so it can be a Power BI Date Table). Carried
+#                      verbatim from Silver; date_key is the deterministic yyyymmdd INT. is_month_end /
+#                      is_quarter_end flag the days the monthly / quarterly facts join on.
 #   dim_metro_environment  CBSA, static (no date), 1:1 with dim_geo. Holds the FEMA hazard (15) + NOAA
 #                      climate (13) attributes, renamed/COMMENTed per silver_gold_column_name_mapping
 #                      §5/§6. expected_annual_loss_usd + population are RETAINED as the additive base
@@ -99,13 +101,13 @@ def create_gold_tables(spark, gold_schema):
         (f"{gold_schema}.dim_date", f"""
             CREATE TABLE IF NOT EXISTS {gold_schema}.dim_date (
                 date_key           INT NOT NULL COMMENT 'Deterministic yyyymmdd surrogate key (equals full_date as yyyymmdd)',
-                full_date          DATE NOT NULL COMMENT 'Calendar date this row represents (always a month-end)',
+                full_date          DATE NOT NULL COMMENT 'Calendar date this row represents (one row per day)',
                 year               INT COMMENT 'Calendar year',
                 quarter            INT COMMENT 'Calendar quarter (1 to 4)',
                 month              INT COMMENT 'Calendar month (1 to 12)',
                 month_start        DATE COMMENT 'First day of the month',
                 quarter_start      DATE COMMENT 'First day of the quarter',
-                is_month_end       BOOLEAN COMMENT 'True if full_date is the last day of its month (always true at this grain)',
+                is_month_end       BOOLEAN COMMENT 'True if full_date is the last day of its month (the days the monthly facts join on)',
                 is_quarter_end     BOOLEAN COMMENT 'True if full_date is a quarter-end (Mar/Jun/Sep/Dec)',
                 inserted_ts        TIMESTAMP,
                 updated_ts         TIMESTAMP,

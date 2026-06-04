@@ -8,8 +8,11 @@
 #   dim_geo                       grain = CBSA. Universe seeded from the OMB/Census CBSA
 #                                 delineation. geo_key is GENERATED ALWAYS AS IDENTITY, so
 #                                 seeders use INSERT INTO ... SELECT and never supply it.
-#   dim_date                      grain = day (period-end). date_key is a deterministic
-#                                 yyyymmdd INT (NOT identity) — seeders compute it.
+#   dim_date                      grain = day (every calendar day). date_key is a deterministic
+#                                 yyyymmdd INT (NOT identity) — seeders compute it. Daily grain so
+#                                 it can be marked as a Power BI Date Table (needs a contiguous,
+#                                 gap-free date column); is_month_end / is_quarter_end flag the
+#                                 days the monthly / quarterly facts join on.
 #   fact_zillow_metro_monthly     3 Bronze feeds (zhvi/zori/inventory) outer-joined on
 #                                 (geo, month). Zillow joins to dim_geo via zillow_region_id.
 #   fact_realtor_metro_monthly    15 base metrics cast from STRING; _mm/_yy companions dropped
@@ -101,13 +104,13 @@ def create_silver_tables(spark, silver_schema):
         (f"{silver_schema}.dim_date", f"""
             CREATE TABLE IF NOT EXISTS {silver_schema}.dim_date (
                 date_key           INT NOT NULL COMMENT 'Deterministic yyyymmdd surrogate key (equals full_date as yyyymmdd)',
-                full_date          DATE NOT NULL COMMENT 'Calendar date this row represents (always a month-end)',
+                full_date          DATE NOT NULL COMMENT 'Calendar date this row represents (one row per day)',
                 year               INT COMMENT 'Calendar year',
                 quarter            INT COMMENT 'Calendar quarter (1 to 4)',
                 month              INT COMMENT 'Calendar month (1 to 12)',
                 month_start        DATE COMMENT 'First day of the month',
                 quarter_start      DATE COMMENT 'First day of the quarter',
-                is_month_end       BOOLEAN COMMENT 'True if full_date is the last day of its month (always true at this grain)',
+                is_month_end       BOOLEAN COMMENT 'True if full_date is the last day of its month (the days the monthly facts join on)',
                 is_quarter_end     BOOLEAN COMMENT 'True if full_date is a quarter-end (Mar/Jun/Sep/Dec)',
                 inserted_ts        TIMESTAMP,
                 updated_ts         TIMESTAMP,
